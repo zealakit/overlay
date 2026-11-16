@@ -49,7 +49,7 @@ pnpm clean        # remove package/example build output and local tarballs
 pnpm pack:packages # pack release tarballs into artifacts/ (no publish)
 pnpm release:check # full checks + package tarballs (no publish)
 pnpm npm:publish:check # validate, build, test, pack, inspect all five (no publish)
-pnpm npm:publish:all   # preflight all five, then publish internal core → adapters
+pnpm npm:publish:all   # preflight all five, then publish the four adapters (core must exist on npm)
 pnpm readme:check # README structure: EN/VI/CN parity, absolute links, H1 = package name
 
 pnpm dev:vanilla
@@ -82,9 +82,9 @@ pnpm monitor      # dependency dashboard at http://127.0.0.1:4177
 - **Package surface:** do not export speculative or unimplemented APIs. No placeholder
   components, no fake implementations.
 - **Public packaging:** adapters are the user-facing packages. Core is an internal runtime
-  dependency; publish it first so adapter dependencies resolve, but never document it as a
-  direct-install or configuration entry point. There is no standalone core publish command;
-  `pnpm npm:publish:all` handles it.
+  dependency; publish it manually before the adapter commands, because this repo's publish
+  script never publishes Core. Never document Core as a direct-install or configuration entry
+  point.
 - **Scope:** Popover, Tooltip, Dialog, and ContextMenu are implemented as compound components
   in React (own implementation), Vue (render functions) and Svelte (`.svelte` files, exported
   from the root entry `@zealakit/overlay-svelte`), and as declarative `data-*` markup in Vanilla

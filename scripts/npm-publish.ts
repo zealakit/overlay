@@ -5,11 +5,11 @@
  *   pnpm npm:publish:vanilla | npm:publish:react | npm:publish:vue | npm:publish:svelte
  *   pnpm npm:publish:all
  *
- * Core is the internal runtime dependency; it has no standalone publish command and is
- * uploaded only by `npm:publish:all`, first, so the adapter packages can resolve it.
- * Vanilla, React, Vue, and Svelte are the public packages users install. Every package is
- * validated, built, typechecked, tested, packed, and inspected before any upload, so
- * `workspace:^` ranges are rewritten by `pnpm pack`, never by hand.
+ * Core is the internal runtime dependency. This script never publishes it. Publish Core
+ * manually first; `npm:publish:all` and the adapter commands require the matching Core version
+ * to already exist on npm. Vanilla, React, Vue, and Svelte are the public packages users
+ * install. Every adapter is validated, built, typechecked, tested, packed, and inspected before
+ * any upload, so `workspace:^` ranges are rewritten by `pnpm pack`, never by hand.
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
@@ -159,9 +159,10 @@ vanilla  Validate, build, test, and publish @zealakit/overlay-vanilla
 react    Validate, build, test, and publish @zealakit/overlay-react
 vue      Validate, build, test, and publish @zealakit/overlay-vue
 svelte   Validate, build, test, and publish @zealakit/overlay-svelte
-all      Preflight all five, then publish internal Core → vanilla → react → vue → svelte
+all      Preflight all five, then publish the four adapters; Core must already be on npm
 
-Core has no standalone publish command; \`all\` uploads it first for adapter resolution.
+Core is never published by this script. Publish it manually first:
+npm publish packages/core --access public.
 Adapter publishes require the matching internal Core version to already exist on npm.
 Users install adapters only; Core is never a direct-install entry point.
 Publishing needs "npm login" (or an npm token in .npmrc) and explicit intent.
@@ -438,44 +439,46 @@ function assertVersionNotPublished(pkg: PackageConfig): void {
   }
 }
 
-function assertCorePublished(pkg: PackageConfig): void {
-  const version = pkg.manifest.version as string;
+function assertCoreVersionPublished(version: string): void {
   if (versionExists(CORE_NAME, version)) {
     return;
   }
   fail(
-    `Cannot publish ${pkg.label}@${version}: ${CORE_NAME}@${version} is not on npm yet. Publish the full set with \`pnpm npm:publish:all\` first.`,
+    `${CORE_NAME}@${version} is not on npm yet. This script never publishes Core; publish it manually first, for example \`npm publish packages/core --access public\`, then rerun the adapter publish.`,
   );
 }
 
 function checkVersionAvailability(
   targets: PackageConfig[],
   allPackages: PackageConfig[],
+  mode: "check" | "all" | "single",
 ): void {
   const version = targets[0].manifest.version as string;
 
-  if (targets.length > 1) {
-    for (const pkg of targets) {
-      assertVersionNotPublished(pkg);
+  for (const pkg of targets) {
+    if (mode === "check" && pkg.id === "core") {
+      continue;
     }
+    assertVersionNotPublished(pkg);
+  }
+
+  if (mode !== "check") {
+    assertCoreVersionPublished(version);
+  }
+
+  if (mode !== "single") {
     return;
   }
 
   const target = targets[0];
-  assertVersionNotPublished(target);
-
-  if (target.id !== "core") {
-    assertCorePublished(target);
-  }
-
   for (const pkg of allPackages) {
-    if (pkg.id === target.id) {
+    if (pkg.id === "core" || pkg.id === target.id) {
       continue;
     }
     const name = pkg.manifest.name as string;
     if (!versionExists(name, version)) {
       console.log(
-        `  warning: ${name}@${version} is not on npm. This publish leaves the set out of sync; use \`pnpm npm:publish:all\` to ship all five.`,
+        `  warning: ${name}@${version} is not on npm. This publish leaves the set out of sync; use \`pnpm npm:publish:all\` to publish the remaining adapters.`,
       );
     }
   }
@@ -698,23 +701,22 @@ function logStep(current: number, total: number, message: string): void {
 function preflight(
   targets: PackageConfig[],
   allPackages: PackageConfig[],
+  buildSet: PackageConfig[],
+  mode: "check" | "all" | "single",
 ): Map<PackageId, string> {
-  const fullSet = targets.length === allPackages.length;
-  const buildClosure = fullSet
-    ? allPackages
-    : getBuildClosure(targets[targets.length - 1]);
+  const buildAll = buildSet.length === allPackages.length;
 
   logStep(1, 4, "Checking npm version availability");
-  checkVersionAvailability(targets, allPackages);
+  checkVersionAvailability(targets, allPackages, mode);
 
   logStep(
     2,
     4,
-    fullSet
+    buildAll
       ? "Building all packages"
       : `Building ${targets[0].label} and its dependencies`,
   );
-  buildPackages(buildClosure, fullSet);
+  buildPackages(buildSet, buildAll);
 
   logStep(3, 4, "Running typecheck and tests");
   for (const pkg of targets) {
@@ -727,7 +729,13 @@ function preflight(
   const coreVersion = getPackageConfig("core").manifest.version as string;
   const tarballs = new Map<PackageId, string>();
 
-  logStep(4, 4, "Packing and inspecting publish tarballs");
+  logStep(
+    4,
+    4,
+    mode === "all"
+      ? "Packing and inspecting adapter tarballs"
+      : "Packing and inspecting publish tarballs",
+  );
   for (const pkg of targets) {
     const tarball = packPackage(pkg);
     inspectTarball(pkg, tarball, coreVersion);
@@ -735,27 +743,6 @@ function preflight(
   }
 
   return tarballs;
-}
-
-function sleepSync(ms: number): void {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
-}
-
-function waitForPublishedVersion(
-  name: string,
-  version: string,
-  timeoutMs = 90_000,
-): void {
-  const startedAt = Date.now();
-  while (Date.now() - startedAt < timeoutMs) {
-    if (versionExists(name, version)) {
-      return;
-    }
-    sleepSync(3000);
-  }
-  fail(
-    `${name}@${version} did not appear on npm within ${Math.round(timeoutMs / 1000)}s. Aborting before dependent packages are published.`,
-  );
 }
 
 function publishPackage(tarball: string): void {
@@ -794,16 +781,6 @@ function publishTargets(
     try {
       publishPackage(tarball);
       published.push(`${pkg.manifest.name}@${pkg.manifest.version}`);
-
-      if (pkg.id === "core" && targets.length > 1) {
-        console.log(
-          `\nWaiting for ${pkg.manifest.name}@${pkg.manifest.version} to appear on npm...`,
-        );
-        waitForPublishedVersion(
-          pkg.manifest.name as string,
-          pkg.manifest.version as string,
-        );
-      }
     } catch (error) {
       printSummary(published, pkg);
       throw error;
@@ -827,19 +804,35 @@ function main(): void {
   console.log(`repository: ${PROJECT_ROOT}`);
   console.log("public packages: vanilla, react, vue, svelte");
   console.log(
-    `internal dependency: ${CORE_NAME} (published first, not a direct-install entry point)`,
+    `internal dependency: ${CORE_NAME} (must already be on npm; this script never publishes it)`,
   );
-  const fullSet = command === "check" || command === "all";
-  const targets = fullSet
-    ? allPackages
-    : [getPackageConfig(command as PackageId)];
+  const adapters = allPackages.filter((pkg) => pkg.id !== "core");
+
+  let targets: PackageConfig[];
+  let buildSet: PackageConfig[];
+  let mode: "check" | "all" | "single";
+
+  if (command === "check") {
+    targets = allPackages;
+    buildSet = allPackages;
+    mode = "check";
+  } else if (command === "all") {
+    targets = adapters;
+    buildSet = allPackages;
+    mode = "all";
+  } else {
+    const target = getPackageConfig(command as PackageId);
+    targets = [target];
+    buildSet = getBuildClosure(target);
+    mode = "single";
+  }
 
   if (command !== "check") {
     const npmUser = checkNpmAuthentication();
     console.log(`npm user: ${npmUser}`);
   }
 
-  const tarballs = preflight(targets, allPackages);
+  const tarballs = preflight(targets, allPackages, buildSet, mode);
 
   if (command === "check") {
     console.log(

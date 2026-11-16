@@ -130,10 +130,10 @@ bump gated by the Core positioner tests.
 
 ## Release
 
-- All five packages ship together at one version. Core is an internal runtime dependency and
-  publishes first only so adapter dependencies resolve; Vanilla, React, Vue, and Svelte are the
-  public packages users install. Adapters keep `workspace:^` in the repository; packing rewrites
-  it to the release version.
+- All five packages share one version. Core is an internal runtime dependency and is published
+  manually first so adapter dependencies resolve; Vanilla, React, Vue, and Svelte are the public
+  packages users install. The publish script never publishes Core. Adapters keep `workspace:^` in
+  the repository; packing rewrites it to the release version.
 - Peer ranges: React `^18.0.0 || ^19.0.0`, Vue `^3.5.0`, Svelte `^5.0.0`.
 - Preflight: `pnpm install --frozen-lockfile`, `pnpm clean`, `pnpm check`, `pnpm readme:check`,
   build every example, then `pnpm pack:packages` (tarballs in `artifacts/`, no publish).
@@ -144,12 +144,12 @@ bump gated by the Core positioner tests.
 - Validate the tarballs in temporary projects outside the repository (Core tarball provided to
   adapters, framework peer from the registry, a TypeScript build, and a Node SSR import). Never
   validate with `workspace:*` aliases or `packages/*` imports.
-- Publishing is manual and needs explicit authorization: `pnpm npm:publish:check`, then
-  `pnpm npm:publish:all` (or one adapter command, `pnpm npm:publish:<adapter>`). The script
-  builds, tests, packs, and inspects each tarball before uploading; no CI or automated publishing.
-  Core has no standalone publish command and is uploaded first by `npm:publish:all` as an internal
-  dependency, never documented as a direct-install entry point. Storybook and Changesets stay out
-  of scope. Tag `vX.Y.Z` only after preflight.
+- Publishing is manual and needs explicit authorization: publish Core manually, then run
+  `pnpm npm:publish:check` and `pnpm npm:publish:all` (or one adapter command,
+  `pnpm npm:publish:<adapter>`). The script builds, tests, packs, and inspects adapter tarballs;
+  it never publishes Core. No CI or automated publishing. Core must already be on npm at the same
+  version and is never documented as a direct-install entry point. Storybook and Changesets stay
+  out of scope. Tag `vX.Y.Z` only after preflight.
 
 ## Documentation
 
