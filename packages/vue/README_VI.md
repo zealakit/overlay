@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/vue/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/vue/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/vue/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
 
 Component Popover, Tooltip, Dialog và ContextMenu headless cho Vue. Cung cấp compound component, định vị reactive, đóng theo lớp, quản lý focus và các composable cấp thấp. Bạn tự quyết định kiểu dáng.
 
@@ -17,7 +17,7 @@ Hãy style các phần bằng `class`, `style` và các hook `data-*` bên dư�
 npm install @zealakit/overlay-vue vue
 ```
 
-Peer dependency: `vue` `^3.5.0`. Chỉ ESM. Các component là render function thuần nên không cần thêm bước build.
+Peer dependency: `vue` `^3.5.0`. Chỉ ESM. Các component là render function thuần nên không cần thêm bước build. `@zealakit/overlay-core` là dependency nội bộ được cài tự động; không cài riêng.
 
 ## Popover
 

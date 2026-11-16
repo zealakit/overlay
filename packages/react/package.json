@@ -9,7 +9,11 @@
     "zealakit",
     "react",
     "react-hook",
-    "react-component"
+    "react-component",
+    "dialog",
+    "context-menu",
+    "dropdown",
+    "tooltip"
   ],
   "author": "nqhed - Huy Ed. Nguyen",
   "license": "MIT",

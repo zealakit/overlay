@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/svelte/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
 
 Headless Popover, Tooltip, Dialog, and ContextMenu components for Svelte 5. Provides compound components, positioning, layered dismissal, focus management, and low-level controllers and actions. You own visual styling.
 
@@ -17,7 +17,7 @@ Style the parts with `class`, `style`, and the `data-*` hooks below. Content sta
 npm install @zealakit/overlay-svelte svelte
 ```
 
-Peer dependency: `svelte` `^5.0.0`. Svelte 5 only; ESM only. Components, controllers, and actions share one entry, `@zealakit/overlay-svelte`. Components ship as `.svelte` files, so use Vite with `@sveltejs/vite-plugin-svelte` (SvelteKit includes it).
+Peer dependency: `svelte` `^5.0.0`. Svelte 5 only; ESM only. Components, controllers, and actions share one entry, `@zealakit/overlay-svelte`. Components ship as `.svelte` files, so use Vite with `@sveltejs/vite-plugin-svelte` (SvelteKit includes it). `@zealakit/overlay-core` is an internal dependency installed automatically; do not install it separately.
 
 ## Popover
 

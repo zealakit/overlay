@@ -2,9 +2,9 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/core/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/core/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/core/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
 
-Headless positioning, layering, focus, and DOM-controller kernel for every Zealakit Overlay adapter. Provides a collision-aware positioner, a layer stack, focus helpers, and a shared overlay controller. You own visual styling.
+Internal positioning, layering, focus, and DOM-controller kernel for every Zealakit Overlay adapter. Every adapter installs it automatically, so application code should use the adapter for its framework instead of importing core directly. The public API remains available for custom adapter authors.
 
 Core renders nothing and ships no CSS. Controllers write only inline `position`, `left`, `top` and `data-*` attributes, so your CSS owns every visual and exit animations collapse cleanly.
 
@@ -17,7 +17,7 @@ Core renders nothing and ships no CSS. Controllers write only inline `position`,
 npm install @zealakit/overlay-core
 ```
 
-No peer dependencies. The only runtime dependency is `@floating-ui/dom`, which stays behind `createPositioner()` and never appears in public types.
+Core is installed automatically with an adapter; install it directly only when you are building a custom adapter. No peer dependencies. The only runtime dependency is `@floating-ui/dom`, which stays behind `createPositioner()` and never appears in public types.
 
 ## Public API
 

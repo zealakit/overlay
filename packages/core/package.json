@@ -1,7 +1,7 @@
 {
   "name": "@zealakit/overlay-core",
   "version": "1.0.0",
-  "description": "Framework-independent overlay core: collision-aware positioning, layers, lifecycle, and event primitives.",
+  "description": "Internal framework-independent overlay kernel: collision-aware positioning, layers, lifecycle, and event primitives. Installed automatically by the adapter packages.",
   "keywords": [
     "overlay",
     "popover",

@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/svelte/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
 
 面向 Svelte 5 的无样式 Popover、Tooltip、Dialog 和 ContextMenu 组件。提供复合组件、定位、分层关闭、焦点管理，以及底层控制器和 action。视觉样式由你自己决定。
 
@@ -17,7 +17,7 @@
 npm install @zealakit/overlay-svelte svelte
 ```
 
-Peer 依赖：`svelte` `^5.0.0`。仅支持 Svelte 5；仅支持 ESM。组件、控制器和 action 共用同一个入口 `@zealakit/overlay-svelte`。组件以 `.svelte` 文件形式提供，因此请使用带 `@sveltejs/vite-plugin-svelte` 的 Vite（SvelteKit 已包含）。
+Peer 依赖：`svelte` `^5.0.0`。仅支持 Svelte 5；仅支持 ESM。组件、控制器和 action 共用同一个入口 `@zealakit/overlay-svelte`。组件以 `.svelte` 文件形式提供，因此请使用带 `@sveltejs/vite-plugin-svelte` 的 Vite（SvelteKit 已包含）。`@zealakit/overlay-core` 是自动安装的内部依赖，请勿单独安装。
 
 ## Popover
 

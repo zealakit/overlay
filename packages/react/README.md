@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/react/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/react/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/react/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
 
 Headless Popover, Tooltip, Dialog, and ContextMenu for React. Provides compound components, positioning, layered dismissal, focus management, and low-level hooks. You own visual styling.
 
@@ -17,7 +17,7 @@ Style the parts through `className`, `style`, and the `data-*` hooks below. Clos
 npm install @zealakit/overlay-react react react-dom
 ```
 
-Peer dependencies: `react` and `react-dom` `^18.0.0 || ^19.0.0`. ESM only. Entries carry `"use client"` for Next.js App Router.
+Peer dependencies: `react` and `react-dom` `^18.0.0 || ^19.0.0`. ESM only. Entries carry `"use client"` for Next.js App Router. `@zealakit/overlay-core` is an internal dependency installed automatically; do not install it separately.
 
 ## Popover
 

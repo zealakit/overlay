@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/react/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/react/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/react/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
 
 Popover, Tooltip, Dialog và ContextMenu headless cho React. Cung cấp compound component, định vị, đóng theo lớp, quản lý focus và các hook cấp thấp. Bạn tự quyết định kiểu dáng.
 
@@ -17,7 +17,7 @@ Hãy style các phần qua `className`, `style` và các hook `data-*` bên dư�
 npm install @zealakit/overlay-react react react-dom
 ```
 
-Peer dependency: `react` và `react-dom` `^18.0.0 || ^19.0.0`. Chỉ ESM. Các entry có `"use client"` cho Next.js App Router.
+Peer dependency: `react` và `react-dom` `^18.0.0 || ^19.0.0`. Chỉ ESM. Các entry có `"use client"` cho Next.js App Router. `@zealakit/overlay-core` là dependency nội bộ được cài tự động; không cài riêng.
 
 ## Popover
 

@@ -2,11 +2,11 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
 
 Các primitive overlay headless để xây popover, tooltip, dialog và context menu bằng Vanilla TypeScript, React, Vue và Svelte.
 
-- **Core** — một kernel dùng chung cho định vị, layer, focus và DOM controller.
+- **Core** — kernel dùng chung nội bộ cho định vị, layer, focus và DOM controller, được mọi adapter cài tự động.
 - **Adapter** — component React, composable Vue, controller và action Svelte, controller Vanilla.
 - **An toàn SSR** — import package không bao giờ chạm vào biến toàn cục của trình duyệt.
 
@@ -19,18 +19,17 @@ Overlay chỉ xử lý định vị, phân lớp, đóng, focus và thuộc tín
 
 | Package | Framework/Runtime | Documentation |
 | --- | --- | --- |
-| `@zealakit/overlay-core` | Không phụ thuộc framework | [README](https://github.com/zealakit/overlay/blob/main/packages/core/README_VI.md) |
+| `@zealakit/overlay-core` | Kernel nội bộ (cài tự động) | [README](https://github.com/zealakit/overlay/blob/main/packages/core/README_VI.md) |
 | `@zealakit/overlay-vanilla` | Vanilla JS / TS | [README](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README_VI.md) |
 | `@zealakit/overlay-react` | React 18 / 19 | [README](https://github.com/zealakit/overlay/blob/main/packages/react/README_VI.md) |
 | `@zealakit/overlay-vue` | Vue 3.5+ | [README](https://github.com/zealakit/overlay/blob/main/packages/vue/README_VI.md) |
 | `@zealakit/overlay-svelte` | Svelte 5 | [README](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_VI.md) |
 
-Mỗi package được cài độc lập. Adapter tự kéo theo `@zealakit/overlay-core`, và các adapter không chia sẻ runtime với nhau.
+Chỉ cần cài một adapter cho framework của bạn. Adapter tự kéo theo `@zealakit/overlay-core`; core là dependency nội bộ, không cài hoặc cấu hình trực tiếp. Các adapter không chia sẻ runtime với nhau.
 
 ## Installation
 
 ```bash
-npm i @zealakit/overlay-core
 npm i @zealakit/overlay-vanilla
 npm i @zealakit/overlay-react react react-dom
 npm i @zealakit/overlay-vue vue

@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
 
 Headless Popover, Tooltip, Dialog, and ContextMenu for plain TypeScript and JavaScript. Provides declarative `data-*` markup, imperative controllers, positioning, a layer stack, focus handling, and ARIA wiring on elements you own. You own visual styling.
 
@@ -17,7 +17,7 @@ Style the trigger and content with your own CSS and the `data-*` hooks below. Th
 npm install @zealakit/overlay-vanilla
 ```
 
-No peer dependencies; `@zealakit/overlay-core` is installed automatically. ESM only.
+No peer dependencies. `@zealakit/overlay-core` is an internal dependency installed automatically; do not install it separately. ESM only.
 
 ## Public API
 

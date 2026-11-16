@@ -2,12 +2,14 @@
  * Manual npm publish for Zealakit Overlay packages.
  *
  *   pnpm npm:publish:check
- *   pnpm npm:publish:core | npm:publish:vanilla | npm:publish:react | npm:publish:vue | npm:publish:svelte
+ *   pnpm npm:publish:vanilla | npm:publish:react | npm:publish:vue | npm:publish:svelte
  *   pnpm npm:publish:all
  *
- * Every package is validated, built, typechecked, tested, packed, and inspected before any
- * upload. Publishing then uploads the already-built tarballs in core → vanilla → react → vue →
- * svelte order, so `workspace:^` ranges are rewritten by `pnpm pack`, never by hand.
+ * Core is the internal runtime dependency; it has no standalone publish command and is
+ * uploaded only by `npm:publish:all`, first, so the adapter packages can resolve it.
+ * Vanilla, React, Vue, and Svelte are the public packages users install. Every package is
+ * validated, built, typechecked, tested, packed, and inspected before any upload, so
+ * `workspace:^` ranges are rewritten by `pnpm pack`, never by hand.
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
@@ -22,7 +24,8 @@ const ARTIFACT_DIR = path.join(PROJECT_ROOT, "artifacts", "npm-publish");
 const CORE_NAME = "@zealakit/overlay-core";
 
 type PackageId = "core" | "vanilla" | "react" | "vue" | "svelte";
-type Command = "check" | PackageId | "all";
+type AdapterId = Exclude<PackageId, "core">;
+type Command = "check" | AdapterId | "all";
 type DependencyField =
   | "dependencies"
   | "devDependencies"
@@ -75,6 +78,7 @@ type PackageConfig = PackageMeta & {
 };
 
 const PACKAGES: readonly PackageMeta[] = [
+  // Internal runtime dependency: published first, never a user-facing entry point.
   {
     id: "core",
     label: "Core",
@@ -141,7 +145,6 @@ const FORBIDDEN_TARBALL_PATTERNS: readonly RegExp[] = [
 function printHelp(): void {
   console.log(`Usage:
   pnpm npm:publish:check
-  pnpm npm:publish:core
   pnpm npm:publish:vanilla
   pnpm npm:publish:react
   pnpm npm:publish:vue
@@ -149,17 +152,18 @@ function printHelp(): void {
   pnpm npm:publish:all
 
 Or:
-  node --strip-types scripts/npm-publish.ts <check|core|vanilla|react|vue|svelte|all>
+  node --strip-types scripts/npm-publish.ts <check|vanilla|react|vue|svelte|all>
 
 check    Run pre-publish validation for all five packages (no publish, no login needed)
-core     Validate, build, test, and publish @zealakit/overlay-core
 vanilla  Validate, build, test, and publish @zealakit/overlay-vanilla
 react    Validate, build, test, and publish @zealakit/overlay-react
 vue      Validate, build, test, and publish @zealakit/overlay-vue
 svelte   Validate, build, test, and publish @zealakit/overlay-svelte
-all      Preflight all five, then publish core → vanilla → react → vue → svelte
+all      Preflight all five, then publish internal Core → vanilla → react → vue → svelte
 
-Single-adapter publishes require the matching Core version to already exist on npm.
+Core has no standalone publish command; \`all\` uploads it first for adapter resolution.
+Adapter publishes require the matching internal Core version to already exist on npm.
+Users install adapters only; Core is never a direct-install entry point.
 Publishing needs "npm login" (or an npm token in .npmrc) and explicit intent.
 `);
 }
@@ -172,7 +176,6 @@ function parseCommand(argv: string[]): Command {
   const command = argv[0];
   if (
     command === "check" ||
-    command === "core" ||
     command === "vanilla" ||
     command === "react" ||
     command === "vue" ||
@@ -185,7 +188,7 @@ function parseCommand(argv: string[]): Command {
   fail(
     command
       ? `Unknown command "${command}".`
-      : "Missing command. Pass check, core, vanilla, react, vue, svelte, or all.",
+      : "Missing command. Pass check, vanilla, react, vue, svelte, or all.",
   );
 }
 
@@ -441,7 +444,7 @@ function assertCorePublished(pkg: PackageConfig): void {
     return;
   }
   fail(
-    `Cannot publish ${pkg.label}@${version}: ${CORE_NAME}@${version} is not on npm yet. Publish Core first with \`pnpm npm:publish:core\`, or use \`pnpm npm:publish:all\`.`,
+    `Cannot publish ${pkg.label}@${version}: ${CORE_NAME}@${version} is not on npm yet. Publish the full set with \`pnpm npm:publish:all\` first.`,
   );
 }
 
@@ -822,6 +825,10 @@ function main(): void {
   validateRelease(allPackages);
 
   console.log(`repository: ${PROJECT_ROOT}`);
+  console.log("public packages: vanilla, react, vue, svelte");
+  console.log(
+    `internal dependency: ${CORE_NAME} (published first, not a direct-install entry point)`,
+  );
   const fullSet = command === "check" || command === "all";
   const targets = fullSet
     ? allPackages

@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/svelte/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
 
 Component Popover, Tooltip, Dialog và ContextMenu headless cho Svelte 5. Cung cấp compound component, định vị, đóng theo lớp, quản lý focus cùng controller và action cấp thấp. Bạn tự quyết định kiểu dáng.
 
@@ -17,7 +17,7 @@ Hãy style các phần bằng `class`, `style` và các hook `data-*` bên dư�
 npm install @zealakit/overlay-svelte svelte
 ```
 
-Peer dependency: `svelte` `^5.0.0`. Chỉ Svelte 5; chỉ ESM. Component, controller và action dùng chung một entry, `@zealakit/overlay-svelte`. Các component phát hành dạng file `.svelte`, nên hãy dùng Vite với `@sveltejs/vite-plugin-svelte` (SvelteKit đã có sẵn).
+Peer dependency: `svelte` `^5.0.0`. Chỉ Svelte 5; chỉ ESM. Component, controller và action dùng chung một entry, `@zealakit/overlay-svelte`. Các component phát hành dạng file `.svelte`, nên hãy dùng Vite với `@sveltejs/vite-plugin-svelte` (SvelteKit đã có sẵn). `@zealakit/overlay-core` là dependency nội bộ được cài tự động; không cài riêng.
 
 ## Popover
 

@@ -22,7 +22,7 @@ when adding support for another source tree; keep hard rules here.
 
 | Area | Path | Package |
 | --- | --- | --- |
-| Framework-agnostic kernel | `packages/core/` | `@zealakit/overlay-core` |
+| Internal framework-agnostic kernel | `packages/core/` | `@zealakit/overlay-core` |
 | Imperative DOM adapter | `packages/vanilla/` | `@zealakit/overlay-vanilla` |
 | React adapter | `packages/react/` | `@zealakit/overlay-react` |
 | Vue adapter | `packages/vue/` | `@zealakit/overlay-vue` |
@@ -48,7 +48,7 @@ pnpm clean        # remove package/example build output and local tarballs
 pnpm pack:packages # pack release tarballs into artifacts/ (no publish)
 pnpm release:check # full checks + package tarballs (no publish)
 pnpm npm:publish:check # validate, build, test, pack, inspect all five (no publish)
-pnpm npm:publish:all   # preflight all five, then publish core → vanilla → react → vue → svelte
+pnpm npm:publish:all   # preflight all five, then publish internal core → adapters
 pnpm readme:check # README structure: EN/VI/CN parity, absolute links, H1 = package name
 
 pnpm dev:vanilla
@@ -80,6 +80,10 @@ pnpm monitor      # dependency dashboard at http://127.0.0.1:4177
 - **Naming:** files and folders are `kebab-case`; exported React components are `PascalCase`.
 - **Package surface:** do not export speculative or unimplemented APIs. No placeholder
   components, no fake implementations.
+- **Public packaging:** adapters are the user-facing packages. Core is an internal runtime
+  dependency; publish it first so adapter dependencies resolve, but never document it as a
+  direct-install or configuration entry point. There is no standalone core publish command;
+  `pnpm npm:publish:all` handles it.
 - **Scope:** Popover, Tooltip, Dialog, and ContextMenu are implemented as compound components
   in React (own implementation), Vue (render functions) and Svelte (`.svelte` files, exported
   from the root entry `@zealakit/overlay-svelte`), and as declarative `data-*` markup in Vanilla

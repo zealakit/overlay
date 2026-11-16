@@ -2,9 +2,9 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/core/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/core/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/core/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
 
-Kernel headless cho định vị, phân lớp, focus và DOM controller của mọi adapter Zealakit Overlay. Cung cấp positioner có xử lý va chạm, layer stack, helper focus và overlay controller dùng chung. Bạn tự quyết định kiểu dáng.
+Kernel nội bộ cho định vị, phân lớp, focus và DOM controller của mọi adapter Zealakit Overlay. Mọi adapter tự cài core, nên code ứng dụng nên dùng adapter của framework thay vì import core trực tiếp. Public API vẫn dành cho người viết adapter tùy biến.
 
 Core không render gì và không kèm CSS. Controller chỉ ghi `position`, `left`, `top` inline cùng các thuộc tính `data-*`, nên CSS của bạn quyết định mọi hiển thị và animation thoát kết thúc gọn gàng.
 
@@ -17,7 +17,7 @@ Core không render gì và không kèm CSS. Controller chỉ ghi `position`, `le
 npm install @zealakit/overlay-core
 ```
 
-Không có peer dependency. Runtime dependency duy nhất là `@floating-ui/dom`, nằm sau `createPositioner()` và không bao giờ xuất hiện trong public type.
+Core được cài tự động cùng adapter; chỉ cài trực tiếp khi bạn viết adapter tùy biến. Không có peer dependency. Runtime dependency duy nhất là `@floating-ui/dom`, nằm sau `createPositioner()` và không bao giờ xuất hiện trong public type.
 
 ## Public API
 

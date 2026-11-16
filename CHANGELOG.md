@@ -25,6 +25,10 @@
 
 ### Changed
 
+- Packaging is documented around the adapter packages. `@zealakit/overlay-core` is an internal
+  dependency installed automatically by adapters; it remains published first so adapter
+  dependencies resolve, but it is no longer presented as a direct-install entry point. The
+  standalone `npm:publish:core` script is gone; `npm:publish:all` uploads core first.
 - Core now owns the logic previously copied across packages: `acquireModalBackground` (inert
   background for modals, shared per document by the controller and React Dialog),
   `getMenuItems`/`moveMenuFocus`/`focusMenuTypeahead`/`createTypeaheadBuffer` (menu keyboard

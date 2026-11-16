@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
 
 面向原生 TypeScript 和 JavaScript 的无样式 Popover、Tooltip、Dialog 和 ContextMenu。在你自己的元素上提供声明式 `data-*` 标记、命令式控制器、定位、layer stack、焦点处理和 ARIA 连接。视觉样式由你自己决定。
 
@@ -17,7 +17,7 @@
 npm install @zealakit/overlay-vanilla
 ```
 
-无 peer 依赖；`@zealakit/overlay-core` 会自动安装。仅支持 ESM。
+无 peer 依赖。`@zealakit/overlay-core` 是自动安装的内部依赖，请勿单独安装。仅支持 ESM。
 
 ## Public API
 

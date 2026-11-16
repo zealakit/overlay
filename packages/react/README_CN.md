@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/react/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/react/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/react/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
 
 面向 React 的无样式 Popover、Tooltip、Dialog 和 ContextMenu。提供复合组件、定位、分层关闭、焦点管理和底层 hook。视觉样式由你自己决定。
 
@@ -17,7 +17,7 @@
 npm install @zealakit/overlay-react react react-dom
 ```
 
-Peer 依赖：`react` 与 `react-dom` `^18.0.0 || ^19.0.0`。仅支持 ESM。入口带有 `"use client"`，适用于 Next.js App Router。
+Peer 依赖：`react` 与 `react-dom` `^18.0.0 || ^19.0.0`。仅支持 ESM。入口带有 `"use client"`，适用于 Next.js App Router。`@zealakit/overlay-core` 是自动安装的内部依赖，请勿单独安装。
 
 ## Popover
 

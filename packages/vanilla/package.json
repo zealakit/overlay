@@ -10,7 +10,11 @@
     "vanilla",
     "javascript",
     "typescript",
-    "dom"
+    "dom",
+    "context-menu",
+    "dropdown",
+    "dialog",
+    "tooltip"
   ],
   "author": "nqhed - Huy Ed. Nguyen",
   "license": "MIT",

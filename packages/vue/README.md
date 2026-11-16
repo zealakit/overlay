@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/vue/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/vue/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/vue/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
 
 Headless Popover, Tooltip, Dialog, and ContextMenu components for Vue. Provides compound components, reactive positioning, layered dismissal, focus management, and low-level composables. You own visual styling.
 
@@ -17,7 +17,7 @@ Style the parts with `class`, `style`, and the `data-*` hooks below. Content sta
 npm install @zealakit/overlay-vue vue
 ```
 
-Peer dependency: `vue` `^3.5.0`. ESM only. The components are plain render functions, so no extra build step is needed.
+Peer dependency: `vue` `^3.5.0`. ESM only. The components are plain render functions, so no extra build step is needed. `@zealakit/overlay-core` is an internal dependency installed automatically; do not install it separately.
 
 ## Popover
 

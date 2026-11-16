@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/vue/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/vue/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/vue/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
 
 面向 Vue 的无样式 Popover、Tooltip、Dialog 和 ContextMenu 组件。提供复合组件、响应式定位、分层关闭、焦点管理和底层 composable。视觉样式由你自己决定。
 
@@ -17,7 +17,7 @@
 npm install @zealakit/overlay-vue vue
 ```
 
-Peer 依赖：`vue` `^3.5.0`。仅支持 ESM。组件是纯渲染函数，因此无需额外构建步骤。
+Peer 依赖：`vue` `^3.5.0`。仅支持 ESM。组件是纯渲染函数，因此无需额外构建步骤。`@zealakit/overlay-core` 是自动安装的内部依赖，请勿单独安装。
 
 ## Popover
 

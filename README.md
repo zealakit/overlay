@@ -2,11 +2,11 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
 
 Headless overlay primitives for building popovers, tooltips, dialogs, and context menus in Vanilla TypeScript, React, Vue, and Svelte.
 
-- **Core** — one shared kernel for positioning, layers, focus, and the DOM controller.
+- **Core** — an internal shared kernel for positioning, layers, focus, and the DOM controller, installed automatically by every adapter.
 - **Adapters** — React components, Vue composables, Svelte controllers and actions, and Vanilla controllers.
 - **SSR-safe** — importing a package never touches browser globals.
 
@@ -19,18 +19,17 @@ Overlay only handles positioning, layering, dismissal, focus, and accessibility 
 
 | Package | Framework/Runtime | Documentation |
 | --- | --- | --- |
-| `@zealakit/overlay-core` | Framework-agnostic | [README](https://github.com/zealakit/overlay/blob/main/packages/core/README.md) |
+| `@zealakit/overlay-core` | Internal kernel (installed automatically) | [README](https://github.com/zealakit/overlay/blob/main/packages/core/README.md) |
 | `@zealakit/overlay-vanilla` | Vanilla JS / TS | [README](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README.md) |
 | `@zealakit/overlay-react` | React 18 / 19 | [README](https://github.com/zealakit/overlay/blob/main/packages/react/README.md) |
 | `@zealakit/overlay-vue` | Vue 3.5+ | [README](https://github.com/zealakit/overlay/blob/main/packages/vue/README.md) |
 | `@zealakit/overlay-svelte` | Svelte 5 | [README](https://github.com/zealakit/overlay/blob/main/packages/svelte/README.md) |
 
-Each package installs independently. Adapters pull in `@zealakit/overlay-core` automatically, and no runtime is shared between adapters.
+Install one adapter for your framework. Adapters pull in `@zealakit/overlay-core` automatically; core is an internal dependency you do not install or configure directly. No runtime is shared between adapters.
 
 ## Installation
 
 ```bash
-npm i @zealakit/overlay-core
 npm i @zealakit/overlay-vanilla
 npm i @zealakit/overlay-react react react-dom
 npm i @zealakit/overlay-vue vue
