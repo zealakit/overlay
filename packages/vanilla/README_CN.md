@@ -2,19 +2,23 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
 面向原生 TypeScript 和 JavaScript 的无样式 Popover、Tooltip、Dialog 和 ContextMenu。在你自己的元素上提供声明式 `data-*` 标记、命令式控制器、定位、layer stack、焦点处理和 ARIA 连接。视觉样式由你自己决定。
 
 请用你自己的 CSS 和下方的 `data-*` 钩子为 trigger 与 content 设置样式。控制器会切换 content 的 `hidden`，因此退出动画请使用 `animation`，不要依赖 `display: none`。
 
 > **Note**
-> Overlay 是无样式（headless）的：不附带 CSS，也不渲染带样式的标记。已实现 Popover、Tooltip、Dialog 和 ContextMenu；尚未实现 Select、Combobox、DatePicker、DropdownMenu、Menubar 和命令面板。
+> Overlay 是一组专注的 headless 浮层原语，涵盖 Popover、Tooltip、Dialog 和 ContextMenu。它不附带 CSS，也不渲染带样式的标记，所有视觉细节都由你掌控。Select、Combobox、DatePicker、DropdownMenu、Menubar 和命令面板尚未实现。
+>
+> Overlay 不能替代完整的 UI 库或设计系统。当你需要无障碍的浮层基础组件、又不想引入大型 UI 套件，或现有库中的浮层组件难以重设样式时，可以使用它。
 
 ## Install
 
 ```bash
 npm install @zealakit/overlay-vanilla
+
+# or yarn, pnpm, ...
 ```
 
 无 peer 依赖。`@zealakit/overlay-core` 是自动安装的内部依赖，请勿单独安装。仅支持 ESM。
@@ -252,9 +256,9 @@ const overlay = createOverlay({
 }
 ```
 
-## AI Agent Skill
+## Agent Skill
 
-在此 package 上工作的编码 agent 应先加载 [overlay skill](https://github.com/zealakit/overlay/blob/main/.agents/skills/overlay/SKILL.md)。
+将 [Overlay Vanilla skill](https://github.com/zealakit/overlay/blob/main/skills/overlay-vanilla.md) 添加到 agent 的 skills 目录，让它遵循此 package 的组件、样式和无障碍规则。
 
 ## License
 

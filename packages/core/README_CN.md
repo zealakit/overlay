@@ -2,14 +2,16 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/core/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/core/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/core/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
 供所有 Zealakit Overlay 适配器使用的内部内核，负责定位、分层、焦点和 DOM 控制器。每个适配器都会自动安装它，因此应用代码应使用对应框架的适配器，而不是直接导入 core。公开 API 仍保留给自定义适配器作者使用。
 
 Core 不渲染任何内容，也不附带 CSS。控制器只写入内联的 `position`、`left`、`top` 与 `data-*` 属性，因此所有视觉都由你的 CSS 决定，退出动画也能干净收尾。
 
 > **Note**
-> Overlay 是无样式（headless）的：不附带 CSS，也不渲染带样式的标记。已实现 Popover、Tooltip、Dialog 和 ContextMenu；尚未实现 Select、Combobox、DatePicker、DropdownMenu、Menubar 和命令面板。
+> Overlay 是一组专注的 headless 浮层原语，涵盖 Popover、Tooltip、Dialog 和 ContextMenu。它不附带 CSS，也不渲染带样式的标记，所有视觉细节都由你掌控。Select、Combobox、DatePicker、DropdownMenu、Menubar 和命令面板尚未实现。
+>
+> Overlay 不能替代完整的 UI 库或设计系统。当你需要无障碍的浮层基础组件、又不想引入大型 UI 套件，或现有库中的浮层组件难以重设样式时，可以使用它。
 
 ## Install
 
@@ -178,10 +180,6 @@ positioner.dispose();
   --overlay-arrow-border-color: #3d5478;
 }
 ```
-
-## AI Agent Skill
-
-在此 package 上工作的编码 agent 应先加载 [overlay skill](https://github.com/zealakit/overlay/blob/main/.agents/skills/overlay/SKILL.md)。
 
 ## License
 

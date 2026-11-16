@@ -2,14 +2,16 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/core/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/core/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/core/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
 Internal positioning, layering, focus, and DOM-controller kernel for every Zealakit Overlay adapter. Every adapter installs it automatically, so application code should use the adapter for its framework instead of importing core directly. The public API remains available for custom adapter authors.
 
 Core renders nothing and ships no CSS. Controllers write only inline `position`, `left`, `top` and `data-*` attributes, so your CSS owns every visual and exit animations collapse cleanly.
 
 > **Note**
-> Overlay is headless: it ships no CSS and renders no styled markup. Popover, Tooltip, Dialog, and ContextMenu are implemented. Select, Combobox, DatePicker, DropdownMenu, Menubar, and command palette are not.
+> Overlay is a focused, headless set of primitives for Popover, Tooltip, Dialog, and ContextMenu. It ships no CSS and renders no styled markup, so you keep full control of the visuals. Select, Combobox, DatePicker, DropdownMenu, Menubar, and command palette are not implemented.
+>
+> Overlay is not a replacement for a full UI library or design system. Use it when you need accessible overlay primitives without adopting a large kit, or when your current library's overlays are hard to restyle.
 
 ## Install
 
@@ -178,10 +180,6 @@ The controller sets `role`, `aria-expanded`, `aria-controls`, `aria-haspopup`, `
   --overlay-arrow-border-color: #3d5478;
 }
 ```
-
-## AI Agent Skill
-
-Coding agents working on this package load the [overlay skill](https://github.com/zealakit/overlay/blob/main/.agents/skills/overlay/SKILL.md) first.
 
 ## License
 

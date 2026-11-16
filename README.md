@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
 Headless overlay primitives for building popovers, tooltips, dialogs, and context menus in Vanilla TypeScript, React, Vue, and Svelte.
 
@@ -13,7 +13,9 @@ Headless overlay primitives for building popovers, tooltips, dialogs, and contex
 Overlay only handles positioning, layering, dismissal, focus, and accessibility attributes. It does not ship styles, themes, or form controls.
 
 > **Note**
-> Overlay is headless: it ships no CSS and renders no styled markup. Popover, Tooltip, Dialog, and ContextMenu are implemented. Select, Combobox, DatePicker, DropdownMenu, Menubar, and command palette are not.
+> Overlay is a focused, headless set of primitives for Popover, Tooltip, Dialog, and ContextMenu. It ships no CSS and renders no styled markup, so you keep full control of the visuals. Select, Combobox, DatePicker, DropdownMenu, Menubar, and command palette are not implemented.
+>
+> Overlay is not a replacement for a full UI library or design system. Use it when you need accessible overlay primitives without adopting a large kit, or when your current library's overlays are hard to restyle.
 
 ## Packages
 
@@ -25,15 +27,17 @@ Overlay only handles positioning, layering, dismissal, focus, and accessibility 
 | `@zealakit/overlay-vue` | Vue 3.5+ | [README](https://github.com/zealakit/overlay/blob/main/packages/vue/README.md) |
 | `@zealakit/overlay-svelte` | Svelte 5 | [README](https://github.com/zealakit/overlay/blob/main/packages/svelte/README.md) |
 
-Install one adapter for your framework. Adapters pull in `@zealakit/overlay-core` automatically; core is an internal dependency you do not install or configure directly. No runtime is shared between adapters.
+Install one adapter for your framework. Your app already provides the framework runtime, so you only add the adapter. Adapters pull in `@zealakit/overlay-core` automatically; core is an internal dependency you do not install or configure directly. No runtime is shared between adapters.
 
 ## Installation
 
 ```bash
 npm i @zealakit/overlay-vanilla
-npm i @zealakit/overlay-react react react-dom
-npm i @zealakit/overlay-vue vue
-npm i @zealakit/overlay-svelte svelte
+npm i @zealakit/overlay-react
+npm i @zealakit/overlay-vue
+npm i @zealakit/overlay-svelte
+
+# or yarn, pnpm, ...
 ```
 
 ## Examples
@@ -46,19 +50,14 @@ pnpm build
 pnpm dev:vanilla   # or dev:react, dev:vue, dev:svelte, dev:nextjs, dev:astro
 ```
 
-## Dependency monitor
+## Agent Skills
 
-A local dashboard lists outdated dependencies. Run the command and open the URL. Files live in [`monitor/`](https://github.com/zealakit/overlay/blob/main/monitor).
+Add the integration skill for your framework to your agent's skills directory:
 
-```bash
-pnpm monitor   # http://127.0.0.1:4177
-```
-
-## AI Agent Skills
-
-- [overlay](https://github.com/zealakit/overlay/blob/main/.agents/skills/overlay/SKILL.md) — architecture, boundaries, workflow.
-- [readme-system](https://github.com/zealakit/overlay/blob/main/.agents/skills/readme-system/SKILL.md) — structure of every README.
-- [AGENTS.md](https://github.com/zealakit/overlay/blob/main/.agents/AGENTS.md) — hard rules and commands.
+- [Overlay React](https://github.com/zealakit/overlay/blob/main/skills/overlay-react.md) — components, controlled state, styling, and Next.js rules.
+- [Overlay Vue](https://github.com/zealakit/overlay/blob/main/skills/overlay-vue.md) — components, v-model state, composables, and Nuxt rules.
+- [Overlay Svelte](https://github.com/zealakit/overlay/blob/main/skills/overlay-svelte.md) — components, bind:open state, controllers, and SvelteKit rules.
+- [Overlay Vanilla](https://github.com/zealakit/overlay/blob/main/skills/overlay-vanilla.md) — data-* markup, controllers, and lifecycle rules.
 
 ## License
 

@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
 Các primitive overlay headless để xây popover, tooltip, dialog và context menu bằng Vanilla TypeScript, React, Vue và Svelte.
 
@@ -13,7 +13,9 @@ Các primitive overlay headless để xây popover, tooltip, dialog và context 
 Overlay chỉ xử lý định vị, phân lớp, đóng, focus và thuộc tính truy cập. Nó không kèm style, theme hay form control.
 
 > **Note**
-> Overlay là headless: không kèm CSS và không render markup có kiểu dáng. Popover, Tooltip, Dialog và ContextMenu đã được triển khai. Select, Combobox, DatePicker, DropdownMenu, Menubar và command palette thì chưa.
+> Overlay là bộ primitive headless tập trung cho Popover, Tooltip, Dialog và ContextMenu. Không kèm CSS và không render markup có kiểu dáng, nên mọi quyết định visual đều thuộc về bạn. Select, Combobox, DatePicker, DropdownMenu, Menubar và command palette chưa được triển khai.
+>
+> Overlay không phải là bản thay thế cho một UI library hay design system đầy đủ. Hãy dùng khi bạn cần các primitive overlay có accessibility mà không phải kéo theo một bộ UI lớn, hoặc khi overlay trong thư viện hiện tại khó restyle.
 
 ## Packages
 
@@ -25,15 +27,17 @@ Overlay chỉ xử lý định vị, phân lớp, đóng, focus và thuộc tín
 | `@zealakit/overlay-vue` | Vue 3.5+ | [README](https://github.com/zealakit/overlay/blob/main/packages/vue/README_VI.md) |
 | `@zealakit/overlay-svelte` | Svelte 5 | [README](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_VI.md) |
 
-Chỉ cần cài một adapter cho framework của bạn. Adapter tự kéo theo `@zealakit/overlay-core`; core là dependency nội bộ, không cài hoặc cấu hình trực tiếp. Các adapter không chia sẻ runtime với nhau.
+Chỉ cần cài một adapter cho framework của bạn. Ứng dụng đã có sẵn framework runtime, nên bạn chỉ thêm adapter. Adapter tự kéo theo `@zealakit/overlay-core`; core là dependency nội bộ, không cài hoặc cấu hình trực tiếp. Các adapter không chia sẻ runtime với nhau.
 
 ## Installation
 
 ```bash
 npm i @zealakit/overlay-vanilla
-npm i @zealakit/overlay-react react react-dom
-npm i @zealakit/overlay-vue vue
-npm i @zealakit/overlay-svelte svelte
+npm i @zealakit/overlay-react
+npm i @zealakit/overlay-vue
+npm i @zealakit/overlay-svelte
+
+# or yarn, pnpm, ...
 ```
 
 ## Examples
@@ -46,19 +50,14 @@ pnpm build
 pnpm dev:vanilla   # or dev:react, dev:vue, dev:svelte, dev:nextjs, dev:astro
 ```
 
-## Dependency monitor
+## Agent Skills
 
-Một dashboard cục bộ liệt kê dependency đã cũ. Chạy lệnh rồi mở URL. Mã nguồn nằm trong [`monitor/`](https://github.com/zealakit/overlay/blob/main/monitor).
+Thêm skill tích hợp cho framework của bạn vào thư mục skills của agent:
 
-```bash
-pnpm monitor   # http://127.0.0.1:4177
-```
-
-## AI Agent Skills
-
-- [overlay](https://github.com/zealakit/overlay/blob/main/.agents/skills/overlay/SKILL.md) — kiến trúc, ranh giới, quy trình.
-- [readme-system](https://github.com/zealakit/overlay/blob/main/.agents/skills/readme-system/SKILL.md) — cấu trúc của mọi README.
-- [AGENTS.md](https://github.com/zealakit/overlay/blob/main/.agents/AGENTS.md) — quy tắc cứng và lệnh.
+- [Overlay React](https://github.com/zealakit/overlay/blob/main/skills/overlay-react.md) — component, controlled state, styling và quy tắc Next.js.
+- [Overlay Vue](https://github.com/zealakit/overlay/blob/main/skills/overlay-vue.md) — component, v-model state, composable và quy tắc Nuxt.
+- [Overlay Svelte](https://github.com/zealakit/overlay/blob/main/skills/overlay-svelte.md) — component, bind:open state, controller và quy tắc SvelteKit.
+- [Overlay Vanilla](https://github.com/zealakit/overlay/blob/main/skills/overlay-vanilla.md) — markup data-*, controller và lifecycle.
 
 ## License
 

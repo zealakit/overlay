@@ -2,22 +2,26 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/svelte/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
 Headless Popover, Tooltip, Dialog, and ContextMenu components for Svelte 5. Provides compound components, positioning, layered dismissal, focus management, and low-level controllers and actions. You own visual styling.
 
 Style the parts with `class`, `style`, and the `data-*` hooks below. Content stays in the DOM as `hidden` while closed and the controller owns `hidden`, so never bind it yourself; with `animation` the content stays visible until the exit ends.
 
 > **Note**
-> Overlay is headless: it ships no CSS and renders no styled markup. Popover, Tooltip, Dialog, and ContextMenu are implemented. Select, Combobox, DatePicker, DropdownMenu, Menubar, and command palette are not.
+> Overlay is a focused, headless set of primitives for Popover, Tooltip, Dialog, and ContextMenu. It ships no CSS and renders no styled markup, so you keep full control of the visuals. Select, Combobox, DatePicker, DropdownMenu, Menubar, and command palette are not implemented.
+>
+> Overlay is not a replacement for a full UI library or design system. Use it when you need accessible overlay primitives without adopting a large kit, or when your current library's overlays are hard to restyle.
 
 ## Install
 
 ```bash
-npm install @zealakit/overlay-svelte svelte
+npm install @zealakit/overlay-svelte
+
+# or yarn, pnpm, ...
 ```
 
-Peer dependency: `svelte` `^5.0.0`. Svelte 5 only; ESM only. Components, controllers, and actions share one entry, `@zealakit/overlay-svelte`. Components ship as `.svelte` files, so use Vite with `@sveltejs/vite-plugin-svelte` (SvelteKit includes it). `@zealakit/overlay-core` is an internal dependency installed automatically; do not install it separately.
+Peer dependency: `svelte` `^5.0.0`; a Svelte app already provides it. Svelte 5 only; ESM only. Components, controllers, and actions share one entry, `@zealakit/overlay-svelte`. Components ship as `.svelte` files, so use Vite with `@sveltejs/vite-plugin-svelte` (SvelteKit includes it). `@zealakit/overlay-core` is an internal dependency installed automatically; do not install it separately.
 
 ## Popover
 
@@ -519,9 +523,9 @@ The components are built on these lower-level APIs. Use them directly when you n
 
 No SvelteKit-specific entry exists. Importing the package is safe on the server, and the components render their markup during SSR with the content `hidden`.
 
-## AI Agent Skill
+## Agent Skill
 
-Coding agents working on this package load the [overlay skill](https://github.com/zealakit/overlay/blob/main/.agents/skills/overlay/SKILL.md) first.
+Add the [Overlay Svelte skill](https://github.com/zealakit/overlay/blob/main/skills/overlay-svelte.md) to your agent's skills directory so it can follow the component, styling, and accessibility rules for this package.
 
 ## License
 

@@ -2,22 +2,26 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/react/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/react/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/react/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
 Popover, Tooltip, Dialog và ContextMenu headless cho React. Cung cấp compound component, định vị, đóng theo lớp, quản lý focus và các hook cấp thấp. Bạn tự quyết định kiểu dáng.
 
 Hãy style các phần qua `className`, `style` và các hook `data-*` bên dưới. Content đã đóng bị unmount (hoặc giữ lại với `keepMounted`), nên animation thoát cần prop `animation` để kết thúc gọn gàng.
 
 > **Note**
-> Overlay là headless: không kèm CSS và không render markup có kiểu dáng. Popover, Tooltip, Dialog và ContextMenu đã được triển khai. Select, Combobox, DatePicker, DropdownMenu, Menubar và command palette thì chưa.
+> Overlay là bộ primitive headless tập trung cho Popover, Tooltip, Dialog và ContextMenu. Không kèm CSS và không render markup có kiểu dáng, nên mọi quyết định visual đều thuộc về bạn. Select, Combobox, DatePicker, DropdownMenu, Menubar và command palette chưa được triển khai.
+>
+> Overlay không phải là bản thay thế cho một UI library hay design system đầy đủ. Hãy dùng khi bạn cần các primitive overlay có accessibility mà không phải kéo theo một bộ UI lớn, hoặc khi overlay trong thư viện hiện tại khó restyle.
 
 ## Install
 
 ```bash
-npm install @zealakit/overlay-react react react-dom
+npm install @zealakit/overlay-react
+
+# or yarn, pnpm, ...
 ```
 
-Peer dependency: `react` và `react-dom` `^18.0.0 || ^19.0.0`. Chỉ ESM. Các entry có `"use client"` cho Next.js App Router. `@zealakit/overlay-core` là dependency nội bộ được cài tự động; không cài riêng.
+Peer dependency: `react` và `react-dom` `^18.0.0 || ^19.0.0`; ứng dụng React đã cung cấp sẵn. Chỉ ESM. Các entry có `"use client"` cho Next.js App Router. `@zealakit/overlay-core` là dependency nội bộ được cài tự động; không cài riêng.
 
 ## Popover
 
@@ -535,9 +539,9 @@ Mọi entry đều có `"use client"`, nên hãy import component từ client co
 import { Popover, PopoverContent, PopoverTrigger } from "@zealakit/overlay-react";
 ```
 
-## AI Agent Skill
+## Agent Skill
 
-Coding agent làm việc với package này nạp [overlay skill](https://github.com/zealakit/overlay/blob/main/.agents/skills/overlay/SKILL.md) trước tiên.
+Thêm [Overlay React skill](https://github.com/zealakit/overlay/blob/main/skills/overlay-react.md) vào thư mục skills của agent để nó tuân theo quy tắc component, styling và accessibility của package này.
 
 ## License
 

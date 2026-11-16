@@ -2,22 +2,26 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/svelte/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
 面向 Svelte 5 的无样式 Popover、Tooltip、Dialog 和 ContextMenu 组件。提供复合组件、定位、分层关闭、焦点管理，以及底层控制器和 action。视觉样式由你自己决定。
 
 请通过 `class`、`style` 和下方的 `data-*` 钩子为各部分设置样式。关闭时内容以 `hidden` 保留在 DOM 中，且 `hidden` 由控制器管理，因此不要自行绑定；启用 `animation` 时内容会保持可见，直到退出动画结束。
 
 > **Note**
-> Overlay 是无样式（headless）的：不附带 CSS，也不渲染带样式的标记。已实现 Popover、Tooltip、Dialog 和 ContextMenu；尚未实现 Select、Combobox、DatePicker、DropdownMenu、Menubar 和命令面板。
+> Overlay 是一组专注的 headless 浮层原语，涵盖 Popover、Tooltip、Dialog 和 ContextMenu。它不附带 CSS，也不渲染带样式的标记，所有视觉细节都由你掌控。Select、Combobox、DatePicker、DropdownMenu、Menubar 和命令面板尚未实现。
+>
+> Overlay 不能替代完整的 UI 库或设计系统。当你需要无障碍的浮层基础组件、又不想引入大型 UI 套件，或现有库中的浮层组件难以重设样式时，可以使用它。
 
 ## Install
 
 ```bash
-npm install @zealakit/overlay-svelte svelte
+npm install @zealakit/overlay-svelte
+
+# or yarn, pnpm, ...
 ```
 
-Peer 依赖：`svelte` `^5.0.0`。仅支持 Svelte 5；仅支持 ESM。组件、控制器和 action 共用同一个入口 `@zealakit/overlay-svelte`。组件以 `.svelte` 文件形式提供，因此请使用带 `@sveltejs/vite-plugin-svelte` 的 Vite（SvelteKit 已包含）。`@zealakit/overlay-core` 是自动安装的内部依赖，请勿单独安装。
+Peer 依赖：`svelte` `^5.0.0`；Svelte 应用已提供该运行时。仅支持 Svelte 5；仅支持 ESM。组件、控制器和 action 共用同一个入口 `@zealakit/overlay-svelte`。组件以 `.svelte` 文件形式提供，因此请使用带 `@sveltejs/vite-plugin-svelte` 的 Vite（SvelteKit 已包含）。`@zealakit/overlay-core` 是自动安装的内部依赖，请勿单独安装。
 
 ## Popover
 
@@ -519,9 +523,9 @@ Peer 依赖：`svelte` `^5.0.0`。仅支持 Svelte 5；仅支持 ESM。组件、
 
 没有 SvelteKit 专用入口。在服务端导入 package 是安全的，组件在 SSR 期间渲染标记，内容为 `hidden` 状态。
 
-## AI Agent Skill
+## Agent Skill
 
-在此 package 上工作的编码 agent 应先加载 [overlay skill](https://github.com/zealakit/overlay/blob/main/.agents/skills/overlay/SKILL.md)。
+将 [Overlay Svelte skill](https://github.com/zealakit/overlay/blob/main/skills/overlay-svelte.md) 添加到 agent 的 skills 目录，让它遵循此 package 的组件、样式和无障碍规则。
 
 ## License
 

@@ -29,6 +29,7 @@ when adding support for another source tree; keep hard rules here.
 | Svelte adapter | `packages/svelte/` | `@zealakit/overlay-svelte` |
 | Integration examples | `examples/{vanilla,react,vue,svelte,nextjs}/`, `examples/astro/` (React + Vue + Svelte integrations in one project) | private |
 | Product documentation | root `README*.md` + `packages/*/README*.md` (EN, VI, CN) | — |
+| User-facing integration skills | `skills/overlay-*.md` | — |
 | Dependency monitor | `monitor/` | local dashboard |
 | Release packaging helper | `scripts/pack-packages.mjs` | — |
 | README structure check | `scripts/check-readmes.mjs` | — |

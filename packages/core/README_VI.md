@@ -2,14 +2,16 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/core/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/core/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/core/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
 Kernel nội bộ cho định vị, phân lớp, focus và DOM controller của mọi adapter Zealakit Overlay. Mọi adapter tự cài core, nên code ứng dụng nên dùng adapter của framework thay vì import core trực tiếp. Public API vẫn dành cho người viết adapter tùy biến.
 
 Core không render gì và không kèm CSS. Controller chỉ ghi `position`, `left`, `top` inline cùng các thuộc tính `data-*`, nên CSS của bạn quyết định mọi hiển thị và animation thoát kết thúc gọn gàng.
 
 > **Note**
-> Overlay là headless: không kèm CSS và không render markup có kiểu dáng. Popover, Tooltip, Dialog và ContextMenu đã được triển khai. Select, Combobox, DatePicker, DropdownMenu, Menubar và command palette thì chưa.
+> Overlay là bộ primitive headless tập trung cho Popover, Tooltip, Dialog và ContextMenu. Không kèm CSS và không render markup có kiểu dáng, nên mọi quyết định visual đều thuộc về bạn. Select, Combobox, DatePicker, DropdownMenu, Menubar và command palette chưa được triển khai.
+>
+> Overlay không phải là bản thay thế cho một UI library hay design system đầy đủ. Hãy dùng khi bạn cần các primitive overlay có accessibility mà không phải kéo theo một bộ UI lớn, hoặc khi overlay trong thư viện hiện tại khó restyle.
 
 ## Install
 
@@ -178,10 +180,6 @@ Controller đặt `role`, `aria-expanded`, `aria-controls`, `aria-haspopup`, `hi
   --overlay-arrow-border-color: #3d5478;
 }
 ```
-
-## AI Agent Skill
-
-Coding agent làm việc với package này nạp [overlay skill](https://github.com/zealakit/overlay/blob/main/.agents/skills/overlay/SKILL.md) trước tiên.
 
 ## License
 

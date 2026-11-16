@@ -2,22 +2,26 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/vue/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/vue/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/vue/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
 Component Popover, Tooltip, Dialog và ContextMenu headless cho Vue. Cung cấp compound component, định vị reactive, đóng theo lớp, quản lý focus và các composable cấp thấp. Bạn tự quyết định kiểu dáng.
 
 Hãy style các phần bằng `class`, `style` và các hook `data-*` bên dưới. Content vẫn ở trong DOM dạng `hidden` khi đóng và controller giữ `hidden`, nên đừng tự bind nó; khi có `animation`, content vẫn hiển thị đến khi exit kết thúc.
 
 > **Note**
-> Overlay là headless: không kèm CSS và không render markup có kiểu dáng. Popover, Tooltip, Dialog và ContextMenu đã được triển khai. Select, Combobox, DatePicker, DropdownMenu, Menubar và command palette thì chưa.
+> Overlay là bộ primitive headless tập trung cho Popover, Tooltip, Dialog và ContextMenu. Không kèm CSS và không render markup có kiểu dáng, nên mọi quyết định visual đều thuộc về bạn. Select, Combobox, DatePicker, DropdownMenu, Menubar và command palette chưa được triển khai.
+>
+> Overlay không phải là bản thay thế cho một UI library hay design system đầy đủ. Hãy dùng khi bạn cần các primitive overlay có accessibility mà không phải kéo theo một bộ UI lớn, hoặc khi overlay trong thư viện hiện tại khó restyle.
 
 ## Install
 
 ```bash
-npm install @zealakit/overlay-vue vue
+npm install @zealakit/overlay-vue
+
+# or yarn, pnpm, ...
 ```
 
-Peer dependency: `vue` `^3.5.0`. Chỉ ESM. Các component là render function thuần nên không cần thêm bước build. `@zealakit/overlay-core` là dependency nội bộ được cài tự động; không cài riêng.
+Peer dependency: `vue` `^3.5.0`; ứng dụng Vue đã cung cấp sẵn. Chỉ ESM. Các component là render function thuần nên không cần thêm bước build. `@zealakit/overlay-core` là dependency nội bộ được cài tự động; không cài riêng.
 
 ## Popover
 
@@ -524,9 +528,9 @@ Mọi option đều nhận `ref` hoặc getter (`MaybeRefOrGetter`) trừ callba
 
 Import package an toàn trên server, và nội dung overlay chỉ tương tác được sau khi mount. Hãy bọc trong `<ClientOnly>` các component tự tạo controller thủ công.
 
-## AI Agent Skill
+## Agent Skill
 
-Coding agent làm việc với package này nạp [overlay skill](https://github.com/zealakit/overlay/blob/main/.agents/skills/overlay/SKILL.md) trước tiên.
+Thêm [Overlay Vue skill](https://github.com/zealakit/overlay/blob/main/skills/overlay-vue.md) vào thư mục skills của agent để nó tuân theo quy tắc component, styling và accessibility của package này.
 
 ## License
 

@@ -33,14 +33,17 @@ them when porting. Rules later reference the keys, not the literal values.
 | Units | root + `packages/{core,vanilla,react,vue,svelte}` | File set, checker |
 | Layouts | core/vanilla → kernel; react/vue/svelte → component | Section 3 |
 | Package READMEs excluded | `examples/`, `monitor/` | File structure |
-| Agent skills | `.agents/skills/{overlay,readme-system}/SKILL.md` | AI Agent Skills section |
+| Internal agent skills | `.agents/skills/{overlay,readme-system}/SKILL.md` | Never linked from user-facing READMEs |
+| User-facing integration skills | `skills/overlay-*.md` | Root `## Agent Skills` + package `## Agent Skill` links |
 | Checker | `pnpm readme:check` | Pre-flight checklist |
 | Architecture skill | `.agents/skills/overlay/SKILL.md` | Optional pre-read |
 
 Canonical `> **Note**` for this repo (same text in every README of one language):
 
 > **Note**
-> Overlay is headless: it ships no CSS and renders no styled markup. Popover, Tooltip, Dialog, and ContextMenu are implemented. Select, Combobox, DatePicker, DropdownMenu, Menubar, and command palette are not.
+> Overlay is a focused, headless set of primitives for Popover, Tooltip, Dialog, and ContextMenu. It ships no CSS and renders no styled markup, so you keep full control of the visuals. Select, Combobox, DatePicker, DropdownMenu, Menubar, and command palette are not implemented.
+>
+> Overlay is not a replacement for a full UI library or design system. Use it when you need accessible overlay primitives without adopting a large kit, or when your current library's overlays are hard to restyle.
 
 Single-language or single-package repos can delete the language and layout rows they do not
 use; the rest of the skill still applies.
@@ -75,9 +78,10 @@ For a multi-unit repo:
    absolute links, then one sentence that each package installs independently.
 7. `## Installation`: one `bash` block with the install commands. No explanation.
 8. `## Examples` (only if examples exist): install/build commands and the `dev:*` scripts.
-9. Optional host-repo sections (monitor, playground, benchmarks): one command, the URL, a link
-   to details. Omit what does not exist.
-10. `## AI Agent Skills` (only if agent skills exist): links to the skill files and `AGENTS.md`.
+9. Optional end-user sections (playground, benchmarks) only when they help consumers. Omit
+   maintainer tooling such as the dependency monitor.
+10. `## Agent Skills` (when the repo ships user-facing skills under `skills/`): link each
+    framework skill; never link the internal `.agents/skills` files.
 11. `## License`.
 
 No badges, screenshot gallery, changelog, roadmap, contributing, or API tables in the root
@@ -90,7 +94,8 @@ in the unit README.
 
 Pick one layout per unit in the profile and keep its section order. Every layout shares:
 H1 equal to the exact package/unit name, language switcher + cover (reuse the root image),
-canonical Note, `## Install`, `## AI Agent Skill` (when agent skills exist), `## License`.
+canonical Note, `## Install`, `## Agent Skill` (when the repo ships a user-facing skill for the
+unit), `## License`.
 
 ### component layout (framework UI packages)
 
@@ -106,7 +111,7 @@ canonical Note, `## Install`, `## AI Agent Skill` (when agent skills exist), `##
 8. Framework-specific section when needed (`## Next.js App Router`, `## Nuxt`,
    `## SvelteKit`).
 9. `## Styling hooks`: `Attribute | Where | Purpose`.
-10. `## AI Agent Skill`.
+10. `## Agent Skill`.
 11. `## License`.
 
 Framework-specific extras (composables, controllers/actions, lifecycle) go after the
@@ -117,13 +122,13 @@ primitives when the adapter exposes them.
 H1, switcher + cover, lead paragraphs with the styling contract, Note, `## Install`,
 `## Public API` (types/options tables), `## Usage` (quick start, options, controlled usage),
 `## Lifecycle` (create, refresh, destroy; guard against double init), `## Styling hooks` (only
-if the package sets attributes), `## AI Agent Skill`, `## License`.
+if the package sets attributes), `## Agent Skill`, `## License`.
 
 ### adapter layout (imperative or non-component wrapper)
 
 Same as kernel, plus `## Markup` when the adapter owns host attributes, child markers, or
-events. Order: Install → Public API → Markup → Usage → Lifecycle → Styling hooks → AI Agent
-Skill → License.
+events. Order: Install → Public API → Markup → Usage → Lifecycle → Styling hooks → Agent Skill →
+License.
 
 ### custom layout
 
@@ -170,7 +175,9 @@ Technical terms (props, attributes, CSS variables, component names) are never tr
 2. Choose languages: delete unused `README_<LANG>.md` rows, update the switcher and the checker.
 3. Map each unit to a layout in [section 3](#3-unit-readme-layout-profiles); delete unused
    layouts.
-4. Delete optional root sections the target repo does not have (Examples, monitor, AI skills).
+4. Delete optional root sections the target repo does not have (Examples, playground,
+   benchmarks). Link user-facing `skills/*` integration files from the root and unit READMEs,
+   never the internal `.agents/skills` files.
 5. Point the pre-flight checker to the host command, or remove that checklist item.
 6. Remove the architecture-skill reference if the host repo has no such skill.
 7. Search for leftover source-repo names (`zealakit`, `overlay`, old package names) after

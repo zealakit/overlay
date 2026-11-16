@@ -2,22 +2,26 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/vue/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/vue/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/vue/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
 Headless Popover, Tooltip, Dialog, and ContextMenu components for Vue. Provides compound components, reactive positioning, layered dismissal, focus management, and low-level composables. You own visual styling.
 
 Style the parts with `class`, `style`, and the `data-*` hooks below. Content stays in the DOM as `hidden` while closed and the controller owns `hidden`, so never bind it yourself; with `animation` the content stays visible until the exit ends.
 
 > **Note**
-> Overlay is headless: it ships no CSS and renders no styled markup. Popover, Tooltip, Dialog, and ContextMenu are implemented. Select, Combobox, DatePicker, DropdownMenu, Menubar, and command palette are not.
+> Overlay is a focused, headless set of primitives for Popover, Tooltip, Dialog, and ContextMenu. It ships no CSS and renders no styled markup, so you keep full control of the visuals. Select, Combobox, DatePicker, DropdownMenu, Menubar, and command palette are not implemented.
+>
+> Overlay is not a replacement for a full UI library or design system. Use it when you need accessible overlay primitives without adopting a large kit, or when your current library's overlays are hard to restyle.
 
 ## Install
 
 ```bash
-npm install @zealakit/overlay-vue vue
+npm install @zealakit/overlay-vue
+
+# or yarn, pnpm, ...
 ```
 
-Peer dependency: `vue` `^3.5.0`. ESM only. The components are plain render functions, so no extra build step is needed. `@zealakit/overlay-core` is an internal dependency installed automatically; do not install it separately.
+Peer dependency: `vue` `^3.5.0`; a Vue app already provides it. ESM only. The components are plain render functions, so no extra build step is needed. `@zealakit/overlay-core` is an internal dependency installed automatically; do not install it separately.
 
 ## Popover
 
@@ -524,9 +528,9 @@ Every option accepts a `ref` or getter (`MaybeRefOrGetter`) except callbacks. Th
 
 Importing the package is safe on the server, and overlay content only becomes interactive after mount. Wrap components that create controllers manually in `<ClientOnly>`.
 
-## AI Agent Skill
+## Agent Skill
 
-Coding agents working on this package load the [overlay skill](https://github.com/zealakit/overlay/blob/main/.agents/skills/overlay/SKILL.md) first.
+Add the [Overlay Vue skill](https://github.com/zealakit/overlay/blob/main/skills/overlay-vue.md) to your agent's skills directory so it can follow the component, styling, and accessibility rules for this package.
 
 ## License
 

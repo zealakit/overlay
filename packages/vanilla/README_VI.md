@@ -2,19 +2,23 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
 Popover, Tooltip, Dialog và ContextMenu headless cho TypeScript và JavaScript thuần. Cung cấp markup `data-*` khai báo, controller mệnh lệnh, định vị, layer stack, xử lý focus và ARIA trên các phần tử do bạn sở hữu. Bạn tự quyết định kiểu dáng.
 
 Hãy style trigger và content bằng CSS của bạn và các hook `data-*` bên dưới. Controller bật/tắt `hidden` trên content, nên hãy đặt animation thoát trong `animation` thay vì dựa vào `display: none`.
 
 > **Note**
-> Overlay là headless: không kèm CSS và không render markup có kiểu dáng. Popover, Tooltip, Dialog và ContextMenu đã được triển khai. Select, Combobox, DatePicker, DropdownMenu, Menubar và command palette thì chưa.
+> Overlay là bộ primitive headless tập trung cho Popover, Tooltip, Dialog và ContextMenu. Không kèm CSS và không render markup có kiểu dáng, nên mọi quyết định visual đều thuộc về bạn. Select, Combobox, DatePicker, DropdownMenu, Menubar và command palette chưa được triển khai.
+>
+> Overlay không phải là bản thay thế cho một UI library hay design system đầy đủ. Hãy dùng khi bạn cần các primitive overlay có accessibility mà không phải kéo theo một bộ UI lớn, hoặc khi overlay trong thư viện hiện tại khó restyle.
 
 ## Install
 
 ```bash
 npm install @zealakit/overlay-vanilla
+
+# or yarn, pnpm, ...
 ```
 
 Không có peer dependency. `@zealakit/overlay-core` là dependency nội bộ được cài tự động; không cài riêng. Chỉ ESM.
@@ -252,9 +256,9 @@ const overlay = createOverlay({
 }
 ```
 
-## AI Agent Skill
+## Agent Skill
 
-Coding agent làm việc với package này nạp [overlay skill](https://github.com/zealakit/overlay/blob/main/.agents/skills/overlay/SKILL.md) trước tiên.
+Thêm [Overlay Vanilla skill](https://github.com/zealakit/overlay/blob/main/skills/overlay-vanilla.md) vào thư mục skills của agent để nó tuân theo quy tắc component, styling và accessibility của package này.
 
 ## License
 

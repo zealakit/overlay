@@ -2,22 +2,26 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/svelte/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
 Component Popover, Tooltip, Dialog và ContextMenu headless cho Svelte 5. Cung cấp compound component, định vị, đóng theo lớp, quản lý focus cùng controller và action cấp thấp. Bạn tự quyết định kiểu dáng.
 
 Hãy style các phần bằng `class`, `style` và các hook `data-*` bên dưới. Content vẫn ở trong DOM dạng `hidden` khi đóng và controller giữ `hidden`, nên đừng tự bind nó; khi có `animation`, content vẫn hiển thị đến khi exit kết thúc.
 
 > **Note**
-> Overlay là headless: không kèm CSS và không render markup có kiểu dáng. Popover, Tooltip, Dialog và ContextMenu đã được triển khai. Select, Combobox, DatePicker, DropdownMenu, Menubar và command palette thì chưa.
+> Overlay là bộ primitive headless tập trung cho Popover, Tooltip, Dialog và ContextMenu. Không kèm CSS và không render markup có kiểu dáng, nên mọi quyết định visual đều thuộc về bạn. Select, Combobox, DatePicker, DropdownMenu, Menubar và command palette chưa được triển khai.
+>
+> Overlay không phải là bản thay thế cho một UI library hay design system đầy đủ. Hãy dùng khi bạn cần các primitive overlay có accessibility mà không phải kéo theo một bộ UI lớn, hoặc khi overlay trong thư viện hiện tại khó restyle.
 
 ## Install
 
 ```bash
-npm install @zealakit/overlay-svelte svelte
+npm install @zealakit/overlay-svelte
+
+# or yarn, pnpm, ...
 ```
 
-Peer dependency: `svelte` `^5.0.0`. Chỉ Svelte 5; chỉ ESM. Component, controller và action dùng chung một entry, `@zealakit/overlay-svelte`. Các component phát hành dạng file `.svelte`, nên hãy dùng Vite với `@sveltejs/vite-plugin-svelte` (SvelteKit đã có sẵn). `@zealakit/overlay-core` là dependency nội bộ được cài tự động; không cài riêng.
+Peer dependency: `svelte` `^5.0.0`; ứng dụng Svelte đã cung cấp sẵn. Chỉ Svelte 5; chỉ ESM. Component, controller và action dùng chung một entry, `@zealakit/overlay-svelte`. Các component phát hành dạng file `.svelte`, nên hãy dùng Vite với `@sveltejs/vite-plugin-svelte` (SvelteKit đã có sẵn). `@zealakit/overlay-core` là dependency nội bộ được cài tự động; không cài riêng.
 
 ## Popover
 
@@ -519,9 +523,9 @@ Các component được xây trên những API cấp thấp này. Hãy dùng tr�
 
 Không có entry riêng cho SvelteKit. Import package an toàn trên server, và các component render markup khi SSR với content ở trạng thái `hidden`.
 
-## AI Agent Skill
+## Agent Skill
 
-Coding agent làm việc với package này nạp [overlay skill](https://github.com/zealakit/overlay/blob/main/.agents/skills/overlay/SKILL.md) trước tiên.
+Thêm [Overlay Svelte skill](https://github.com/zealakit/overlay/blob/main/skills/overlay-svelte.md) vào thư mục skills của agent để nó tuân theo quy tắc component, styling và accessibility của package này.
 
 ## License
 

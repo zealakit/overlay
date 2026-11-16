@@ -2,19 +2,23 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
 Headless Popover, Tooltip, Dialog, and ContextMenu for plain TypeScript and JavaScript. Provides declarative `data-*` markup, imperative controllers, positioning, a layer stack, focus handling, and ARIA wiring on elements you own. You own visual styling.
 
 Style the trigger and content with your own CSS and the `data-*` hooks below. The controller toggles `hidden` on the content, so keep exit animations in `animation` rather than relying on `display: none`.
 
 > **Note**
-> Overlay is headless: it ships no CSS and renders no styled markup. Popover, Tooltip, Dialog, and ContextMenu are implemented. Select, Combobox, DatePicker, DropdownMenu, Menubar, and command palette are not.
+> Overlay is a focused, headless set of primitives for Popover, Tooltip, Dialog, and ContextMenu. It ships no CSS and renders no styled markup, so you keep full control of the visuals. Select, Combobox, DatePicker, DropdownMenu, Menubar, and command palette are not implemented.
+>
+> Overlay is not a replacement for a full UI library or design system. Use it when you need accessible overlay primitives without adopting a large kit, or when your current library's overlays are hard to restyle.
 
 ## Install
 
 ```bash
 npm install @zealakit/overlay-vanilla
+
+# or yarn, pnpm, ...
 ```
 
 No peer dependencies. `@zealakit/overlay-core` is an internal dependency installed automatically; do not install it separately. ESM only.
@@ -252,9 +256,9 @@ const overlay = createOverlay({
 }
 ```
 
-## AI Agent Skill
+## Agent Skill
 
-Coding agents working on this package load the [overlay skill](https://github.com/zealakit/overlay/blob/main/.agents/skills/overlay/SKILL.md) first.
+Add the [Overlay Vanilla skill](https://github.com/zealakit/overlay/blob/main/skills/overlay-vanilla.md) to your agent's skills directory so it can follow the component, styling, and accessibility rules for this package.
 
 ## License
 

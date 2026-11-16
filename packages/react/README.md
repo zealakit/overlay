@@ -2,22 +2,26 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/react/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/react/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/react/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
 Headless Popover, Tooltip, Dialog, and ContextMenu for React. Provides compound components, positioning, layered dismissal, focus management, and low-level hooks. You own visual styling.
 
 Style the parts through `className`, `style`, and the `data-*` hooks below. Closed content is unmounted (or kept with `keepMounted`), so exit animations need the `animation` prop to collapse cleanly.
 
 > **Note**
-> Overlay is headless: it ships no CSS and renders no styled markup. Popover, Tooltip, Dialog, and ContextMenu are implemented. Select, Combobox, DatePicker, DropdownMenu, Menubar, and command palette are not.
+> Overlay is a focused, headless set of primitives for Popover, Tooltip, Dialog, and ContextMenu. It ships no CSS and renders no styled markup, so you keep full control of the visuals. Select, Combobox, DatePicker, DropdownMenu, Menubar, and command palette are not implemented.
+>
+> Overlay is not a replacement for a full UI library or design system. Use it when you need accessible overlay primitives without adopting a large kit, or when your current library's overlays are hard to restyle.
 
 ## Install
 
 ```bash
-npm install @zealakit/overlay-react react react-dom
+npm install @zealakit/overlay-react
+
+# or yarn, pnpm, ...
 ```
 
-Peer dependencies: `react` and `react-dom` `^18.0.0 || ^19.0.0`. ESM only. Entries carry `"use client"` for Next.js App Router. `@zealakit/overlay-core` is an internal dependency installed automatically; do not install it separately.
+Peer dependencies: `react` and `react-dom` `^18.0.0 || ^19.0.0`; a React app already provides them. ESM only. Entries carry `"use client"` for Next.js App Router. `@zealakit/overlay-core` is an internal dependency installed automatically; do not install it separately.
 
 ## Popover
 
@@ -535,9 +539,9 @@ Every entry carries `"use client"`, so import the components from client compone
 import { Popover, PopoverContent, PopoverTrigger } from "@zealakit/overlay-react";
 ```
 
-## AI Agent Skill
+## Agent Skill
 
-Coding agents working on this package load the [overlay skill](https://github.com/zealakit/overlay/blob/main/.agents/skills/overlay/SKILL.md) first.
+Add the [Overlay React skill](https://github.com/zealakit/overlay/blob/main/skills/overlay-react.md) to your agent's skills directory so it can follow the component, styling, and accessibility rules for this package.
 
 ## License
 

@@ -155,6 +155,8 @@ bump gated by the Core positioner tests.
 
 - READMEs are the only product documentation; follow the
   [readme-system skill](../readme-system/SKILL.md) for structure, tables, links, and voice.
+- User-facing integration skills live in `skills/overlay-<framework>.md`; internal agent guidance
+  stays in `.agents/`. Link the former from the root and package READMEs, never the latter.
 - Keep the root README and package READMEs synchronized with public APIs in EN, VI, and CN.
 - Use absolute GitHub links, because npm breaks relative ones.
 - Document implemented behavior only; state limitations clearly. There is no docs app.
