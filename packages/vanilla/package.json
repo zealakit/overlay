@@ -1,0 +1,69 @@
+{
+  "name": "@zealakit/overlay-vanilla",
+  "version": "1.0.0",
+  "description": "A lightweight foundation for building floating, layered, and interactive headless UI components for vanilla JavaScript and TypeScript.",
+  "keywords": [
+    "overlay",
+    "popover",
+    "headless",
+    "zealakit",
+    "vanilla",
+    "javascript",
+    "typescript",
+    "dom",
+    "context-menu",
+    "dropdown",
+    "dialog",
+    "tooltip"
+  ],
+  "author": "nqhed - Huy Ed. Nguyen",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zealakit/overlay.git",
+    "directory": "packages/vanilla"
+  },
+  "homepage": "https://github.com/zealakit/overlay#readme",
+  "bugs": {
+    "url": "https://github.com/zealakit/overlay/issues"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@zealakit/overlay-core": "workspace:^"
+  },
+  "devDependencies": {
+    "happy-dom": "^21.0.4"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tests/tsconfig.json --noEmit",
+    "test": "pnpm build && node --import ./tests/setup.ts --test tests/*.test.ts",
+    "test:watch": "node --import ./tests/setup.ts --test --watch tests/*.test.ts",
+    "clean": "rm -rf dist",
+    "prepack": "pnpm run build"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  }
+}

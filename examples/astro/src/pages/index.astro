@@ -1,0 +1,41 @@
+---
+import SiteLayout from "../layouts/site-layout.astro";
+import ReactOverlayDemo from "../components/react/react-overlay-demo.tsx";
+import SvelteOverlayDemo from "../components/svelte/svelte-overlay-demo.svelte";
+import VueOverlayDemo from "../components/vue/vue-overlay-demo.vue";
+---
+
+<SiteLayout title="@zealakit/overlay · Astro">
+  <main class="page examples-page combined-examples">
+    <header class="masthead">
+      <p class="eyebrow">@zealakit/overlay · Astro</p>
+      <h1>Overlay examples</h1>
+      <p class="lede">
+        One Astro project, three integrations. Each island below uses its own
+        workspace adapter and is server-rendered, then hydrated with
+        <code>client:load</code>. Every island shows the same cards: arrow and
+        animation, Popover, Tooltip, Dialog, and ContextMenu.
+      </p>
+      <nav class="examples-nav" aria-label="Example sections">
+        <a href="#react">React</a>
+        <a href="#vue">Vue</a>
+        <a href="#svelte">Svelte</a>
+      </nav>
+    </header>
+
+    <section id="react" class="examples-section">
+      <h2 class="examples-section-title">React</h2>
+      <ReactOverlayDemo client:load />
+    </section>
+
+    <section id="vue" class="examples-section">
+      <h2 class="examples-section-title">Vue</h2>
+      <VueOverlayDemo client:load />
+    </section>
+
+    <section id="svelte" class="examples-section">
+      <h2 class="examples-section-title">Svelte</h2>
+      <SvelteOverlayDemo client:load />
+    </section>
+  </main>
+</SiteLayout>

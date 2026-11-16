@@ -1,0 +1,77 @@
+{
+  "name": "@zealakit/overlay-svelte",
+  "version": "1.0.0",
+  "description": "A lightweight foundation for building floating, layered, and interactive headless UI components for Svelte.",
+  "keywords": [
+    "overlay",
+    "popover",
+    "headless",
+    "zealakit",
+    "svelte",
+    "svelte5",
+    "action",
+    "context-menu",
+    "dropdown",
+    "dialog",
+    "tooltip"
+  ],
+  "author": "nqhed - Huy Ed. Nguyen",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zealakit/overlay.git",
+    "directory": "packages/svelte"
+  },
+  "homepage": "https://github.com/zealakit/overlay#readme",
+  "bugs": {
+    "url": "https://github.com/zealakit/overlay/issues"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "sideEffects": [
+    "**/*.svelte"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@zealakit/overlay-core": "workspace:^"
+  },
+  "peerDependencies": {
+    "svelte": "^5.0.0"
+  },
+  "devDependencies": {
+    "@sveltejs/package": "^3.0.2",
+    "happy-dom": "^21.0.4",
+    "svelte": "^5.57.3",
+    "svelte-check": "^4.7.8"
+  },
+  "scripts": {
+    "build": "rm -rf dist && svelte-package -i src -o dist",
+    "dev": "svelte-package -i src -o dist --watch",
+    "typecheck": "svelte-check --tsconfig ./tsconfig.json && tsc -p tests/tsconfig.json --noEmit",
+    "test": "pnpm build && node --conditions=browser --import ./tests/setup.ts --test tests/*.test.ts",
+    "test:watch": "node --conditions=browser --import ./tests/setup.ts --test --watch tests/*.test.ts",
+    "clean": "rm -rf dist",
+    "prepack": "pnpm run build"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  }
+}

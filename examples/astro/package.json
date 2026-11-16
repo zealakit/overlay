@@ -1,0 +1,30 @@
+{
+  "name": "@zealakit/overlay-astro-example",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Single Astro project integrating the React, Vue, and Svelte overlay adapters together.",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --port 4321",
+    "build": "astro build",
+    "preview": "astro preview --port 4321"
+  },
+  "dependencies": {
+    "@astrojs/react": "^7.1.9",
+    "@astrojs/svelte": "^9.1.6",
+    "@astrojs/vue": "^7.1.6",
+    "@zealakit/overlay-react": "workspace:*",
+    "@zealakit/overlay-svelte": "workspace:*",
+    "@zealakit/overlay-vue": "workspace:*",
+    "astro": "^7.4.12",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "svelte": "^5.43.6",
+    "vue": "^3.5.22"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "typescript": "^5.9.3"
+  }
+}

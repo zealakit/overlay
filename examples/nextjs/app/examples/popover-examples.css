@@ -1,0 +1,272 @@
+.examples-page {
+  max-width: 1120px;
+}
+
+.example-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.example-card {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #262f3d;
+  border-radius: 16px;
+  background: rgb(13 17 24 / 0.72);
+}
+
+.example-card h2 {
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+
+.example-description {
+  margin: 0 0 16px;
+  color: #8f9caf;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.example-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.example-trigger {
+  border-color: #3e4d63;
+  background: #1a2230;
+  font-weight: 500;
+}
+
+.example-popover {
+  z-index: 50;
+  min-width: 190px;
+  max-width: 290px;
+  padding: 13px;
+  border: 1px solid #3d5478;
+  border-radius: 11px;
+  background: #121a27;
+  box-shadow: 0 22px 50px -22px rgb(0 0 0 / 0.9);
+  font-size: 13px;
+}
+
+.example-popover p {
+  margin: 6px 0 0;
+}
+
+.example-close {
+  padding: 7px 10px;
+  border-radius: 7px;
+  font-size: 12px;
+}
+
+.example-popover .example-close {
+  margin-top: 10px;
+}
+
+.example-form-popover {
+  min-width: 270px;
+}
+
+.example-primary {
+  padding: 7px 12px;
+  border-color: #4869a8;
+  border-radius: 7px;
+  background: #1d2d49;
+  font-size: 12px;
+}
+
+.example-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.example-small {
+  color: #8f9caf;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.example-status {
+  margin: 10px 0 0;
+  color: #8f9caf;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+}
+
+.example-form-popover form {
+  display: grid;
+  gap: 9px;
+}
+
+.field {
+  display: grid;
+  gap: 3px;
+  color: #aab6c8;
+  font-size: 11px;
+}
+
+.field input,
+.field textarea,
+.field select,
+.example-input-group input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 7px 8px;
+  border: 1px solid #2e3746;
+  border-radius: 7px;
+  background: #0d131c;
+  color: #e8ecf3;
+  font: inherit;
+  font-size: 12px;
+}
+
+.check {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  color: #aab6c8;
+  font-size: 11px;
+}
+
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.radio-group legend {
+  width: 100%;
+  margin-bottom: 4px;
+  color: #aab6c8;
+  font-size: 11px;
+}
+
+.example-input-group {
+  display: flex;
+  width: 100%;
+  gap: 6px;
+}
+
+.example-input-group input {
+  flex: 1;
+}
+
+.example-input-group .example-trigger {
+  flex: none;
+}
+
+.icon-button {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 9px;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.anchor-target {
+  border-color: #4869a8;
+  background: #1d2d49;
+}
+
+.placement-picker {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  width: 100%;
+}
+
+.placement-picker button {
+  padding: 5px 6px;
+  border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.dialog-fixture {
+  width: 100%;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  border: 1px dashed #3e4d63;
+  border-radius: 11px;
+  background: #0e141d;
+}
+
+.dialog-fixture > strong {
+  font-size: 12px;
+}
+
+.dialog-fixture > p {
+  margin: 0;
+}
+
+.portal-target {
+  width: 100%;
+  padding: 10px;
+  border: 1px dashed #3e4d63;
+  border-radius: 9px;
+  color: #8f9caf;
+  font-size: 10px;
+}
+
+.inline-portal {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  border: 1px dashed #2e3746;
+  border-radius: 9px;
+}
+
+.rtl-frame {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 172px;
+  padding: 14px 14px 80px;
+  border: 1px dashed #2e3746;
+  border-radius: 9px;
+  text-align: right;
+}
+
+.rtl-frame .example-popover {
+  text-align: right;
+}
+
+.long-list {
+  max-height: 90px;
+  margin: 7px 0;
+  padding-inline-start: 18px;
+  overflow-y: auto;
+  color: #aab6c8;
+  font-size: 11px;
+}
+
+.example-child {
+  border-color: #5470a0;
+}
+
+@media (max-width: 800px) {
+  .example-grid {
+    grid-template-columns: 1fr;
+  }
+}

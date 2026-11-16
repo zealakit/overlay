@@ -1,0 +1,23 @@
+{
+  "name": "@zealakit/overlay-vue-example",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimal Vite integration smoke test for @zealakit/overlay-vue.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@zealakit/overlay-vue": "workspace:*",
+    "vue": "^3.5.22"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12",
+    "vue-tsc": "^3.1.1"
+  }
+}

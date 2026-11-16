@@ -1,0 +1,32 @@
+# Local
+.DS_Store
+*.local
+*.log*
+
+# Dependencies / build
+node_modules
+dist/
+**/dist/
+.svelte-kit/
+**/.svelte-kit/
+.astro/
+**/.astro/
+**/.next/
+**/node_modules/.vite/
+*.tsbuildinfo
+
+# Caches
+.pnpm-store
+
+# IDE
+!.vscode/extensions.json
+.idea
+
+# Test / coverage
+coverage
+
+# Dependency monitor
+monitor/reports/*
+!monitor/reports/.gitkeep
+
+artifacts/

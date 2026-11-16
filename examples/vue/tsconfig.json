@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["vite/client"],
+    "noEmit": true,
+    // Template refs are resolved by name at runtime (`ref="referenceRef"`), so
+    // vue-tsc cannot see the script-setup binding as "used".
+    "noUnusedLocals": false
+  },
+  "include": ["src"]
+}

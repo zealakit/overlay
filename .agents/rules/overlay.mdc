@@ -1,0 +1,30 @@
+---
+description: Zealakit Overlay monorepo conventions — package boundaries, SSR safety, build order
+alwaysApply: true
+---
+
+# Zealakit Overlay conventions
+
+- `@zealakit/overlay-core` is framework-independent. Never import React / Vue / Svelte from it.
+- Adapters (`vanilla`, `react`, `vue`, `svelte`) depend on core with `workspace:^`; core depends
+  on no adapter. Keep the dependency graph acyclic.
+- SSR safety: no `window` / `document` access at module init or during render. Use
+  `isBrowser()` for guards and framework lifecycle hooks for DOM effects.
+- Do not ship default CSS or a styling system. Styling is the consumer's job (`data-*` hooks OK).
+- Only `@zealakit/overlay-core` may import the positioning engine (`@floating-ui/dom`). Adapters
+  consume `createPositioner()`; keep engine types out of public adapter APIs.
+- New core primitives ship with focused tests (`pnpm test`). Do not add a second test framework.
+- Do not export unimplemented APIs, placeholder components, or a positioning engine that is not
+  actually implemented.
+- TypeScript only: `type` aliases, `import type`, strict mode, ESM. Files are `kebab-case`.
+- Build order matters: core emits `dist` first; adapters resolve core through its package
+  exports. Run `pnpm build` before `pnpm typecheck`.
+- Verify with `pnpm check` (build + typecheck + test + lint) before reporting work as done.
+  Run the relevant example/docs builds when those areas change.
+- `examples/` are integration/smoke-test projects only. Product documentation lives only in the
+  root and package READMEs (EN, VI, CN); there is no `docs/` folder and no separate docs app.
+- Load the compact `.agents/skills/overlay/SKILL.md` before code, test, docs, or release work,
+  and `.agents/skills/readme-system/SKILL.md` before touching any README. Run
+  `pnpm readme:check` after README changes.
+- Update the READMEs, `.agents/AGENTS.md`, and `.agents/skills/overlay/SKILL.md` together when
+  architecture, package boundaries, commands, or documented workflows change.
