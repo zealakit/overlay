@@ -1,12 +1,13 @@
-import { mkdir, rm } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
+import { mkdir, readdir, rm } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { bundleCoreIntoTarball } from "./bundle-core.mjs";
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const output = join(root, "artifacts");
+// Core is private: it is never packed on its own, only bundled into each adapter.
 const packages = [
-  "@zealakit/overlay-core",
   "@zealakit/overlay-vanilla",
   "@zealakit/overlay-react",
   "@zealakit/overlay-vue",
@@ -24,5 +25,12 @@ for (const name of packages) {
   );
   if (result.status !== 0) {
     process.exit(result.status ?? 1);
+  }
+}
+
+for (const file of await readdir(output)) {
+  if (file.endsWith(".tgz")) {
+    bundleCoreIntoTarball(join(output, file));
+    console.log(`bundled Core into ${file}`);
   }
 }

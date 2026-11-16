@@ -46,10 +46,10 @@ pnpm test         # core + vanilla + react + vue + svelte tests (Node test runne
 pnpm lint         # Biome
 pnpm check        # build + typecheck + test + lint
 pnpm clean        # remove package/example build output and local tarballs
-pnpm pack:packages # pack release tarballs into artifacts/ (no publish)
+pnpm pack:packages # pack the four adapter tarballs, Core bundled in, into artifacts/ (no publish)
 pnpm release:check # full checks + package tarballs (no publish)
-pnpm npm:publish:check # validate, build, test, pack, inspect all five (no publish)
-pnpm npm:publish:all   # preflight all five, then publish the four adapters (core must exist on npm)
+pnpm npm:publish:check # build + test all five, pack/bundle/inspect the four adapters (no publish)
+pnpm npm:publish:all   # same preflight, then publish the four adapters (Core is never published)
 pnpm readme:check # README structure: EN/VI/CN parity, absolute links, H1 = package name
 
 pnpm dev:vanilla
@@ -81,10 +81,13 @@ pnpm monitor      # dependency dashboard at http://127.0.0.1:4177
 - **Naming:** files and folders are `kebab-case`; exported React components are `PascalCase`.
 - **Package surface:** do not export speculative or unimplemented APIs. No placeholder
   components, no fake implementations.
-- **Public packaging:** adapters are the user-facing packages. Core is an internal runtime
-  dependency; publish it manually before the adapter commands, because this repo's publish
-  script never publishes Core. Never document Core as a direct-install or configuration entry
-  point.
+- **Public packaging:** only the four adapters are published to npm. Core is `"private": true`
+  and never published: `scripts/bundle-core.mjs` copies the built Core into each adapter
+  tarball (`dist/vendor/core/`), rewrites `@zealakit/overlay-core` imports to relative paths,
+  and replaces the Core dependency with Core's own runtime dependencies. Page-global Core state
+  must go through `getGlobalState()` (`globalThis` + versioned `Symbol.for` key), never a bare
+  module-level variable, so adapters bundling separate copies still share it. Never document
+  Core as an install or configuration entry point.
 - **Scope:** Popover, Tooltip, Dialog, and ContextMenu are implemented as compound components
   in React (own implementation), Vue (render functions) and Svelte (`.svelte` files, exported
   from the root entry `@zealakit/overlay-svelte`), and as declarative `data-*` markup in Vanilla

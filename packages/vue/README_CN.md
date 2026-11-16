@@ -21,7 +21,7 @@ npm install @zealakit/overlay-vue
 # or yarn, pnpm, ...
 ```
 
-Peer 依赖：`vue` `^3.5.0`；Vue 应用已提供该运行时。仅支持 ESM。组件是纯渲染函数，因此无需额外构建步骤。`@zealakit/overlay-core` 是自动安装的内部依赖，请勿单独安装。
+Peer 依赖：`vue` `^3.5.0`；Vue 应用已提供该运行时。仅支持 ESM。组件是纯渲染函数，因此无需额外构建步骤。内部内核 `@zealakit/overlay-core` 已内置于本包中，不会发布到 npm；无需额外安装。
 
 ## Popover
 

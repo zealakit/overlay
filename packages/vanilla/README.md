@@ -21,7 +21,7 @@ npm install @zealakit/overlay-vanilla
 # or yarn, pnpm, ...
 ```
 
-No peer dependencies. `@zealakit/overlay-core` is an internal dependency installed automatically; do not install it separately. ESM only.
+No peer dependencies. The internal `@zealakit/overlay-core` kernel is bundled inside this package and is not published to npm; there is nothing else to install. ESM only.
 
 ## Public API
 

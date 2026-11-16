@@ -37,6 +37,7 @@ import {
   type PortalState,
 } from "../portal/portal.js";
 import type { Cleanup } from "../types/lifecycle.js";
+import { getGlobalState } from "../utils/global-state.js";
 import { createOverlayAnimator } from "./animator.js";
 import { createContextMenuBehavior } from "./context-menu-behavior.js";
 import type { ControllerHost } from "./host.js";
@@ -59,7 +60,7 @@ export type {
   OverlayFocusTarget,
 } from "./types.js";
 
-let idCounter = 0;
+const idCounter = getGlobalState("overlay-id", () => ({ value: 0 }));
 
 function focusTarget(
   content: HTMLElement,
@@ -101,7 +102,8 @@ export function createOverlayController(
   let controlledOpen = initial.open ?? internalOpen;
   let isControlled = initial.open !== undefined;
   let disabled = initial.disabled ?? false;
-  const contentId = initial.content.id || `overlay-${++idCounter}-content`;
+  const contentId =
+    initial.content.id || `overlay-${++idCounter.value}-content`;
   const doc = initial.content.ownerDocument;
   initial.content.id = contentId;
   if (initial.dir === "rtl") {

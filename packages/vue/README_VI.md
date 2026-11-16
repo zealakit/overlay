@@ -21,7 +21,7 @@ npm install @zealakit/overlay-vue
 # or yarn, pnpm, ...
 ```
 
-Peer dependency: `vue` `^3.5.0`; ứng dụng Vue đã cung cấp sẵn. Chỉ ESM. Các component là render function thuần nên không cần thêm bước build. `@zealakit/overlay-core` là dependency nội bộ được cài tự động; không cài riêng.
+Peer dependency: `vue` `^3.5.0`; ứng dụng Vue đã cung cấp sẵn. Chỉ ESM. Các component là render function thuần nên không cần thêm bước build. Kernel nội bộ `@zealakit/overlay-core` đã được đóng gói sẵn trong package này và không có trên npm; không cần cài thêm gì.
 
 ## Popover
 

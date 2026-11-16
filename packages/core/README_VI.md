@@ -4,7 +4,7 @@
 
 ![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
-Kernel nội bộ cho định vị, phân lớp, focus và DOM controller của mọi adapter Zealakit Overlay. Mọi adapter tự cài core, nên code ứng dụng nên dùng adapter của framework thay vì import core trực tiếp. Public API vẫn dành cho người viết adapter tùy biến.
+Kernel nội bộ cho định vị, phân lớp, focus và DOM controller của mọi adapter Zealakit Overlay. Core là package private và không bao giờ được publish lên npm: mỗi adapter đóng gói sẵn một bản core riêng, nên code ứng dụng dùng adapter của framework. Tài liệu này dành cho người đóng góp phát triển các adapter trong monorepo.
 
 Core không render gì và không kèm CSS. Controller chỉ ghi `position`, `left`, `top` inline cùng các thuộc tính `data-*`, nên CSS của bạn quyết định mọi hiển thị và animation thoát kết thúc gọn gàng.
 
@@ -16,10 +16,10 @@ Core không render gì và không kèm CSS. Controller chỉ ghi `position`, `le
 ## Install
 
 ```bash
-npm install @zealakit/overlay-core
+pnpm --filter @zealakit/overlay-core run build
 ```
 
-Core được cài tự động cùng adapter; chỉ cài trực tiếp khi bạn viết adapter tùy biến. Không có peer dependency. Runtime dependency duy nhất là `@floating-ui/dom`, nằm sau `createPositioner()` và không bao giờ xuất hiện trong public type.
+Core không có trên npm nên không thể cài. Core được build trong workspace và, khi release, được chép vào tarball của từng adapter tại `dist/vendor/core`. State dùng chung toàn trang (layer stack, scroll lock, modal background, bộ đếm id) nằm trên `globalThis`, nên nhiều adapter trên cùng một trang vẫn dùng chung. Không có peer dependency. Runtime dependency duy nhất là `@floating-ui/dom`, được mỗi adapter khai báo thay cho core; nó nằm sau `createPositioner()` và không bao giờ xuất hiện trong public type.
 
 ## Public API
 

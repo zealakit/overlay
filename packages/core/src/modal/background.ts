@@ -1,4 +1,5 @@
 import type { Cleanup } from "../types/lifecycle.js";
+import { getGlobalState } from "../utils/global-state.js";
 
 type SavedAttributes = {
   inert: string | null;
@@ -11,7 +12,10 @@ type DocumentState = {
   hidden: Map<HTMLElement, SavedAttributes>;
 };
 
-const states = new WeakMap<Document, DocumentState>();
+const states = getGlobalState(
+  "modal-background",
+  () => new WeakMap<Document, DocumentState>(),
+);
 
 function topLevelBodyChild(
   root: Element,

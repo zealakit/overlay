@@ -3,6 +3,7 @@ import { isPointerOutside } from "../events/pointer.js";
 import { listen } from "../lifecycle/events.js";
 import type { DismissReason } from "../types/dismissal.js";
 import type { Cleanup } from "../types/lifecycle.js";
+import { getGlobalState } from "../utils/global-state.js";
 import type {
   LayerBoundarySource,
   LayerElementSource,
@@ -308,7 +309,10 @@ export function createLayerStackRegistry(): LayerStackRegistry {
   };
 }
 
-const sharedLayerStackRegistry = createLayerStackRegistry();
+const sharedLayerStackRegistry = getGlobalState(
+  "shared-layer-stack",
+  createLayerStackRegistry,
+);
 
 /**
  * Shared per-document layer stack used by all adapters by default.

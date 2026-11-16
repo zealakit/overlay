@@ -21,7 +21,7 @@ npm install @zealakit/overlay-vanilla
 # or yarn, pnpm, ...
 ```
 
-Không có peer dependency. `@zealakit/overlay-core` là dependency nội bộ được cài tự động; không cài riêng. Chỉ ESM.
+Không có peer dependency. Kernel nội bộ `@zealakit/overlay-core` đã được đóng gói sẵn trong package này và không có trên npm; không cần cài thêm gì. Chỉ ESM.
 
 ## Public API
 

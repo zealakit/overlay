@@ -11,8 +11,8 @@ Use `@zealakit/overlay-vanilla` for headless Popover, Tooltip, Dialog, and Conte
 plain TypeScript or JavaScript. The package owns positioning, layering, dismissal, focus, and ARIA
 wiring. You own the markup and all CSS.
 
-`@zealakit/overlay-core` is an internal dependency installed automatically. Never install it or
-import from it in application code.
+`@zealakit/overlay-core` is an internal kernel bundled inside the adapter and not published to
+npm. Never install it or import from it in application code.
 
 ## Install
 

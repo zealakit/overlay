@@ -21,7 +21,7 @@ npm install @zealakit/overlay-vanilla
 # or yarn, pnpm, ...
 ```
 
-无 peer 依赖。`@zealakit/overlay-core` 是自动安装的内部依赖，请勿单独安装。仅支持 ESM。
+无 peer 依赖。内部内核 `@zealakit/overlay-core` 已内置于本包中，不会发布到 npm；无需额外安装。仅支持 ESM。
 
 ## Public API
 

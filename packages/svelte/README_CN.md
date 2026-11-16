@@ -21,7 +21,7 @@ npm install @zealakit/overlay-svelte
 # or yarn, pnpm, ...
 ```
 
-Peer 依赖：`svelte` `^5.0.0`；Svelte 应用已提供该运行时。仅支持 Svelte 5；仅支持 ESM。组件、控制器和 action 共用同一个入口 `@zealakit/overlay-svelte`。组件以 `.svelte` 文件形式提供，因此请使用带 `@sveltejs/vite-plugin-svelte` 的 Vite（SvelteKit 已包含）。`@zealakit/overlay-core` 是自动安装的内部依赖，请勿单独安装。
+Peer 依赖：`svelte` `^5.0.0`；Svelte 应用已提供该运行时。仅支持 Svelte 5；仅支持 ESM。组件、控制器和 action 共用同一个入口 `@zealakit/overlay-svelte`。组件以 `.svelte` 文件形式提供，因此请使用带 `@sveltejs/vite-plugin-svelte` 的 Vite（SvelteKit 已包含）。内部内核 `@zealakit/overlay-core` 已内置于本包中，不会发布到 npm；无需额外安装。
 
 ## Popover
 

@@ -6,7 +6,7 @@
 
 无样式（headless）的 overlay 原语，用于在 Vanilla TypeScript、React、Vue 和 Svelte 中构建 popover、tooltip、dialog 和 context menu。
 
-- **Core** — 内部共享内核，负责定位、layer、焦点和 DOM 控制器，由每个适配器自动安装。
+- **Core** — 内部共享内核，负责定位、layer、焦点和 DOM 控制器，内置于每个适配器中，不会单独发布。
 - **适配器** — React 组件、Vue composable、Svelte controller 与 action，以及 Vanilla controller。
 - **SSR 安全** — 导入 package 不会访问浏览器全局对象。
 
@@ -21,13 +21,13 @@ Overlay 仅处理定位、分层、关闭、焦点和无障碍属性，不提供
 
 | Package | Framework/Runtime | Documentation |
 | --- | --- | --- |
-| `@zealakit/overlay-core` | 内部内核（自动安装） | [README](https://github.com/zealakit/overlay/blob/main/packages/core/README_CN.md) |
+| `@zealakit/overlay-core` | 内部内核（已内置，不在 npm 上） | [README](https://github.com/zealakit/overlay/blob/main/packages/core/README_CN.md) |
 | `@zealakit/overlay-vanilla` | Vanilla JS / TS | [README](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README_CN.md) |
 | `@zealakit/overlay-react` | React 18 / 19 | [README](https://github.com/zealakit/overlay/blob/main/packages/react/README_CN.md) |
 | `@zealakit/overlay-vue` | Vue 3.5+ | [README](https://github.com/zealakit/overlay/blob/main/packages/vue/README_CN.md) |
 | `@zealakit/overlay-svelte` | Svelte 5 | [README](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_CN.md) |
 
-只需安装对应框架的适配器。应用已经提供框架运行时，因此只需添加适配器。适配器会自动引入 `@zealakit/overlay-core`；core 是内部依赖，无需直接安装或配置。适配器之间不共享运行时。
+只需安装对应框架的适配器。应用已经提供框架运行时，因此只需添加适配器。每个适配器都内置 `@zealakit/overlay-core`，它不会发布到 npm；你无需直接安装或配置 core。适配器之间不共享运行时。
 
 ## Installation
 

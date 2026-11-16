@@ -21,7 +21,7 @@ npm install @zealakit/overlay-react
 # or yarn, pnpm, ...
 ```
 
-Peer dependencies: `react` and `react-dom` `^18.0.0 || ^19.0.0`; a React app already provides them. ESM only. Entries carry `"use client"` for Next.js App Router. `@zealakit/overlay-core` is an internal dependency installed automatically; do not install it separately.
+Peer dependencies: `react` and `react-dom` `^18.0.0 || ^19.0.0`; a React app already provides them. ESM only. Entries carry `"use client"` for Next.js App Router. The internal `@zealakit/overlay-core` kernel is bundled inside this package and is not published to npm; there is nothing else to install.
 
 ## Popover
 

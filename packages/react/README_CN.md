@@ -21,7 +21,7 @@ npm install @zealakit/overlay-react
 # or yarn, pnpm, ...
 ```
 
-Peer 依赖：`react` 与 `react-dom` `^18.0.0 || ^19.0.0`；React 应用已提供这些运行时。仅支持 ESM。入口带有 `"use client"`，适用于 Next.js App Router。`@zealakit/overlay-core` 是自动安装的内部依赖，请勿单独安装。
+Peer 依赖：`react` 与 `react-dom` `^18.0.0 || ^19.0.0`；React 应用已提供这些运行时。仅支持 ESM。入口带有 `"use client"`，适用于 Next.js App Router。内部内核 `@zealakit/overlay-core` 已内置于本包中，不会发布到 npm；无需额外安装。
 
 ## Popover
 

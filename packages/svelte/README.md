@@ -21,7 +21,7 @@ npm install @zealakit/overlay-svelte
 # or yarn, pnpm, ...
 ```
 
-Peer dependency: `svelte` `^5.0.0`; a Svelte app already provides it. Svelte 5 only; ESM only. Components, controllers, and actions share one entry, `@zealakit/overlay-svelte`. Components ship as `.svelte` files, so use Vite with `@sveltejs/vite-plugin-svelte` (SvelteKit includes it). `@zealakit/overlay-core` is an internal dependency installed automatically; do not install it separately.
+Peer dependency: `svelte` `^5.0.0`; a Svelte app already provides it. Svelte 5 only; ESM only. Components, controllers, and actions share one entry, `@zealakit/overlay-svelte`. Components ship as `.svelte` files, so use Vite with `@sveltejs/vite-plugin-svelte` (SvelteKit includes it). The internal `@zealakit/overlay-core` kernel is bundled inside this package and is not published to npm; there is nothing else to install.
 
 ## Popover
 

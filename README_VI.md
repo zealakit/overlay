@@ -6,7 +6,7 @@
 
 Các primitive overlay headless để xây popover, tooltip, dialog và context menu bằng Vanilla TypeScript, React, Vue và Svelte.
 
-- **Core** — kernel dùng chung nội bộ cho định vị, layer, focus và DOM controller, được mọi adapter cài tự động.
+- **Core** — kernel dùng chung nội bộ cho định vị, layer, focus và DOM controller, được đóng gói sẵn trong mọi adapter và không publish riêng.
 - **Adapter** — component React, composable Vue, controller và action Svelte, controller Vanilla.
 - **An toàn SSR** — import package không bao giờ chạm vào biến toàn cục của trình duyệt.
 
@@ -21,13 +21,13 @@ Overlay chỉ xử lý định vị, phân lớp, đóng, focus và thuộc tín
 
 | Package | Framework/Runtime | Documentation |
 | --- | --- | --- |
-| `@zealakit/overlay-core` | Kernel nội bộ (cài tự động) | [README](https://github.com/zealakit/overlay/blob/main/packages/core/README_VI.md) |
+| `@zealakit/overlay-core` | Kernel nội bộ (đóng gói sẵn, không có trên npm) | [README](https://github.com/zealakit/overlay/blob/main/packages/core/README_VI.md) |
 | `@zealakit/overlay-vanilla` | Vanilla JS / TS | [README](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README_VI.md) |
 | `@zealakit/overlay-react` | React 18 / 19 | [README](https://github.com/zealakit/overlay/blob/main/packages/react/README_VI.md) |
 | `@zealakit/overlay-vue` | Vue 3.5+ | [README](https://github.com/zealakit/overlay/blob/main/packages/vue/README_VI.md) |
 | `@zealakit/overlay-svelte` | Svelte 5 | [README](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_VI.md) |
 
-Chỉ cần cài một adapter cho framework của bạn. Ứng dụng đã có sẵn framework runtime, nên bạn chỉ thêm adapter. Adapter tự kéo theo `@zealakit/overlay-core`; core là dependency nội bộ, không cài hoặc cấu hình trực tiếp. Các adapter không chia sẻ runtime với nhau.
+Chỉ cần cài một adapter cho framework của bạn. Ứng dụng đã có sẵn framework runtime, nên bạn chỉ thêm adapter. Mỗi adapter đóng gói sẵn `@zealakit/overlay-core`, vốn không được publish lên npm; bạn không bao giờ cài hoặc cấu hình core trực tiếp. Các adapter không chia sẻ runtime với nhau.
 
 ## Installation
 

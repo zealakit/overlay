@@ -4,7 +4,7 @@
 
 ![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
-Internal positioning, layering, focus, and DOM-controller kernel for every Zealakit Overlay adapter. Every adapter installs it automatically, so application code should use the adapter for its framework instead of importing core directly. The public API remains available for custom adapter authors.
+Internal positioning, layering, focus, and DOM-controller kernel for every Zealakit Overlay adapter. Core is private and never published to npm: every adapter bundles its own copy, so application code uses the adapter for its framework. This reference is for contributors working on the adapters inside the monorepo.
 
 Core renders nothing and ships no CSS. Controllers write only inline `position`, `left`, `top` and `data-*` attributes, so your CSS owns every visual and exit animations collapse cleanly.
 
@@ -16,10 +16,10 @@ Core renders nothing and ships no CSS. Controllers write only inline `position`,
 ## Install
 
 ```bash
-npm install @zealakit/overlay-core
+pnpm --filter @zealakit/overlay-core run build
 ```
 
-Core is installed automatically with an adapter; install it directly only when you are building a custom adapter. No peer dependencies. The only runtime dependency is `@floating-ui/dom`, which stays behind `createPositioner()` and never appears in public types.
+Core is not on npm, so it cannot be installed. It is built inside the workspace and, at release time, copied into each adapter tarball under `dist/vendor/core`. Page-global state (layer stack, scroll lock, modal background, id counter) lives on `globalThis`, so several adapters on one page still share it. No peer dependencies. The only runtime dependency is `@floating-ui/dom`, which every adapter declares in its place and which stays behind `createPositioner()`, never appearing in public types.
 
 ## Public API
 

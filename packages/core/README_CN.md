@@ -4,7 +4,7 @@
 
 ![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/images/overlay-cover.jpg?raw=true)
 
-供所有 Zealakit Overlay 适配器使用的内部内核，负责定位、分层、焦点和 DOM 控制器。每个适配器都会自动安装它，因此应用代码应使用对应框架的适配器，而不是直接导入 core。公开 API 仍保留给自定义适配器作者使用。
+供所有 Zealakit Overlay 适配器使用的内部内核，负责定位、分层、焦点和 DOM 控制器。Core 是私有包，从不发布到 npm：每个适配器都内置一份 core，因此应用代码应使用对应框架的适配器。本文档面向在 monorepo 内开发适配器的贡献者。
 
 Core 不渲染任何内容，也不附带 CSS。控制器只写入内联的 `position`、`left`、`top` 与 `data-*` 属性，因此所有视觉都由你的 CSS 决定，退出动画也能干净收尾。
 
@@ -16,10 +16,10 @@ Core 不渲染任何内容，也不附带 CSS。控制器只写入内联的 `pos
 ## Install
 
 ```bash
-npm install @zealakit/overlay-core
+pnpm --filter @zealakit/overlay-core run build
 ```
 
-Core 会随适配器自动安装；只有编写自定义适配器时才需要直接安装。无 peer 依赖。唯一的运行时依赖是 `@floating-ui/dom`，它隐藏在 `createPositioner()` 之后，不会出现在公开类型中。
+Core 不在 npm 上，因此无法安装。它在 workspace 内构建，发布时会被复制到每个适配器 tarball 的 `dist/vendor/core` 中。页面级共享状态（layer 栈、滚动锁、模态背景、id 计数器）保存在 `globalThis` 上，因此同一页面上的多个适配器仍然共享它们。无 peer 依赖。唯一的运行时依赖是 `@floating-ui/dom`，由每个适配器代替 core 声明；它隐藏在 `createPositioner()` 之后，不会出现在公开类型中。
 
 ## Public API
 

@@ -5,16 +5,17 @@
  *   pnpm npm:publish:vanilla | npm:publish:react | npm:publish:vue | npm:publish:svelte
  *   pnpm npm:publish:all
  *
- * Core is the internal runtime dependency. This script never publishes it. Publish Core
- * manually first; `npm:publish:all` and the adapter commands require the matching Core version
- * to already exist on npm. Vanilla, React, Vue, and Svelte are the public packages users
- * install. Every adapter is validated, built, typechecked, tested, packed, and inspected before
- * any upload, so `workspace:^` ranges are rewritten by `pnpm pack`, never by hand.
+ * Vanilla, React, Vue, and Svelte are the only packages published to npm. Core is private and
+ * internal: it is built and tested here, then bundled into each adapter tarball
+ * (`dist/vendor/core/`, see scripts/bundle-core.mjs), so it never needs to exist on npm. Every
+ * adapter is validated, built, typechecked, tested, packed, bundled, and inspected before any
+ * upload.
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { bundleCoreIntoTarball, VENDOR_DIR } from "./bundle-core.mjs";
 
 const PROJECT_ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -78,7 +79,7 @@ type PackageConfig = PackageMeta & {
 };
 
 const PACKAGES: readonly PackageMeta[] = [
-  // Internal runtime dependency: published first, never a user-facing entry point.
+  // Internal, private: built and tested, then bundled into each adapter. Never published.
   {
     id: "core",
     label: "Core",
@@ -154,17 +155,15 @@ function printHelp(): void {
 Or:
   node --strip-types scripts/npm-publish.ts <check|vanilla|react|vue|svelte|all>
 
-check    Run pre-publish validation for all five packages (no publish, no login needed)
+check    Validate, build, test, pack, and inspect the four adapters (no publish, no login needed)
 vanilla  Validate, build, test, and publish @zealakit/overlay-vanilla
 react    Validate, build, test, and publish @zealakit/overlay-react
 vue      Validate, build, test, and publish @zealakit/overlay-vue
 svelte   Validate, build, test, and publish @zealakit/overlay-svelte
-all      Preflight all five, then publish the four adapters; Core must already be on npm
+all      Preflight all four adapters, then publish them
 
-Core is never published by this script. Publish it manually first:
-npm publish packages/core --access public.
-Adapter publishes require the matching internal Core version to already exist on npm.
-Users install adapters only; Core is never a direct-install entry point.
+Core (@zealakit/overlay-core) is private and never published. Each adapter tarball bundles
+the locally built Core under dist/vendor/core and depends on Core's runtime dependencies instead.
 Publishing needs "npm login" (or an npm token in .npmrc) and explicit intent.
 `);
 }
@@ -257,8 +256,33 @@ function validateWorkspaceDependencies(pkg: PackageConfig): void {
   }
 }
 
+function validateCore(pkg: PackageConfig): void {
+  const { manifest, expectedName, packageJsonPath } = pkg;
+  if (manifest.name !== expectedName) {
+    fail(
+      `Core package name mismatch in ${packageJsonPath}: expected "${expectedName}", found "${manifest.name ?? "(missing)"}".`,
+    );
+  }
+  if (manifest.private !== true) {
+    fail(
+      `Core must stay "private": true in ${packageJsonPath}; it is bundled into the adapters, never published.`,
+    );
+  }
+  if (!manifest.version || !VERSION_RE.test(manifest.version)) {
+    fail(
+      `Core package has an invalid version: "${manifest.version ?? "(missing)"}".`,
+    );
+  }
+  validateWorkspaceDependencies(pkg);
+}
+
 function validatePackage(pkg: PackageConfig): void {
   const { manifest, expectedName, label, packageDir, packageJsonPath } = pkg;
+
+  if (pkg.id === "core") {
+    validateCore(pkg);
+    return;
+  }
 
   if (manifest.private === true) {
     fail(`${label} package is marked private and cannot be published.`);
@@ -439,15 +463,6 @@ function assertVersionNotPublished(pkg: PackageConfig): void {
   }
 }
 
-function assertCoreVersionPublished(version: string): void {
-  if (versionExists(CORE_NAME, version)) {
-    return;
-  }
-  fail(
-    `${CORE_NAME}@${version} is not on npm yet. This script never publishes Core; publish it manually first, for example \`npm publish packages/core --access public\`, then rerun the adapter publish.`,
-  );
-}
-
 function checkVersionAvailability(
   targets: PackageConfig[],
   allPackages: PackageConfig[],
@@ -456,14 +471,7 @@ function checkVersionAvailability(
   const version = targets[0].manifest.version as string;
 
   for (const pkg of targets) {
-    if (mode === "check" && pkg.id === "core") {
-      continue;
-    }
     assertVersionNotPublished(pkg);
-  }
-
-  if (mode !== "check") {
-    assertCoreVersionPublished(version);
   }
 
   if (mode !== "single") {
@@ -545,6 +553,15 @@ function packPackage(pkg: PackageConfig): string {
   if (!fs.existsSync(tarball)) {
     fail(`${pkg.label} pack did not produce ${tarball}.`);
   }
+  try {
+    bundleCoreIntoTarball(tarball);
+  } catch (error) {
+    fail(
+      `${pkg.label} Core bundling failed: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  }
   return tarball;
 }
 
@@ -623,7 +640,7 @@ function assertPackedEntryPoints(
 function inspectTarball(
   pkg: PackageConfig,
   tarball: string,
-  coreVersion: string,
+  core: PackageConfig,
 ): void {
   const listing = runCaptured("tar", ["-tzf", tarball], PROJECT_ROOT);
   if (listing.status !== 0) {
@@ -679,12 +696,28 @@ function inspectTarball(
   assertNoWorkspaceProtocol(pkg, packed);
   assertPackedEntryPoints(pkg, packed);
 
-  if (pkg.id !== "core") {
-    const coreRange = packed.dependencies?.[CORE_NAME];
-    if (coreRange !== `^${coreVersion}`) {
+  for (const field of DEPENDENCY_FIELDS) {
+    if (packed[field]?.[CORE_NAME]) {
       fail(
-        `${pkg.label} tarball must depend on ${CORE_NAME}@^${coreVersion} (found "${coreRange ?? "(missing)"}").`,
+        `${pkg.label} tarball still lists ${CORE_NAME} in ${field}; Core must be bundled, not installed.`,
       );
+    }
+  }
+  for (const [name, range] of Object.entries(
+    core.manifest.dependencies ?? {},
+  )) {
+    if (packed.dependencies?.[name] !== range) {
+      fail(
+        `${pkg.label} tarball must depend on Core's runtime dependency ${name}@${range} (found "${packed.dependencies?.[name] ?? "(missing)"}").`,
+      );
+    }
+  }
+  for (const required of [
+    `package/${VENDOR_DIR}/index.js`,
+    `package/${VENDOR_DIR}/index.d.ts`,
+  ]) {
+    if (!entries.includes(required)) {
+      fail(`${pkg.label} tarball is missing bundled Core entry "${required}".`);
     }
   }
 
@@ -719,26 +752,20 @@ function preflight(
   buildPackages(buildSet, buildAll);
 
   logStep(3, 4, "Running typecheck and tests");
-  for (const pkg of targets) {
+  for (const pkg of [getPackageConfig("core"), ...targets]) {
     console.log(`\n--- ${pkg.label} ---`);
     runPackageChecks(pkg);
     assertBuiltEntryPoints(pkg);
   }
 
   resetArtifacts();
-  const coreVersion = getPackageConfig("core").manifest.version as string;
+  const core = getPackageConfig("core");
   const tarballs = new Map<PackageId, string>();
 
-  logStep(
-    4,
-    4,
-    mode === "all"
-      ? "Packing and inspecting adapter tarballs"
-      : "Packing and inspecting publish tarballs",
-  );
+  logStep(4, 4, "Packing adapter tarballs, bundling Core, and inspecting them");
   for (const pkg of targets) {
     const tarball = packPackage(pkg);
-    inspectTarball(pkg, tarball, coreVersion);
+    inspectTarball(pkg, tarball, core);
     tarballs.set(pkg.id, tarball);
   }
 
@@ -804,7 +831,7 @@ function main(): void {
   console.log(`repository: ${PROJECT_ROOT}`);
   console.log("public packages: vanilla, react, vue, svelte");
   console.log(
-    `internal dependency: ${CORE_NAME} (must already be on npm; this script never publishes it)`,
+    `internal: ${CORE_NAME} (private, bundled into each adapter, never published)`,
   );
   const adapters = allPackages.filter((pkg) => pkg.id !== "core");
 
@@ -813,7 +840,7 @@ function main(): void {
   let mode: "check" | "all" | "single";
 
   if (command === "check") {
-    targets = allPackages;
+    targets = adapters;
     buildSet = allPackages;
     mode = "check";
   } else if (command === "all") {

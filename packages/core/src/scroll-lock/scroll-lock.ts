@@ -1,4 +1,5 @@
 import type { Cleanup } from "../types/lifecycle.js";
+import { getGlobalState } from "../utils/global-state.js";
 
 type ScrollLockState = {
   count: number;
@@ -7,7 +8,10 @@ type ScrollLockState = {
   htmlOverflow: string;
 };
 
-const states = new WeakMap<Document, ScrollLockState>();
+const states = getGlobalState(
+  "scroll-lock",
+  () => new WeakMap<Document, ScrollLockState>(),
+);
 
 function resolveDocument(documentRef?: Document): Document | null {
   if (documentRef?.body) {

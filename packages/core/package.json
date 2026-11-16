@@ -1,7 +1,8 @@
 {
   "name": "@zealakit/overlay-core",
   "version": "1.0.0",
-  "description": "Internal framework-independent overlay kernel: collision-aware positioning, layers, lifecycle, and event primitives. Installed automatically by the adapter packages.",
+  "private": true,
+  "description": "Internal framework-independent overlay kernel: collision-aware positioning, layers, lifecycle, and event primitives. Private: bundled into each adapter package, never published to npm.",
   "keywords": [
     "overlay",
     "popover",
@@ -57,8 +58,5 @@
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "publishConfig": {
-    "access": "public"
-  }
+  "types": "./dist/index.d.ts"
 }
