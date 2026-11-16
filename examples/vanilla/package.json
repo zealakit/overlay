@@ -1,6 +1,6 @@
 {
   "name": "@zealakit/overlay-vanilla-example",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Minimal Vite integration smoke test for @zealakit/overlay-vanilla.",
   "type": "module",

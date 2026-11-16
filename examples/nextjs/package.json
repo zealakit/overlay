@@ -1,6 +1,6 @@
 {
   "name": "@zealakit/overlay-nextjs-example",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Next.js App Router SSR/hydration smoke test for @zealakit/overlay-react.",
   "type": "module",

@@ -47,6 +47,8 @@ pnpm check        # build + typecheck + test + lint
 pnpm clean        # remove package/example build output and local tarballs
 pnpm pack:packages # pack release tarballs into artifacts/ (no publish)
 pnpm release:check # full checks + package tarballs (no publish)
+pnpm npm:publish:check # validate, build, test, pack, inspect all five (no publish)
+pnpm npm:publish:all   # preflight all five, then publish core → vanilla → react → vue → svelte
 pnpm readme:check # README structure: EN/VI/CN parity, absolute links, H1 = package name
 
 pnpm dev:vanilla

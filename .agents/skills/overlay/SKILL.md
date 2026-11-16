@@ -142,8 +142,10 @@ bump gated by the Core positioner tests.
 - Validate the tarballs in temporary projects outside the repository (Core tarball provided to
   adapters, framework peer from the registry, a TypeScript build, and a Node SSR import). Never
   validate with `workspace:*` aliases or `packages/*` imports.
-- Publishing is manual and needs explicit authorization. No script publishes, and Storybook,
-  Changesets, and automated publishing stay out of scope. Tag `vX.Y.Z` only after preflight.
+- Publishing is manual and needs explicit authorization: `pnpm npm:publish:check`, then
+  `pnpm npm:publish:all` (or one `pnpm npm:publish:<pkg>` command). The script builds, tests,
+  packs, and inspects each tarball before uploading; no CI or automated publishing. Storybook and
+  Changesets stay out of scope. Tag `vX.Y.Z` only after preflight.
 
 ## Documentation
 
