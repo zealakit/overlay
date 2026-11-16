@@ -57,7 +57,7 @@ test("positions with placement, offset, and align offset", async () => {
     x: 15,
     y: 68,
     placement: "bottom-start",
-    strategy: "fixed",
+    strategy: "absolute",
   });
 
   positioner.dispose();

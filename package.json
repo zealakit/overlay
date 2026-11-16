@@ -47,6 +47,7 @@
     "dev:astro": "pnpm --filter @zealakit/overlay-astro-example run dev",
     "monitor": "node --strip-types monitor/server.ts",
     "test": "pnpm --filter @zealakit/overlay-core run test && pnpm --filter @zealakit/overlay-vanilla run test && pnpm --filter @zealakit/overlay-react run test && pnpm --filter @zealakit/overlay-vue run test && pnpm --filter @zealakit/overlay-svelte run test",
+    "readme:check": "node scripts/check-readmes.mjs",
     "pack:packages": "node scripts/pack-packages.mjs",
     "release:check": "pnpm check && pnpm pack:packages"
   },

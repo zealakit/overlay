@@ -1,26 +1,14 @@
 import {
   type DismissReason,
-  type Layer,
-  type LayerEvent,
+  type OverlayChangeReason,
   type Placement,
   type PositionerBoundary,
   type PositionerResult,
   type Strategy,
-  createLayer,
-  acquireSharedLayerStack,
+  createOverlayController,
   isBrowser,
 } from "@zealakit/overlay-core";
-import { createFloating } from "../positioning/create-floating.js";
-import {
-  type PortalState,
-  moveToPortal,
-  restoreFromPortal,
-} from "../portal/portal.js";
-import type {
-  LayerStack,
-  LayerStackHandle,
-  LayerStackLease,
-} from "@zealakit/overlay-core";
+import type { LayerStack } from "@zealakit/overlay-core";
 
 /** How the reference element toggles the overlay. */
 export type OverlayTrigger = "click" | "none";
@@ -69,39 +57,45 @@ export type Overlay = {
   destroy(): void;
 };
 
+function toDismissReason(reason: OverlayChangeReason): DismissReason {
+  switch (reason) {
+    case "escape-key":
+    case "outside-press":
+    case "reference-press":
+    case "imperative":
+      return reason;
+    case "trigger":
+      return "reference-press";
+    default:
+      return "imperative";
+  }
+}
+
 /**
- * Create an imperative overlay controller.
+ * Create an imperative overlay.
  *
- * Positioning is delegated to `createFloating()` (core's collision-aware
- * positioner), dismissal to a shared layer stack. The floating element is
- * hidden while closed and moved into `portal` while open.
+ * A thin wrapper over the shared overlay controller (popover kind): it
+ * positions `floating` against `reference`, registers it on a layer stack for
+ * Escape/outside-press dismissal, and hides it while closed.
  */
 export function createOverlay(options: OverlayOptions): Overlay {
   if (!isBrowser()) {
     throw new Error("[overlay-vanilla] createOverlay requires a browser DOM.");
   }
 
-  const {
-    reference,
-    floating,
-    portal = null,
-    trigger = "click",
-    onOpenChange,
-  } = options;
-
-  let layerStack: LayerStack;
-  let sharedStack: LayerStackLease | null = null;
-  if (options.stack) {
-    layerStack = options.stack;
-  } else {
-    sharedStack = acquireSharedLayerStack(floating.ownerDocument);
-    layerStack = sharedStack.stack;
-  }
-  const layer: Layer = createLayer({ defaultOpen: options.defaultOpen });
-  const floatingController = createFloating({
-    reference: null,
-    floating: null,
-    placement: options.placement,
+  const { onOpenChange } = options;
+  const controller = createOverlayController({
+    kind: "popover",
+    trigger: options.reference as HTMLElement,
+    content: options.floating,
+    defaultOpen: options.defaultOpen,
+    toggleOnTriggerClick: (options.trigger ?? "click") === "click",
+    onOpenChange: (open, reason) =>
+      onOpenChange?.(open, open ? undefined : toDismissReason(reason)),
+    portal: options.portal ?? null,
+    stack: options.stack,
+    boundaries: options.boundaries,
+    placement: options.placement ?? "bottom",
     offset: options.offset,
     alignOffset: options.alignOffset,
     flip: options.flip,
@@ -110,153 +104,47 @@ export function createOverlay(options: OverlayOptions): Overlay {
     boundary: options.boundary,
     strategy: options.strategy,
     autoUpdate: options.autoUpdate,
+    dismissOnEscape: options.dismissOnEscape,
+    dismissOnOutsidePress: options.dismissOnOutsidePress,
+    restoreFocus: false,
   });
 
-  const listeners = new Set<OverlayListener>();
-  let layerHandle: LayerStackHandle | null = null;
-  let portalState: PortalState = null;
   let destroyed = false;
-
-  const currentPlacement = (): Placement =>
-    floatingController.result?.placement ?? options.placement ?? "bottom";
-
-  const notify = (): void => {
-    const state: OverlayState = {
-      open: layer.status === "open",
-      placement: currentPlacement(),
-    };
-    for (const listener of [...listeners]) {
-      listener(state);
-    }
-  };
-
-  const syncAttributes = (open: boolean): void => {
-    floating.dataset.state = open ? "open" : "closed";
-    if (open) {
-      floating.removeAttribute("hidden");
-    } else {
-      floating.setAttribute("hidden", "");
-    }
-  };
-
-  const open = (): void => {
-    layer.open();
-  };
-
-  const close = (reason: DismissReason = "imperative"): void => {
-    layer.close(reason);
-  };
-
-  const toggle = (): void => {
-    if (layer.status === "open") {
-      close("imperative");
-    } else {
-      open();
-    }
-  };
-
-  const handleReferenceClick = (): void => {
-    if (layer.status === "open") {
-      close("reference-press");
-    } else {
-      open();
-    }
-  };
-
-  const start = (): void => {
-    if (portal) {
-      portalState = moveToPortal(floating, portal);
-    }
-    syncAttributes(true);
-
-    floatingController.setReference(reference);
-    floatingController.setFloating(floating);
-
-    layerHandle = layerStack.register({
-      element: floating,
-      reference,
-      boundaries: options.boundaries,
-      dismissOnEscape: options.dismissOnEscape ?? true,
-      dismissOnOutsidePress: options.dismissOnOutsidePress ?? true,
-      onDismiss: (reason) => close(reason),
-    });
-  };
-
-  const stop = (): void => {
-    layerHandle?.dispose();
-    layerHandle = null;
-
-    floatingController.setFloating(null);
-    floatingController.setReference(null);
-    syncAttributes(false);
-  };
-
-  const update = async (): Promise<PositionerResult | null> => {
-    if (destroyed || layer.status !== "open") {
-      return null;
-    }
-    return floatingController.update();
-  };
-
-  const handleLayerEvent = (event: LayerEvent): void => {
-    if (event.type === "open") {
-      start();
-    } else {
-      stop();
-    }
-
-    notify();
-    onOpenChange?.(
-      event.status === "open",
-      event.type === "close" ? event.reason : undefined,
-    );
-  };
-
-  const unsubscribe = layer.subscribe(handleLayerEvent);
-
-  syncAttributes(layer.status === "open");
-  if (layer.status === "open") {
-    start();
-  }
-  if (trigger === "click") {
-    reference.addEventListener("click", handleReferenceClick);
-  }
+  let placement: Placement = options.placement ?? "bottom";
+  const stopTracking = controller.subscribe((state) => {
+    placement = state.placement;
+  });
 
   return {
     get isOpen() {
-      return layer.status === "open";
+      return !destroyed && controller.isOpen;
     },
     get placement() {
-      return currentPlacement();
+      return placement;
     },
-    open,
-    close,
-    toggle,
-    update,
+    open: () => controller.open(),
+    close: (reason = "imperative") => controller.close(reason),
+    toggle: () =>
+      controller.isOpen ? controller.close("imperative") : controller.open(),
+    update: (): Promise<PositionerResult | null> => controller.update(),
     subscribe(listener: OverlayListener) {
-      listeners.add(listener);
-      return () => {
-        listeners.delete(listener);
-      };
+      let initial = true;
+      const unsubscribe = controller.subscribe((state) => {
+        if (initial) {
+          return;
+        }
+        listener({ open: state.isOpen, placement: state.placement });
+      });
+      initial = false;
+      return unsubscribe;
     },
     destroy() {
       if (destroyed) {
         return;
       }
+      stopTracking();
+      controller.destroy();
       destroyed = true;
-      if (trigger === "click") {
-        reference.removeEventListener("click", handleReferenceClick);
-      }
-      unsubscribe();
-      layer.destroy();
-      stop();
-      floatingController.dispose();
-      if (portalState) {
-        restoreFromPortal(floating, portalState);
-        portalState = null;
-      }
-      sharedStack?.release();
-      listeners.clear();
     },
   };
 }

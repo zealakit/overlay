@@ -48,7 +48,7 @@ test("createPositioner positions, updates options, and disposes", async () => {
 
   const result = await controller.update();
   assert.ok(result);
-  assert.equal(floatingElement.style.position, "fixed");
+  assert.equal(floatingElement.style.position, "absolute");
   assert.equal(floatingElement.style.left, "10px");
   assert.equal(floatingElement.style.top, "68px");
   assert.equal(floatingElement.dataset.placement, "bottom-start");

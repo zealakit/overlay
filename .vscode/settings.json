@@ -6,6 +6,8 @@
     "tsbuildinfo",
     "vite",
     "zealakit",
-    "hoverable"
+    "hoverable",
+    "describedby",
+    "labelledby"
   ]
 }

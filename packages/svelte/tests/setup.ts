@@ -1,3 +1,7 @@
+import { readFileSync } from "node:fs";
+import { registerHooks } from "node:module";
+import { fileURLToPath } from "node:url";
+import { compile } from "svelte/compiler";
 import { Window } from "happy-dom";
 
 /** Register a DOM before the built adapter is imported. */
@@ -43,3 +47,19 @@ for (const [key, value] of Object.entries(values)) {
     // Some Node globals may be non-configurable.
   }
 }
+
+/** Compile `.svelte` files on import so tests can load the built components. */
+registerHooks({
+  load(url, context, nextLoad) {
+    if (url.endsWith(".svelte")) {
+      const filename = fileURLToPath(url);
+      const { js } = compile(readFileSync(filename, "utf8"), {
+        generate: "client",
+        filename,
+        css: "injected",
+      });
+      return { format: "module", source: js.code, shortCircuit: true };
+    }
+    return nextLoad(url, context);
+  },
+});

@@ -1,9 +1,10 @@
-export {
-  createOverlayController,
-  type OverlayChangeReason,
-  type OverlayController,
-  type OverlayControllerKind,
-  type OverlayControllerOptions,
-  type OverlayControllerState,
-  type OverlayFocusTarget,
-} from "./overlay-controller.js";
+export { createOverlayController } from "./overlay-controller.js";
+export type {
+  OverlayArrowOptions,
+  OverlayChangeReason,
+  OverlayController,
+  OverlayControllerKind,
+  OverlayControllerOptions,
+  OverlayControllerState,
+  OverlayFocusTarget,
+} from "./types.js";

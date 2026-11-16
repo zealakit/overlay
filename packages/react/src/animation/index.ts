@@ -1,6 +1,5 @@
 export {
   OverlayPresenceContext,
-  useAnimatedRef,
   useOverlayElementAnimation,
   useOverlayPresence,
   useOverlayPresenceContext,

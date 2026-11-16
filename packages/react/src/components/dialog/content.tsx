@@ -89,7 +89,7 @@ export type DialogPopupProps = HTMLAttributes<HTMLDivElement> &
     restoreFocus?: boolean;
     /** Keep the popup mounted while closed for consumer transitions. */
     keepMounted?: boolean;
-    /** Fade/custom enter and exit animation. Enabled by default as fade. */
+    /** Fade/custom enter and exit animation. Disabled by default; pass true or a config. */
     animation?: AnimationSetting;
   };
 
@@ -420,9 +420,7 @@ export const DialogPopup = forwardRef<HTMLDivElement, DialogPopupProps>(
                 {...rest}
                 ref={refs}
                 id={dialog.contentId}
-                hidden={
-                  !dialog.isOpen && !presence.present ? true : undefined
-                }
+                hidden={!dialog.isOpen && !presence.present ? true : undefined}
                 role={rest.role ?? "dialog"}
                 aria-modal={dialog.isOpen && dialog.modal ? true : undefined}
                 aria-labelledby={
@@ -476,11 +474,7 @@ export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(
       <>
         {showBackdrop ? <DialogBackdrop keepMounted={keepMounted} /> : null}
         <DialogViewport>
-          <DialogPopup
-            {...popupProps}
-            animation={animation}
-            ref={forwardedRef}
-          >
+          <DialogPopup {...popupProps} animation={animation} ref={forwardedRef}>
             {children}
           </DialogPopup>
         </DialogViewport>
@@ -494,9 +488,7 @@ export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(
         ) : (
           <DialogPortal
             container={
-              typeof portal === "object" && portal !== null
-                ? portal
-                : undefined
+              typeof portal === "object" && portal !== null ? portal : undefined
             }
             keepMounted={keepMounted}
           >

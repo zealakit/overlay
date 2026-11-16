@@ -39,7 +39,7 @@ export type TooltipContentProps = Omit<
     children?: ReactNode;
     /** `true`/omitted portals to document.body; `false` renders inline. */
     portal?: boolean | Element | null;
-    /** Fade/custom enter and exit animation. Enabled by default as fade. */
+    /** Fade/custom enter and exit animation. Disabled by default; pass true or a config. */
     animation?: AnimationSetting;
   };
 
@@ -236,9 +236,7 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(
         ) : (
           <PopoverPortal
             container={
-              typeof portal === "object" && portal !== null
-                ? portal
-                : undefined
+              typeof portal === "object" && portal !== null ? portal : undefined
             }
           >
             {content}

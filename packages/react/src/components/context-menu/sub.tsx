@@ -258,7 +258,7 @@ export type ContextMenuSubContentProps = ComponentPropsWithoutRef<"div"> & {
   collisionAvoidance?: ContextMenuCollisionAvoidance;
   positionMethod?: Strategy;
   portal?: boolean | Element | null;
-  /** Fade/custom enter and exit animation. Enabled by default as fade. */
+  /** Fade/custom enter and exit animation. Disabled by default; pass true or a config. */
   animation?: AnimationSetting;
 };
 
@@ -321,30 +321,30 @@ export const ContextMenuSubContent = forwardRef<
         {...rest}
         ref={forwardedRef}
         reference={sub.triggerElement}
-      boundaryReference={sub.triggerElement}
-      focusRestoreTarget={sub.triggerElement}
-      menuId={sub.contentId}
-      labelledBy={sub.triggerId}
-      placement={placement}
-      offset={sideOffset}
-      alignOffset={alignOffset}
-      padding={collisionPadding}
-      boundary={collisionBoundary}
-      strategy={positionMethod}
-      flip={collisionAvoidance?.flip ?? true}
-      shift={collisionAvoidance?.shift ?? true}
-      portal={portal}
-      dir={sub.direction}
+        boundaryReference={sub.triggerElement}
+        focusRestoreTarget={sub.triggerElement}
+        menuId={sub.contentId}
+        labelledBy={sub.triggerId}
+        placement={placement}
+        offset={sideOffset}
+        alignOffset={alignOffset}
+        padding={collisionPadding}
+        boundary={collisionBoundary}
+        strategy={positionMethod}
+        flip={collisionAvoidance?.flip ?? true}
+        shift={collisionAvoidance?.shift ?? true}
+        portal={portal}
+        dir={sub.direction}
         submenu
         open={sub.isOpen}
         onDismiss={handleDismiss}
-      onSubmenuKeyDown={handleSubmenuKeyDown}
-      onPointerEnterSurface={() => {
-        sub.cancelClose();
-      }}
-      onPointerLeaveSurface={() => {
-        sub.scheduleClose();
-      }}
+        onSubmenuKeyDown={handleSubmenuKeyDown}
+        onPointerEnterSurface={() => {
+          sub.cancelClose();
+        }}
+        onPointerLeaveSurface={() => {
+          sub.scheduleClose();
+        }}
         onContextMenu={(event) => event.preventDefault()}
       />
     </OverlayPresenceContext.Provider>

@@ -77,7 +77,7 @@ export type PopoverPositionerProps = {
   collisionPadding?: number;
   /** Toggle flip/shift collision avoidance. Both default to true. */
   collisionAvoidance?: PopoverCollisionAvoidance;
-  /** CSS positioning method. Defaults to fixed. */
+  /** CSS positioning method. Defaults to automatic: absolute (scrolls with the page), or fixed for fixed/sticky anchors and viewport points. */
   positionMethod?: Strategy;
   /** Render a default arrow. Disabled by default. */
   arrow?: boolean;
@@ -111,7 +111,7 @@ export type PopoverPopupProps = HTMLAttributes<HTMLDivElement> &
     trapFocus?: boolean;
     /** Restore focus to the trigger when closing from inside. Defaults to true. */
     restoreFocus?: boolean;
-    /** Fade/custom enter and exit animation. Enabled by default as fade. */
+    /** Fade/custom enter and exit animation. Disabled by default; pass true or a config. */
     animation?: AnimationSetting;
   };
 
@@ -297,7 +297,6 @@ export function PopoverPositioner({
       placement,
       referenceElement,
       result,
-      setArrowElement,
     ],
   );
 
@@ -588,9 +587,7 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
         ) : (
           <PopoverPortal
             container={
-              typeof portal === "object" && portal !== null
-                ? portal
-                : undefined
+              typeof portal === "object" && portal !== null ? portal : undefined
             }
           >
             {content}

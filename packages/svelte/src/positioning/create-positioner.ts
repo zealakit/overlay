@@ -5,6 +5,7 @@ import {
   type PositionerResult,
   type ReferenceElement,
   createPositioner as createCorePositioner,
+  isSamePositionerResult,
 } from "@zealakit/overlay-core";
 
 export type CreatePositionerOptions = PositionerOptions & {
@@ -42,19 +43,6 @@ function sameOptions(
   second: PositionerOptions,
 ): boolean {
   return OPTION_KEYS.every((key) => first[key] === second[key]);
-}
-
-function sameResult(
-  previous: PositionerResult | null,
-  next: PositionerResult,
-): boolean {
-  return (
-    previous !== null &&
-    previous.x === next.x &&
-    previous.y === next.y &&
-    previous.placement === next.placement &&
-    previous.strategy === next.strategy
-  );
 }
 
 /**
@@ -111,7 +99,7 @@ export function createPositioner(
       }
       result = null;
     } else {
-      if (sameResult(result, next)) {
+      if (isSamePositionerResult(result, next)) {
         return;
       }
       result = next;

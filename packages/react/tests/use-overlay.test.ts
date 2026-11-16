@@ -110,7 +110,7 @@ test("opens, positions, and registers a layer", async () => {
   await measure();
   const panel = document.getElementById("panel");
   assert.ok(panel);
-  assert.equal(panel.style.position, "fixed");
+  assert.equal(panel.style.position, "absolute");
   assert.equal(panel.style.left, "10px");
   assert.equal(panel.style.top, "68px");
   assert.equal(

@@ -6,161 +6,831 @@
     <title>@zealakit/overlay-vanilla</title>
   </head>
   <body>
-    <main class="page">
-      <h1>@zealakit/overlay-vanilla</h1>
-      <p class="lede">
-        Positioning, layer registration, outside interaction, Escape handling,
-        and cleanup — with no framework runtime.
+    <main class="page examples-page combined-examples">
+      <header class="masthead">
+        <p class="eyebrow">@zealakit/overlay-vanilla</p>
+        <h1>Overlay examples</h1>
+        <p class="lede">
+          All vanilla controller examples on one page. Use the section links to jump
+          between the placement playground and each overlay family.
+        </p>
+        <nav class="examples-nav" aria-label="Example sections">
+          <a href="#playground">Playground</a>
+          <a href="#arrow-animation">Arrow &amp; animation</a>
+          <a href="#popover">Popover</a>
+          <a href="#tooltip">Tooltip</a>
+          <a href="#dialog">Dialog</a>
+          <a href="#context-menu">ContextMenu</a>
+        </nav>
+      </header>
+
+      <section id="playground" class="examples-section">
+        <h2 class="examples-section-title">Placement playground</h2>
+
+      <section class="playground" aria-labelledby="placement-playground-title">
+        <div class="playground-heading">
+          <div>
+            <h2 id="placement-playground-title">Placement playground</h2>
+            <p>Choose one of the twelve placements around the reference. The preview updates immediately.</p>
+          </div>
+          <p class="placement-indicator" aria-live="polite">Current placement <code id="pg-placement">bottom</code></p>
+        </div>
+        <div class="playground-grid" id="pg-grid">
+          <div class="reference-stage">
+            <button id="pg-reference" type="button" class="reference-button" aria-expanded="true" aria-controls="placement-preview">Reference element</button>
+            <span class="reference-hint" id="pg-hint">Click to close</span>
+          </div>
+        </div>
+        <div id="placement-preview" class="floating-preview" data-placement="bottom">
+          <span>Floating preview</span><strong id="pg-label">bottom</strong><small id="pg-requested" hidden></small>
+        </div>
+      </section>
+
+      </section>
+
+
+      <section id="arrow-animation" class="examples-section">
+        <h2 class="examples-section-title">Arrow and animation</h2>
+
+    <section class="example-card">
+      <h2>Arrow and animation</h2>
+      <p class="example-description">Both are opt-in. Toggle them and change the type, direction or timing. For expand, direction is the growth direction.</p>
+      <div class="aa-controls">
+        <label><input id="aa-arrow" type="checkbox" checked /> Arrow</label>
+        <label><input id="aa-animate" type="checkbox" checked /> Animation</label>
+        <label>Type
+          <select id="aa-type"><option>fade</option><option>expand</option><option>custom</option></select>
+        </label>
+        <label>Direction
+          <select id="aa-direction"><option>auto</option><option>up</option><option>down</option><option>left</option><option>right</option></select>
+        </label>
+        <label>Easing
+          <select id="aa-easing"><option>ease-in-out</option><option>linear</option></select>
+        </label>
+        <label>Duration <span id="aa-duration-label">200ms</span>
+          <input id="aa-duration" type="range" min="0" max="800" step="20" value="200" />
+        </label>
+      </div>
+      <div class="example-body">
+        <div id="aa-popover" data-overlay="popover" data-arrow-size="14" data-placement="bottom" data-offset="14" style="display: contents">
+          <button type="button" class="example-trigger" data-trigger>Popover</button>
+          <div class="aa-panel" data-content hidden>Arrow follows the panel. Close it to see the exit run in reverse.<span data-arrow></span></div>
+        </div>
+        <div id="aa-tooltip" data-overlay="tooltip" data-arrow-size="11" data-placement="top" data-offset="12" style="display: contents">
+          <button type="button" class="example-trigger" data-trigger>Tooltip</button>
+          <div class="aa-panel" data-content hidden>Tooltip<span data-arrow></span></div>
+        </div>
+      </div>
+    </section>
+
+      </section>
+
+
+      <section id="popover" class="examples-section">
+        <h2 class="examples-section-title">Popover examples</h2>
+  <div class="example-grid">
+    <section class="example-card"><h2>A. Basic</h2><p class="example-description">A native button trigger, compact content, Escape, outside press, and an optional close control.</p><div class="example-body">
+      <div data-overlay="popover" data-offset="8" style="display: contents"><button data-trigger type="button" class="example-trigger">Open basic</button><div class="example-popover" data-content hidden>
+        
+        
+          <div>
+            <h3>Basic popover</h3>
+            <p>
+              This is a non-modal popover. Focus stays on the trigger unless you
+              configure otherwise.
+            </p>
+          </div>
+          <button type="button" class="example-close" data-close>Close</button>
+        
+      </div></div>
+    </div></section>
+
+    <section class="example-card"><h2>B. Alignment and placement</h2><p class="example-description">All twelve physical placements. Open the popover, then change placement. Outside dismissal is disabled so the controls can be used while it stays open.</p><div class="example-body">
+      <div data-overlay="popover" data-placement="bottom" id="pl-overlay" data-offset="8" data-flip="false" data-shift="false" data-dismiss-on-outside-press="false" style="display: contents"><button data-trigger type="button" class="example-trigger">Open placement</button><div class="example-popover" data-content hidden>
+        
+        <strong id="pl-label">bottom / center</strong>
+        <p class="example-small">Change the placement while the popover is open.</p>
+      </div></div>
+
+      <fieldset class="placement-picker" id="pl-picker"><legend class="visually-hidden">Placement</legend></fieldset>
+    </div></section>
+
+    <section class="example-card"><h2>C. Form</h2><p class="example-description">Labels, text fields, a select, checkboxes, radios, and actions remain interactive. Focus and typing do not dismiss the popover.</p><div class="example-body">
+      <div data-overlay="popover" style="display: contents"><button data-trigger type="button" class="example-trigger">Open form</button><div class="example-popover example-form-popover" data-content hidden>
+        
+        
+          <form id="pop-form">
+            <label class="field">Name <input name="name" value="Huy" /></label>
+            <label class="field">
+              Notes <textarea name="notes" rows="2">Hello</textarea>
+            </label>
+            <label class="field">
+              Plan
+              <select name="plan">
+                <option value="personal">Personal</option>
+                <option value="team" selected>Team</option>
+              </select>
+            </label>
+            <label class="check">
+              <input type="checkbox" name="updates" checked /> Product updates
+            </label>
+            <fieldset class="radio-group">
+              <legend>Visibility</legend>
+              <label class="check">
+                <input type="radio" name="visibility" checked /> Private
+              </label>
+              <label class="check"><input type="radio" name="visibility" /> Shared</label>
+            </fieldset>
+            <div class="example-actions">
+              <button type="submit" class="example-primary">Submit</button>
+              <button type="button" class="example-close" data-close>Cancel</button>
+            </div>
+          </form>
+          <p class="example-status" role="status" id="pop-form-status">Nothing submitted yet.</p>
+        
+      </div></div>
+    </div></section>
+
+    <section class="example-card"><h2>D. Custom trigger</h2><p class="example-description">Any element can be the trigger: a styled button and an icon-only button both receive ARIA and trigger behavior.</p><div class="example-body">
+      <div class="example-actions">
+        <div data-overlay="popover" style="display: contents"><button data-trigger type="button" class="example-trigger">Custom button</button><div class="example-popover" data-content hidden>
+          
+          Opened by a custom button.
+        </div></div>
+        <div data-overlay="popover" style="display: contents"><button data-trigger type="button" class="icon-button" aria-label="More actions">
+              <span aria-hidden="true">⋯</span>
+            </button><div class="example-popover" data-content hidden>
+          
+          Icon-only trigger content.
+        </div></div>
+      </div>
+    </div></section>
+
+    <section class="example-card"><h2>E. Input group</h2><p class="example-description">The trigger is a real button inside a compound input-group layout, not a nested button wrapper.</p><div class="example-body">
+      <div class="example-input-group">
+        <input aria-label="Search" placeholder="Search projects" />
+        <div data-overlay="popover" style="display: contents"><button data-trigger type="button" class="example-trigger">Filters</button><div class="example-popover" data-content hidden>
+          
+          <strong>Filters</strong>
+          <label class="check"><input type="checkbox" checked /> Active</label>
+          <label class="check"><input type="checkbox" /> Archived</label>
+        </div></div>
+      </div>
+    </div></section>
+
+    <section class="example-card"><h2>G. Nested popovers</h2><p class="example-description">A child popover registers with the parent layer. Escape closes the child first; the parent remains open.</p><div class="example-body">
+      <div data-overlay="popover" style="display: contents"><button data-trigger type="button" class="example-trigger">Open parent</button><div class="example-popover" data-content hidden>
+        
+        <p>Parent popover</p>
+        <div data-overlay="popover" data-portal="inline" style="display: contents"><button data-trigger type="button" class="example-trigger">Open child</button><div class="example-popover example-child" data-content hidden>
+          
+          Child popover. Escape closes this layer first.
+        </div></div>
+      </div></div>
+    </div></section>
+
+    <section class="example-card"><h2>I. Portal configuration</h2><p class="example-description">Default body portal, a custom portal container, and an inline popover that skips the portal entirely.</p><div class="example-body">
+      <div id="portal-target" class="portal-target">Custom portal target</div>
+
+      <div class="example-actions">
+        <div data-overlay="popover" style="display: contents"><button data-trigger type="button" class="example-trigger">Default portal</button><div class="example-popover" data-content hidden>
+          
+          Rendered into document.body.
+        </div></div>
+
+        <div data-overlay="popover" data-portal="#portal-target" style="display: contents"><button data-trigger type="button" class="example-trigger">Custom portal</button><div class="example-popover" data-content hidden>
+          
+          Rendered into the custom container.
+        </div></div>
+
+        <div class="inline-portal">
+          <div data-overlay="popover" data-portal="inline" style="display: contents"><button data-trigger type="button" class="example-trigger">No portal</button><div class="example-popover" data-content hidden>
+            
+            Rendered inline in the example card.
+          </div></div>
+        </div>
+      </div>
+    </div></section>
+
+    <section class="example-card"><h2>J. RTL</h2><p class="example-description">Start alignment follows text direction for top/bottom placements; physical left/right placements stay physical.</p><div class="example-body">
+      <div dir="rtl" class="rtl-frame">
+        <div data-overlay="popover" data-placement="bottom-start" data-dir="rtl" data-offset="8" data-flip="false" style="display: contents"><button data-trigger type="button" class="example-trigger">فتح</button><div class="example-popover" data-content hidden dir="rtl">
+          
+          Start alignment resolves to the physical end in RTL.
+        </div></div>
+      </div>
+    </div></section>
+
+    <section class="example-card"><h2>K. Controlled state</h2><p class="example-description">The parent owns open state. Trigger and dismiss interactions report changes through update:open.</p><div class="example-body">
+      <div class="example-actions">
+        <button type="button" class="example-trigger" id="ctl-open">
+          Open programmatically
+        </button>
+      </div>
+      <div id="ctl-overlay" data-overlay="popover" style="display: contents"><button data-trigger type="button" class="example-trigger">Controlled trigger</button><div class="example-popover" data-content hidden>
+        
+        Controlled content.
+        <div class="example-actions">
+          <button
+            type="button"
+            class="example-close"
+           
+           id="ctl-close">
+            Close programmatically
+          </button>
+        </div>
+      </div></div>
+      <p class="example-status" role="status" id="ctl-log">Closed</p>
+    </div></section>
+
+    <section class="example-card"><h2>L. Long and dynamic content</h2><p class="example-description">Content can scroll, grow, and change asynchronously without dismissing the popover.</p><div class="example-body">
+      <div data-overlay="popover" style="display: contents"><button data-trigger type="button" class="example-trigger">Open long content</button><div class="example-popover long-popover" data-content hidden>
+        
+        <strong>Items</strong>
+        <ul class="long-list" id="long-list"></ul>
+        <div class="example-actions">
+          <button type="button" class="example-close" id="long-add">
+            Add 5 items
+          </button>
+          <button type="button" class="example-close" id="long-async">Load async items</button>
+        </div>
+      </div></div>
+    </div></section>
+  </div>
+
+      </section>
+
+
+      <section id="tooltip" class="examples-section">
+        <h2 class="examples-section-title">Tooltip examples</h2>
+  <div class="example-grid">
+    <section class="example-card"><h2>A. Basic</h2><p class="example-description">Hover or keyboard-focus the trigger. Tooltip content is informational and is not a focus destination.</p><div class="example-body">
+      <div data-overlay="tooltip" data-delay="350" style="display: contents"><button data-trigger type="button" class="example-trigger">Hover or focus</button><div class="tooltip-surface" data-content hidden>
+        
+        A concise, non-interactive hint.
+      </div></div>
+    </div></section>
+
+    <section class="example-card"><h2>B. Icon button</h2><p class="example-description">An icon-only trigger keeps its accessible name through aria-label.</p><div class="example-body">
+      <div data-overlay="tooltip" data-delay="350" style="display: contents"><button data-trigger type="button" class="icon-button" aria-label="Delete item">
+            <span aria-hidden="true">⌫</span>
+          </button><div class="tooltip-surface" data-content hidden>
+        
+        Delete item
+      </div></div>
+    </div></section>
+
+    <section class="example-card"><h2>C. Keyboard focus</h2><p class="example-description">Tab to the trigger. Focus opens the Tooltip immediately, without needing hover or click.</p><div class="example-body">
+      <div data-overlay="tooltip" data-delay="350" style="display: contents"><button data-trigger type="button" class="example-trigger">Tab to focus me</button><div class="tooltip-surface" data-content hidden>
+        
+        Keyboard focus supplements the trigger's accessible name.
+      </div></div>
+    </div></section>
+
+    <section class="example-card"><h2>D. Keyboard shortcut</h2><p class="example-description">Shortcut text is informational. Tooltip does not register or intercept the shortcut.</p><div class="example-body">
+      <div data-overlay="tooltip" data-delay="350" style="display: contents"><button data-trigger type="button" class="example-trigger">Save</button><div class="tooltip-surface" data-content hidden>
+        
+        Save changes <kbd class="tooltip-kbd">⌘S</kbd>
+      </div></div>
+    </div></section>
+
+    <section class="example-card"><h2>E. Placement</h2><p class="example-description">Physical sides with center alignment. Content uses the same positioning engine as Popover.</p><div class="example-body">
+      <div class="tooltip-grid">
+        <div data-overlay="tooltip" data-placement="top" data-offset="8" data-delay="0" style="display: contents"><button data-trigger type="button" class="example-trigger">top</button><div class="tooltip-surface" data-content hidden>
+          
+          Placed on the top
+        </div></div>
+        <div data-overlay="tooltip" data-placement="bottom" data-offset="8" data-delay="0" style="display: contents"><button data-trigger type="button" class="example-trigger">bottom</button><div class="tooltip-surface" data-content hidden>
+          
+          Placed on the bottom
+        </div></div>
+        <div data-overlay="tooltip" data-placement="left" data-offset="8" data-delay="0" style="display: contents"><button data-trigger type="button" class="example-trigger">left</button><div class="tooltip-surface" data-content hidden>
+          
+          Placed on the left
+        </div></div>
+        <div data-overlay="tooltip" data-placement="right" data-offset="8" data-delay="0" style="display: contents"><button data-trigger type="button" class="example-trigger">right</button><div class="tooltip-surface" data-content hidden>
+          
+          Placed on the right
+        </div></div>
+      </div>
+    </div></section>
+
+    <section class="example-card"><h2>G. Disabled button</h2><p class="example-description">Native disabled buttons are not focusable. Wrap one in a focusable element; the button stays disabled.</p><div class="example-body">
+      <div data-overlay="tooltip" data-delay="0" style="display: contents"><span data-trigger class="tooltip-disabled-wrapper" tabindex="0">
+            <span class="visually-hidden">Save unavailable</span>
+            <button type="button" disabled>Save</button>
+          </span><div class="tooltip-surface" data-content hidden>
+        
+        Saving is currently unavailable.
+      </div></div>
+      <p class="example-small">
+        The wrapper owns the tooltip focus/description relationship. The consumer
+        remains responsible for the disabled action.
       </p>
+    </div></section>
 
-      <section class="demo">
-        <h2>1–2. Floating positioning</h2>
-        <p class="copy">
-          <code>createFloating()</code> wraps core's collision-aware positioner
-          and applies <code>position</code>/<code>left</code>/<code>top</code>.
-          Change the placement to update it dynamically.
-        </p>
+    <section class="example-card"><h2>I. RTL</h2><p class="example-description">Start alignment follows text direction for horizontal sides; physical left/right stay physical.</p><div class="example-body">
+      <div dir="rtl" class="rtl-frame">
+        <div data-overlay="tooltip" data-placement="bottom-start" data-dir="rtl" data-flip="false" data-delay="0" style="display: contents"><button data-trigger type="button" class="example-trigger">معلومة</button><div class="tooltip-surface" data-content hidden dir="rtl">
+          
+          تبدأ المحاذاة من الجهة اليمنى في RTL.
+        </div></div>
+      </div>
+    </div></section>
 
-        <div class="row">
-          <button id="floating-trigger" type="button" aria-controls="floating-panel" aria-expanded="false">
-            Toggle floating panel
-          </button>
-          <button id="cycle-placement" type="button">Placement: bottom-start</button>
-          <button id="dispose-demo" class="ghost" type="button">Dispose demo</button>
-        </div>
+    <section class="example-card"><h2>J. Nested overlay</h2><p class="example-description">A Tooltip inside a Popover. Escape closes the Tooltip first, then the Popover can still be used.</p><div class="example-body">
+      <div data-overlay="popover" style="display: contents"><button data-trigger type="button" class="example-trigger">Open overlay</button><div class="example-popover" data-content hidden>
+        
+        <p>Popover content</p>
+        <div data-overlay="tooltip" data-portal="inline" data-delay="0" style="display: contents"><button data-trigger type="button" class="example-trigger">Hover in Popover</button><div class="tooltip-surface" data-content hidden>
+          
+          Tooltip inside a parent overlay.
+        </div></div>
+      </div></div>
+    </div></section>
+  </div>
 
-        <p id="floating-status" class="status" aria-live="polite">
-          No measurement yet
-        </p>
-
-        <div
-          id="floating-panel"
-          class="panel"
-          role="dialog"
-          aria-label="Floating panel"
-          hidden
-          data-state="closed"
-        >
-          <p>
-            Positioned by the core engine. Press Escape or click outside to
-            dismiss.
-          </p>
-          <div class="row">
-            <button id="focus-action" type="button">Focusable action</button>
-            <button id="close-floating" class="ghost" type="button">Close</button>
-          </div>
-        </div>
       </section>
 
-      <section class="demo">
-        <h2>3–6. Overlay controller</h2>
-        <p class="copy">
-          <code>createOverlay()</code> combines positioning, a shared layer
-          stack, Escape/outside dismissal, and portal rendering.
-        </p>
 
-        <div class="row">
-          <button id="overlay-trigger" type="button" aria-controls="overlay-panel" aria-expanded="false">
-            Toggle overlay
-          </button>
-          <button id="destroy-overlay" class="ghost" type="button">
-            Destroy overlay
-          </button>
-        </div>
+      <section id="dialog" class="examples-section">
+        <h2 class="examples-section-title">Dialog examples</h2>
+  <div class="example-grid">
+    <section class="example-card"><h2>A. Basic</h2><p class="example-description">A modal Dialog with a title, description, footer, and close control.</p><div class="example-body">
+      <div data-overlay="dialog" style="display: contents"><button data-trigger type="button" class="example-trigger">Open basic dialog</button><div data-backdrop hidden><div data-dialog-backdrop></div><div data-dialog-viewport class=""><div class="dialog-popup" data-content hidden>
+        
+        
+          <header class="dialog-header">
+            <h2>Edit profile</h2>
+            <p>Update the information shown on your public profile.</p>
+          </header>
+          <p>Changes are saved when you choose Save.</p>
+          <footer class="dialog-footer">
+            <button type="button" class="example-trigger" data-close>Cancel</button>
+            <button type="button" class="example-trigger">Save</button>
+          </footer>
+        
+      </div></div></div></div>
+    </div></section>
 
-        <div
-          id="overlay-panel"
-          class="panel"
-          role="dialog"
-          aria-label="Overlay panel"
-          hidden
-          data-state="closed"
-        >
-          <p>
-            Registered on the same layer stack. Only the topmost layer reacts to
-            Escape or outside presses.
-          </p>
-        </div>
+    <section class="example-card"><h2>B. Form</h2><p class="example-description">Focus enters the Dialog. Submitting does not close it; the consumer decides when completion is safe.</p><div class="example-body">
+      <div data-overlay="dialog" style="display: contents"><button data-trigger type="button" class="example-trigger">Open form dialog</button><div data-backdrop hidden><div data-dialog-backdrop></div><div data-dialog-viewport class=""><div class="dialog-popup" data-content hidden>
+        
+        
+          <header class="dialog-header">
+            <h2>Notification settings</h2>
+            <p>Choose how account notifications are delivered.</p>
+          </header>
+          <form class="dialog-form" id="dlg-form">
+            <label>Email <input type="email" value="ada@example.com" /></label>
+            <label>Display name <input type="text" value="Ada Lovelace" /></label>
+            <label class="dialog-check">
+              <input type="checkbox" checked /> Product updates
+            </label>
+            <p role="status" class="dialog-status" id="dlg-status"></p>
+            <footer class="dialog-footer">
+              <button type="button" class="example-trigger" data-close>Cancel</button>
+              <button type="submit" class="example-trigger" id="dlg-save">
+                
+              </button>
+            </footer>
+          </form>
+        
+      </div></div></div></div>
+    </div></section>
+
+    <section class="example-card"><h2>C. Controlled</h2><p class="example-description">Visibility is owned by Vue state. The trigger is outside the Dialog tree.</p><div class="example-body">
+      <div class="example-actions">
+        <button type="button" class="example-trigger" id="dlg-ctl-open">
+          Open controlled
+        </button>
+        <span class="example-small" id="dlg-ctl-state">State: closed</span>
+      </div>
+      <div id="dlg-ctl" data-overlay="dialog" style="display: contents"><div data-backdrop hidden><div data-dialog-backdrop></div><div data-dialog-viewport class=""><div class="dialog-popup" data-content hidden>
+        
+          <header class="dialog-header">
+            <h2>Controlled dialog</h2>
+            <p>External state controls visibility.</p>
+          </header>
+          <p>The parent can close this dialog from anywhere.</p>
+          <footer class="dialog-footer">
+            <button type="button" class="example-trigger" data-close>Close</button>
+          </footer>
+        
+      </div></div></div></div>
+    </div></section>
+
+    <section class="example-card"><h2>E. No close button</h2><p class="example-description">Dialog never injects a close button. This example closes with Escape or outside interaction.</p><div class="example-body">
+      <div data-overlay="dialog" style="display: contents"><button data-trigger type="button" class="example-trigger">Open without close button</button><div data-backdrop hidden><div data-dialog-backdrop></div><div data-dialog-viewport class=""><div class="dialog-popup" data-content hidden>
+        
+        
+          <header class="dialog-header">
+            <h2>No built-in close control</h2>
+            <p>Press Escape or click outside to dismiss.</p>
+          </header>
+          <p>Consumers can compose whatever action set they need.</p>
+        
+      </div></div></div></div>
+    </div></section>
+
+    <section class="example-card"><h2>G. Scrollable content</h2><p class="example-description">The content region scrolls independently; the library applies no default max-height or overflow.</p><div class="example-body">
+      <div data-overlay="dialog" style="display: contents"><button data-trigger type="button" class="example-trigger">Open scrollable</button><div data-backdrop hidden><div data-dialog-backdrop></div><div data-dialog-viewport class=""><div class="dialog-popup dialog-popup--scroll" data-content hidden>
+        
+        
+          <header class="dialog-header dialog-header--sticky">
+            <h2>Terms and conditions</h2>
+            <p>A long readable document.</p>
+          </header>
+          <div class="dialog-scroll-body">
+            <p>
+              Section 1. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 2. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 3. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 4. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 5. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 6. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 7. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 8. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 9. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 10. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 11. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 12. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 13. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 14. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 15. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 16. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 17. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p><p>
+              Section 18. This content scrolls inside its own region
+              while the Dialog remains in place. Consumers control layout,
+              padding, and overflow.
+            </p>
+          </div>
+          <footer class="dialog-footer dialog-footer--sticky">
+            <button type="button" class="example-trigger" data-close>Done</button>
+          </footer>
+        
+      </div></div></div></div>
+    </div></section>
+
+    <section class="example-card"><h2>H. Sticky footer</h2><p class="example-description">Header and footer stay visible while the middle region scrolls.</p><div class="example-body">
+      <div data-overlay="dialog" style="display: contents"><button data-trigger type="button" class="example-trigger">Open sticky footer</button><div data-backdrop hidden><div data-dialog-backdrop></div><div data-dialog-viewport class=""><div class="dialog-popup dialog-popup--scroll" data-content hidden>
+        
+        
+          <header class="dialog-header dialog-header--sticky">
+            <h2>Keyboard shortcuts</h2>
+            <p>Reference sheet</p>
+          </header>
+          <div class="dialog-scroll-body">
+            <p>
+              Shortcut group 1: use the command palette to search
+              actions without leaving the current task.
+            </p><p>
+              Shortcut group 2: use the command palette to search
+              actions without leaving the current task.
+            </p><p>
+              Shortcut group 3: use the command palette to search
+              actions without leaving the current task.
+            </p><p>
+              Shortcut group 4: use the command palette to search
+              actions without leaving the current task.
+            </p><p>
+              Shortcut group 5: use the command palette to search
+              actions without leaving the current task.
+            </p><p>
+              Shortcut group 6: use the command palette to search
+              actions without leaving the current task.
+            </p><p>
+              Shortcut group 7: use the command palette to search
+              actions without leaving the current task.
+            </p><p>
+              Shortcut group 8: use the command palette to search
+              actions without leaving the current task.
+            </p><p>
+              Shortcut group 9: use the command palette to search
+              actions without leaving the current task.
+            </p><p>
+              Shortcut group 10: use the command palette to search
+              actions without leaving the current task.
+            </p><p>
+              Shortcut group 11: use the command palette to search
+              actions without leaving the current task.
+            </p><p>
+              Shortcut group 12: use the command palette to search
+              actions without leaving the current task.
+            </p><p>
+              Shortcut group 13: use the command palette to search
+              actions without leaving the current task.
+            </p><p>
+              Shortcut group 14: use the command palette to search
+              actions without leaving the current task.
+            </p>
+          </div>
+          <footer class="dialog-footer dialog-footer--sticky">
+            <button type="button" class="example-trigger" data-close>Close</button>
+          </footer>
+        
+      </div></div></div></div>
+    </div></section>
+
+    <section class="example-card"><h2>I. Fullscreen</h2><p class="example-description">Advanced composition uses a consumer-styled fullscreen viewport and popup.</p><div class="example-body">
+      <div data-overlay="dialog" style="display: contents"><button data-trigger type="button" class="example-trigger">Open fullscreen</button><div data-backdrop hidden><div data-dialog-backdrop></div><div data-dialog-viewport class="dialog-viewport--fullscreen"><div class="dialog-popup dialog-popup--fullscreen" data-content hidden>
+        
+        
+          <header class="dialog-header">
+            <h2>Fullscreen workspace</h2>
+            <p>The consumer owns width, height, and safe-area styling.</p>
+          </header>
+          <div class="dialog-fullscreen-body">
+            Full-height content can be composed here.
+          </div>
+          <footer class="dialog-footer">
+            <button type="button" class="example-trigger" data-close>Exit</button>
+          </footer>
+        
+      </div></div></div></div>
+    </div></section>
+
+    <section class="example-card"><h2>J. Non-modal</h2><p class="example-description">No backdrop, no focus trap, no scroll lock, and the background remains interactive.</p><div class="example-body">
+      <div class="example-actions">
+        <div data-overlay="dialog" data-modal="false" style="display: contents"><button data-trigger type="button" class="example-trigger">Open non-modal</button><div data-backdrop hidden><div data-dialog-backdrop></div><div data-dialog-viewport class=""><div class="dialog-popup" data-content hidden>
+          
+          
+            <header class="dialog-header">
+              <h2>Non-modal panel</h2>
+              <p>You can still use the background.</p>
+            </header>
+            <button type="button" class="example-trigger" data-close>Close</button>
+          
+        </div></div></div></div>
+        <button type="button" class="example-trigger" id="bg-count">
+          Background action (0)
+        </button>
+      </div>
+    </div></section>
+
+    <section class="example-card"><h2>K. Nested Dialog</h2><p class="example-description">The child has higher layer priority. Escape closes the child; focus returns inside the parent.</p><div class="example-body">
+      <div data-overlay="dialog" style="display: contents"><button data-trigger type="button" class="example-trigger">Open parent</button><div data-backdrop hidden><div data-dialog-backdrop></div><div data-dialog-viewport class=""><div class="dialog-popup" data-content hidden>
+        
+        <header class="dialog-header"><h2>Parent dialog</h2></header>
+        <p>Open the child and press Escape.</p>
+        <div data-overlay="dialog" style="display: contents"><button data-trigger type="button" class="example-trigger">Open child</button><div data-backdrop hidden><div data-dialog-backdrop></div><div data-dialog-viewport class=""><div class="dialog-popup" data-content hidden>
+          
+          
+            <header class="dialog-header"><h2>Child dialog</h2></header>
+            <p>Escape closes this child first.</p>
+            <button type="button" class="example-trigger" data-close>Close child</button>
+          
+        </div></div></div></div>
+      </div></div></div></div>
+    </div></section>
+
+    <section class="example-card"><h2>L. Dialog with Popover</h2><p class="example-description">A child Popover renders inside the Dialog popup. Escape closes the Popover before the Dialog.</p><div class="example-body">
+      <div data-overlay="dialog" style="display: contents"><button data-trigger type="button" class="example-trigger">Open Dialog with Popover</button><div data-backdrop hidden><div data-dialog-backdrop></div><div data-dialog-viewport class=""><div class="dialog-popup" data-content hidden>
+        
+        
+          <header class="dialog-header"><h2>Dialog with a Popover</h2></header>
+          <p>The Popover stays within the dialog interaction boundary.</p>
+          <div data-overlay="popover" data-portal="inline" style="display: contents"><button data-trigger type="button" class="example-trigger">Open child Popover</button><div class="example-popover" data-content hidden>
+            
+            This is a child Popover. Escape closes it first.
+          </div></div>
+          <footer class="dialog-footer">
+            <button type="button" class="example-trigger" data-close>Close dialog</button>
+          </footer>
+        
+      </div></div></div></div>
+    </div></section>
+
+    <section class="example-card"><h2>O. Dialog inside Popover</h2><p class="example-description">The Dialog opens above the Popover. Escape closes the Dialog first, and the Popover remains available.</p><div class="example-body">
+      <div data-overlay="popover" style="display: contents"><button data-trigger type="button" class="example-trigger">Open parent Popover</button><div class="example-popover" data-content hidden>
+        
+        <p>Popover content</p>
+        <div data-overlay="dialog" style="display: contents"><button data-trigger type="button" class="example-trigger">Open Dialog from Popover</button><div data-backdrop hidden><div data-dialog-backdrop></div><div data-dialog-viewport class=""><div class="dialog-popup" data-content hidden>
+          
+          
+            <header class="dialog-header"><h2>Dialog above Popover</h2></header>
+            <p>Escape closes this Dialog, not the Popover.</p>
+            <button type="button" class="example-trigger" data-close>Close dialog</button>
+          
+        </div></div></div></div>
+      </div></div>
+    </div></section>
+
+    <section class="example-card"><h2>M. RTL</h2><p class="example-description">Consumer-owned layout and close placement follow the configured text direction.</p><div class="example-body">
+      <div data-overlay="dialog" data-dir="rtl" style="display: contents"><button data-trigger type="button" class="example-trigger">فتح الحوار</button><div data-backdrop hidden><div data-dialog-backdrop></div><div data-dialog-viewport class=""><div class="dialog-popup dialog-rtl" data-content hidden dir="rtl">
+        
+        
+          <div class="dialog-title-row">
+            <header class="dialog-header">
+              <h2>إعدادات الحساب</h2>
+              <p>واجهة من اليمين إلى اليسار مع زر إغلاق مخصص.</p>
+            </header>
+            <button type="button" class="dialog-icon-close" aria-label="إغلاق" data-close>
+              ×
+            </button>
+          </div>
+          <p>المحتوى يتبع اتجاه النص الذي يحدده المستهلك.</p>
+        
+      </div></div></div></div>
+    </div></section>
+
+    <section class="example-card"><h2>N. Mobile viewport</h2><p class="example-description">At narrow widths the example CSS aligns the Dialog to the bottom. The library imposes no mobile layout.</p><div class="example-body">
+      <div data-overlay="dialog" style="display: contents"><button data-trigger type="button" class="example-trigger">Open responsive dialog</button><div data-backdrop hidden><div data-dialog-backdrop></div><div data-dialog-viewport class=""><div class="dialog-popup dialog-popup--mobile" data-content hidden>
+        
+        
+          <header class="dialog-header">
+            <h2>Responsive dialog</h2>
+            <p>Resize the preview to see the consumer CSS.</p>
+          </header>
+          <label>Email <input type="email" placeholder="you@example.com" /></label>
+          <footer class="dialog-footer">
+            <button type="button" class="example-trigger" data-close>Close</button>
+            <button type="button" class="example-trigger">Continue</button>
+          </footer>
+        
+      </div></div></div></div>
+    </div></section>
+  </div>
+
       </section>
 
-      <section class="demo">
-        <h2>7–14. High-level overlay components</h2>
-        <p class="copy">
-          <code>createPopover()</code>, <code>createTooltip()</code>,
-          <code>createDialog()</code>, and <code>createContextMenu()</code>
-          package the same Core behavior with explicit DOM lifecycle.
-        </p>
 
-        <div class="demo-grid">
-          <div class="demo-card">
-            <h3>Popover + placement</h3>
-            <button id="hl-popover-trigger" type="button">Open popover</button>
-            <button id="hl-placement" type="button">Placement: bottom-start</button>
-            <div id="hl-popover-content" class="popover-surface" hidden>
-              <p>Portaled popover content.</p>
-              <button id="hl-popover-close" type="button">Close</button>
-            </div>
-          </div>
+      <section id="context-menu" class="examples-section">
+        <h2 class="examples-section-title">ContextMenu examples</h2>
+  <div class="example-grid">
+    <section class="example-card"><h2>A. Basic</h2><p class="example-description">Right-click anywhere in the card. Selection closes the menu.</p><div class="example-body">
+      <div id="cm-basic" data-overlay="context-menu" style="display: contents"><div data-trigger class="context-menu-target" tabindex="0">Right-click this card</div><div class="context-menu-surface" data-content hidden>
+        
+        <div role="menuitem" tabindex="-1">Copy</div>
+        <div role="menuitem" tabindex="-1">Cut</div>
+        <div role="separator" data-context-menu-separator></div>
+        <div role="menuitem" tabindex="-1">Paste</div>
+      </div></div>
+      <p class="example-small" id="cm-last">Last action: Nothing selected</p>
+    </div></section>
 
-          <div class="demo-card">
-            <h3>Tooltip</h3>
-            <button id="hl-tooltip-trigger" type="button">Hover or focus me</button>
-            <div id="hl-tooltip-content" class="tooltip-surface" hidden>
-              A concise informational hint.
-            </div>
-          </div>
-
-          <div class="demo-card">
-            <h3>Dialog + nested popover</h3>
-            <button id="hl-dialog-trigger" type="button">Open dialog</button>
-            <div id="hl-dialog-backdrop" class="dialog-backdrop" hidden></div>
-            <div id="hl-dialog-content" class="dialog-surface" hidden>
-              <h2 id="hl-dialog-title">Dialog title</h2>
-              <p>Focus is contained; Escape and backdrop dismiss.</p>
-              <button id="hl-nested-trigger" type="button">Open nested popover</button>
-              <div id="hl-nested-content" class="popover-surface" hidden>
-                <p>Nested popover, still inside the dialog boundary.</p>
-                <button id="hl-nested-close" type="button">Close nested</button>
-              </div>
-              <button id="hl-dialog-close" type="button">Close dialog</button>
-            </div>
-          </div>
-
-          <div class="demo-card">
-            <h3>ContextMenu</h3>
-            <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: focusable context-menu region -->
-            <div id="hl-context-target" class="context-target" tabindex="0">
-              Right-click this target
-            </div>
-            <div id="hl-context-content" class="context-surface" hidden>
-              <div role="menuitem" tabindex="-1">Copy</div>
-              <div role="menuitem" tabindex="-1">Paste</div>
-              <div role="menuitem" tabindex="-1" aria-disabled="true">Unavailable</div>
-            </div>
-          </div>
-
-          <div class="demo-card">
-            <h3>Controlled popover</h3>
-            <button id="hl-controlled-open" type="button">Open</button>
-            <button id="hl-controlled-close" type="button">Close</button>
-            <button id="hl-controlled-trigger" type="button">Toggle controlled</button>
-            <p id="hl-controlled-state" class="status">closed</p>
-            <div id="hl-controlled-content" class="popover-surface" hidden>
-              <p>Visibility is controlled by page state.</p>
-            </div>
-          </div>
-
-          <div class="demo-card">
-            <h3>RTL popover</h3>
-            <div dir="rtl">
-              <button id="hl-rtl-trigger" type="button">افتح</button>
-              <div id="hl-rtl-content" class="popover-surface" hidden>
-                <p>محتوى من اليمين إلى اليسار.</p>
-              </div>
-            </div>
-          </div>
+    <section class="example-card"><h2>B. Icons and shortcut hints</h2><p class="example-description">Shortcut hints are presentational; the component does not register them.</p><div class="example-body">
+      <div data-overlay="context-menu" style="display: contents"><div data-trigger class="context-menu-target" tabindex="0">Right-click for commands</div><div class="context-menu-surface" data-content hidden>
+        
+        <div role="menuitem" tabindex="-1">
+          <span aria-hidden="true">⧉</span> Copy
+          <span data-context-menu-shortcut>⌘C</span>
         </div>
+        <div role="menuitem" tabindex="-1">
+          <span aria-hidden="true">✂</span> Cut
+          <span data-context-menu-shortcut>⌘X</span>
+        </div>
+        <div role="menuitem" tabindex="-1">
+          <span aria-hidden="true">⎘</span> Paste
+          <span data-context-menu-shortcut>⌘V</span>
+        </div>
+      </div></div>
+    </div></section>
+
+    <section class="example-card"><h2>C. Groups, labels, separators</h2><p class="example-description">Labels and separators are not navigable menu items.</p><div class="example-body">
+      <div data-overlay="context-menu" style="display: contents"><div data-trigger class="context-menu-target" tabindex="0">Right-click for grouped actions</div><div class="context-menu-surface" data-content hidden>
+        
+        <div role="group">
+          <div data-context-menu-label>Clipboard</div>
+          <div role="menuitem" tabindex="-1">Copy</div>
+          <div role="menuitem" tabindex="-1">Paste</div>
+        </div>
+        <div role="separator" data-context-menu-separator></div>
+        <div role="group">
+          <div data-context-menu-label>Document</div>
+          <div role="menuitem" tabindex="-1">Rename</div>
+          <div role="menuitem" tabindex="-1">Duplicate</div>
+        </div>
+      </div></div>
+    </div></section>
+
+    <section class="example-card"><h2>G. Disabled and destructive</h2><p class="example-description">Disabled items are skipped by keyboard navigation. Destructive is consumer styling only.</p><div class="example-body">
+      <div data-overlay="context-menu" style="display: contents"><div data-trigger class="context-menu-target" tabindex="0">Right-click for actions</div><div class="context-menu-surface" data-content hidden>
+        
+        <div role="menuitem" tabindex="-1">Archive</div>
+        <div role="menuitem" tabindex="-1" aria-disabled="true">Move to restricted</div>
+        <div role="separator" data-context-menu-separator></div>
+        <div role="menuitem" tabindex="-1" class="context-menu-item--danger">
+          Delete permanently
+        </div>
+      </div></div>
+    </div></section>
+
+    <section class="example-card"><h2>H. Keyboard invocation</h2><p class="example-description">Focus the region, then press the Context Menu key or Shift+F10. The menu anchors to the region.</p><div class="example-body">
+      <div data-overlay="context-menu" style="display: contents"><div data-trigger class="context-menu-target" tabindex="0">Focus me, then Shift+F10</div><div class="context-menu-surface" data-content hidden>
+        
+        <div role="menuitem" tabindex="-1">Keyboard action</div>
+        <div role="menuitem" tabindex="-1">Another command</div>
+      </div></div>
+    </div></section>
+
+    <section class="example-card"><h2>I. Card row</h2><p class="example-description">Contextual commands on a consumer card layout; the trigger is not required to be a button.</p><div class="example-body">
+      <div data-overlay="context-menu" style="display: contents"><article data-trigger class="context-menu-card" tabindex="0">
+            <strong>Quarterly report.pdf</strong>
+            <span>2.4 MB · Edited yesterday</span>
+          </article><div class="context-menu-surface" data-content hidden>
+        
+        <div role="menuitem" tabindex="-1">Open</div>
+        <div role="menuitem" tabindex="-1">Download</div>
+        <div role="separator" data-context-menu-separator></div>
+        <div role="menuitem" tabindex="-1">Rename</div>
+      </div></div>
+    </div></section>
+
+    <section class="example-card"><h2>J. RTL</h2><p class="example-description">Direction flows to the menu; logical arrow keys reverse.</p><div class="example-body">
+      <div dir="rtl">
+        <div data-overlay="context-menu" data-dir="rtl" style="display: contents"><div data-trigger class="context-menu-target" tabindex="0">انقر بزر الفأرة الأيمن هنا</div><div class="context-menu-surface" data-content hidden dir="rtl">
+          
+          <div role="menuitem" tabindex="-1">نسخ</div>
+          <div role="menuitem" tabindex="-1">مشاركة</div>
+          <div role="menuitem" tabindex="-1">حذف</div>
+        </div></div>
+      </div>
+    </div></section>
+
+    <section class="example-card"><h2>K. Viewport edge</h2><p class="example-description">Open near a viewport edge; collision handling flips or shifts the menu back into view.</p><div class="example-body">
+      <div data-overlay="context-menu" style="display: contents"><div data-trigger class="context-menu-target context-menu-edge-target" tabindex="0">
+            Right-click near the edge
+          </div><div class="context-menu-surface" data-content hidden>
+        
+        <div role="menuitem" tabindex="-1">Command one</div>
+        <div role="menuitem" tabindex="-1">Command two</div>
+        <div role="menuitem" tabindex="-1">Command three</div>
+      </div></div>
+    </div></section>
+
+    <section class="example-card"><h2>L. Inside Dialog</h2><p class="example-description">The ContextMenu participates in layer priority inside a Dialog and can open a child Dialog.</p><div class="example-body">
+      <div data-overlay="dialog" style="display: contents"><button data-trigger type="button" class="example-trigger">Open parent Dialog</button><div data-backdrop hidden><div data-dialog-backdrop></div><div data-dialog-viewport class=""><div class="dialog-popup" data-content hidden>
+        
+        <h2>ContextMenu in Dialog</h2>
+        <p>Right-click inside the Dialog content.</p>
+        <div id="cm-child-select" data-overlay="context-menu" data-portal="inline" style="display: contents"><div data-trigger class="context-menu-target context-menu-in-dialog" tabindex="0">
+              Right-click inside Dialog
+            </div><div class="context-menu-surface" data-content hidden>
+          
+          <div role="menuitem" tabindex="-1">Open child Dialog</div>
+        </div></div>
+      </div></div></div></div>
+      <div id="child-dialog" data-overlay="dialog" style="display: contents"><div data-backdrop hidden><div data-dialog-backdrop></div><div data-dialog-viewport class=""><div class="dialog-popup" data-content hidden>
+        <h2>Child Dialog</h2>
+        <p>Opened from a ContextMenu item.</p>
+      </div></div></div></div>
+    </div></section>
+  </div>
+
       </section>
+
     </main>
 
     <script type="module" src="/src/main.ts"></script>

@@ -1,15 +1,12 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
-  isActivationKey,
   isEscapeKey,
-  isFocusInside,
-  isFocusOutside,
   isOutsidePress,
   isPointerOutside,
   isPrimaryPointer,
 } from "../dist/index.js";
-import { dispatchFocusOut, dispatchPointer } from "./support/dom.ts";
+import { dispatchPointer } from "./support/dom.ts";
 
 function keyboardEvent(key: string): KeyboardEvent {
   return { key } as KeyboardEvent;
@@ -81,23 +78,7 @@ test("outside press follows shadow DOM composed paths", () => {
   assert.equal(isOutsidePress(outsideEvent, [container]), true);
 });
 
-test("focus helpers follow relatedTarget", () => {
-  const container = document.createElement("div");
-  const inside = document.createElement("button");
-  const outside = document.createElement("button");
-  container.append(inside);
-  document.body.append(container, outside);
-
-  const leaveEvent = dispatchFocusOut(container, outside);
-  assert.equal(isFocusOutside(leaveEvent, [container]), true);
-
-  const stayEvent = dispatchFocusOut(container, inside);
-  assert.equal(isFocusOutside(stayEvent, [container]), false);
-  assert.equal(isFocusInside(container, inside), true);
-  assert.equal(isFocusInside(null, inside), false);
-});
-
-test("keyboard helpers recognise escape and activation keys", () => {
+test("keyboard helpers recognise the escape key", () => {
   assert.equal(isEscapeKey(keyboardEvent("Escape")), true);
   assert.equal(isEscapeKey(keyboardEvent("Esc")), true);
   assert.equal(isEscapeKey(keyboardEvent("Enter")), false);
@@ -105,8 +86,4 @@ test("keyboard helpers recognise escape and activation keys", () => {
     isEscapeKey({ key: "Escape", isComposing: true } as KeyboardEvent),
     false,
   );
-
-  assert.equal(isActivationKey(keyboardEvent("Enter")), true);
-  assert.equal(isActivationKey(keyboardEvent(" ")), true);
-  assert.equal(isActivationKey(keyboardEvent("a")), false);
 });

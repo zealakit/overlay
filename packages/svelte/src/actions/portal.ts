@@ -1,3 +1,8 @@
+import {
+  moveToPortal,
+  restorePortal,
+  type PortalState,
+} from "@zealakit/overlay-core";
 import type { Action } from "svelte/action";
 
 export type PortalActionParams = {
@@ -14,10 +19,8 @@ export const portal: Action<HTMLElement, PortalActionParams | undefined> = (
   node,
   params,
 ) => {
-  const parent = node.parentNode;
-  const nextSibling = node.nextSibling;
   let current = params;
-  let moved = false;
+  let state: PortalState | null = null;
 
   const resolveTarget = (
     target: PortalActionParams["target"],
@@ -29,30 +32,18 @@ export const portal: Action<HTMLElement, PortalActionParams | undefined> = (
   };
 
   const move = (): void => {
-    if (!parent || moved) {
+    if (state) {
       return;
     }
-
     const target = resolveTarget(current?.target);
-    if (!target) {
-      return;
+    if (target) {
+      state = moveToPortal(node, target);
     }
-
-    target.appendChild(node);
-    moved = true;
   };
 
   const restore = (): void => {
-    if (!moved || !parent) {
-      return;
-    }
-
-    if (nextSibling?.parentNode === parent) {
-      parent.insertBefore(node, nextSibling);
-    } else {
-      parent.appendChild(node);
-    }
-    moved = false;
+    restorePortal(state);
+    state = null;
   };
 
   if (!current?.disabled) {

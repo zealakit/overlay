@@ -14,269 +14,52 @@ import type {
 } from "../types/layer.js";
 import { isEscapeKey } from "../events/keyboard.js";
 import { isPointerOutside } from "../events/pointer.js";
-import { createPositioner } from "../positioning/index.js";
-import type {
-  Positioner,
-  PositionerBoundary,
-  PositionerResult,
-} from "../types/positioner.js";
+import {
+  applyArrowStyles,
+  createPositioner,
+  DEFAULT_ARROW_SIZE,
+  getArrowStyles,
+  resetArrowStyles,
+  snapshotArrowStyles,
+  type ArrowSnapshot,
+} from "../positioning/index.js";
+import type { Positioner, PositionerResult } from "../types/positioner.js";
 import { parsePlacement } from "../positioning/placement.js";
 import { lockBodyScroll } from "../scroll-lock/scroll-lock.js";
-import type {
-  DismissReason,
-  Placement,
-  ReferenceElement,
-  Strategy,
-} from "../types/index.js";
+import type { DismissReason, ReferenceElement } from "../types/index.js";
 import { isBrowser } from "../utils/dom.js";
 import { listen } from "../lifecycle/index.js";
+import { getMenuItems } from "../menu/navigation.js";
+import { acquireModalBackground } from "../modal/background.js";
+import {
+  moveToPortal,
+  restorePortal,
+  type PortalState,
+} from "../portal/portal.js";
 import type { Cleanup } from "../types/lifecycle.js";
+import { createOverlayAnimator } from "./animator.js";
+import { createContextMenuBehavior } from "./context-menu-behavior.js";
+import type { ControllerHost } from "./host.js";
+import { createTooltipBehavior } from "./tooltip-behavior.js";
+import type {
+  OverlayChangeReason,
+  OverlayController,
+  OverlayControllerOptions,
+  OverlayControllerState,
+  OverlayFocusTarget,
+} from "./types.js";
 
-export type OverlayControllerKind =
-  | "popover"
-  | "tooltip"
-  | "dialog"
-  | "context-menu";
-
-export type OverlayChangeReason =
-  | DismissReason
-  | "trigger"
-  | "select"
-  | "programmatic";
-
-export type OverlayFocusTarget = "container" | "first" | Element | null;
-
-export type OverlayControllerOptions = {
-  kind: OverlayControllerKind;
-  trigger: HTMLElement;
-  content: HTMLElement;
-  backdrop?: HTMLElement | null;
-  /** Controlled visibility; use setOpen() to reflect external state. */
-  open?: boolean;
-  defaultOpen?: boolean;
-  disabled?: boolean;
-  onOpenChange?: (open: boolean, reason: OverlayChangeReason) => void;
-  onSelect?: (item: HTMLElement, event: MouseEvent) => void;
-  portal?: Element | null;
-  stack?: LayerStack;
-  parentLayer?: LayerStackHandle | null;
-  boundaries?: readonly (Element | null)[];
-  placement?: Placement;
-  offset?: number;
-  alignOffset?: number;
-  flip?: boolean;
-  shift?: boolean;
-  padding?: number;
-  boundary?: PositionerBoundary;
-  strategy?: Strategy;
-  autoUpdate?: boolean;
-  dir?: "ltr" | "rtl";
-  dismissOnEscape?: boolean;
-  dismissOnOutsidePress?: boolean;
-  modal?: boolean;
-  lockScroll?: boolean;
-  trapFocus?: boolean;
-  initialFocus?: OverlayFocusTarget | boolean;
-  finalFocus?: Element | null;
-  restoreFocus?: boolean;
-  /** Tooltip open/close delays. */
-  delay?: number;
-  closeDelay?: number;
-  hoverableContent?: boolean;
-  /** Dialog ARIA relationships. */
-  labelledBy?: string;
-  describedBy?: string;
-};
-
-export type OverlayControllerState = {
-  isOpen: boolean;
-  placement: Placement;
-  point: { x: number; y: number } | null;
-};
-
-export type OverlayController = {
-  readonly contentId: string;
-  readonly isOpen: boolean;
-  open(reason?: OverlayChangeReason): void;
-  /** Set an explicit context-menu point (null anchors to the trigger). */
-  openAt(
-    point: { x: number; y: number } | null,
-    reason?: OverlayChangeReason,
-  ): void;
-  close(reason?: OverlayChangeReason): void;
-  toggle(reason?: OverlayChangeReason): void;
-  /** Reflect controlled external visibility without emitting onOpenChange. */
-  setOpen(open: boolean): void;
-  setOptions(options: Partial<OverlayControllerOptions>): void;
-  update(): Promise<PositionerResult | null>;
-  subscribe(listener: (state: OverlayControllerState) => void): Cleanup;
-  destroy(): void;
-};
+export type {
+  OverlayArrowOptions,
+  OverlayChangeReason,
+  OverlayController,
+  OverlayControllerKind,
+  OverlayControllerOptions,
+  OverlayControllerState,
+  OverlayFocusTarget,
+} from "./types.js";
 
 let idCounter = 0;
-
-type PortalState = {
-  parent: Node;
-  nextSibling: Node | null;
-  element: HTMLElement;
-};
-
-function moveToPortal(
-  element: HTMLElement,
-  target: Element,
-): PortalState | null {
-  const parent = element.parentNode;
-  if (!parent) {
-    return null;
-  }
-  const state = { parent, nextSibling: element.nextSibling, element };
-  target.appendChild(element);
-  return state;
-}
-
-function restorePortal(state: PortalState | null): void {
-  if (!state) {
-    return;
-  }
-  if (state.nextSibling?.parentNode === state.parent) {
-    state.parent.insertBefore(state.element, state.nextSibling);
-  } else {
-    state.parent.appendChild(state.element);
-  }
-}
-
-type BackgroundEntry = {
-  roots: Element[];
-  hidden: Map<HTMLElement, { inert: string | null; ariaHidden: string | null }>;
-};
-
-const backgroundStacks = new WeakMap<Document, BackgroundEntry[]>();
-
-function topLevelBodyChild(
-  root: Element,
-  body: HTMLElement,
-): HTMLElement | null {
-  let node: Element | null = root;
-  while (node?.parentElement && node.parentElement !== body) {
-    node = node.parentElement;
-  }
-  return node?.parentElement === body ? (node as HTMLElement) : null;
-}
-
-function isBackgroundLive(element: HTMLElement): boolean {
-  if (element.hasAttribute("aria-live")) {
-    return true;
-  }
-  const role = element.getAttribute("role");
-  return role === "status" || role === "alert" || role === "log";
-}
-
-function isNonVisual(element: HTMLElement): boolean {
-  return ["SCRIPT", "STYLE", "LINK", "META", "TEMPLATE"].includes(
-    element.tagName,
-  );
-}
-
-function applyBackground(documentRef: Document): void {
-  const stack = backgroundStacks.get(documentRef);
-  if (!stack) {
-    return;
-  }
-  const body = documentRef.body;
-  const active = new Set<HTMLElement>();
-  const top = stack.at(-1);
-  if (!top) {
-    return;
-  }
-  for (const root of top.roots) {
-    if (!root.isConnected) {
-      continue;
-    }
-    const child = topLevelBodyChild(root, body);
-    if (child) {
-      active.add(child);
-    }
-  }
-
-  for (const [element, previous] of [...top.hidden]) {
-    if (!element.isConnected || active.has(element)) {
-      if (previous.inert === null) {
-        element.removeAttribute("inert");
-      } else {
-        element.setAttribute("inert", previous.inert);
-      }
-      if (previous.ariaHidden === null) {
-        element.removeAttribute("aria-hidden");
-      } else {
-        element.setAttribute("aria-hidden", previous.ariaHidden);
-      }
-      top.hidden.delete(element);
-    }
-  }
-
-  for (const child of [...body.children]) {
-    if (!(child instanceof HTMLElement)) {
-      continue;
-    }
-    if (active.has(child) || isBackgroundLive(child) || isNonVisual(child)) {
-      continue;
-    }
-    if (top.hidden.has(child)) {
-      continue;
-    }
-    top.hidden.set(child, {
-      inert: child.getAttribute("inert"),
-      ariaHidden: child.getAttribute("aria-hidden"),
-    });
-    child.setAttribute("inert", "");
-    child.setAttribute("aria-hidden", "true");
-  }
-}
-
-function acquireBackground(documentRef: Document, roots: Element[]): Cleanup {
-  let stack = backgroundStacks.get(documentRef);
-  if (!stack) {
-    stack = [];
-    backgroundStacks.set(documentRef, stack);
-  }
-  const entry: BackgroundEntry = { roots, hidden: new Map() };
-  stack.push(entry);
-  applyBackground(documentRef);
-
-  let released = false;
-  return () => {
-    if (released) {
-      return;
-    }
-    released = true;
-    const current = backgroundStacks.get(documentRef);
-    if (!current) {
-      return;
-    }
-    const index = current.indexOf(entry);
-    if (index >= 0) {
-      current.splice(index, 1);
-    }
-    for (const [element, previous] of entry.hidden) {
-      if (previous.inert === null) {
-        element.removeAttribute("inert");
-      } else {
-        element.setAttribute("inert", previous.inert);
-      }
-      if (previous.ariaHidden === null) {
-        element.removeAttribute("aria-hidden");
-      } else {
-        element.setAttribute("aria-hidden", previous.ariaHidden);
-      }
-    }
-    entry.hidden.clear();
-    if (current.length === 0) {
-      backgroundStacks.delete(documentRef);
-    } else {
-      applyBackground(documentRef);
-    }
-  };
-}
 
 function focusTarget(
   content: HTMLElement,
@@ -296,19 +79,6 @@ function focusTarget(
     return;
   }
   focusElement(target);
-}
-
-function menuItems(content: HTMLElement): HTMLElement[] {
-  return [
-    ...content.querySelectorAll<HTMLElement>(
-      '[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]',
-    ),
-  ].filter(
-    (item) =>
-      item.getAttribute("aria-disabled") !== "true" &&
-      !item.hasAttribute("disabled") &&
-      !item.hidden,
-  );
 }
 
 /**
@@ -348,18 +118,40 @@ export function createOverlayController(
   let backgroundCleanup: Cleanup | null = null;
   let scrollCleanup: Cleanup | null = null;
   let containment: FocusContainment | null = null;
-  let openTimer: ReturnType<typeof setTimeout> | null = null;
-  let closeTimer: ReturnType<typeof setTimeout> | null = null;
   let docCleanups: Cleanup[] = [];
-  let typeahead = "";
-  let typeaheadTimer: ReturnType<typeof setTimeout> | null = null;
   let destroyed = false;
-  let pointerOver = false;
-  let focused = false;
-  let contentHovered = false;
-  let keyboardInvokedAt = 0;
-  let point: { x: number; y: number } | null = null;
   let latestResult: PositionerResult | null = null;
+  let arrowElement: HTMLElement | null = null;
+  let arrowSnapshot: ArrowSnapshot | null = null;
+
+  const arrowSupported = (): boolean =>
+    options.kind === "popover" || options.kind === "tooltip";
+
+  const arrowPositionerOption = () =>
+    arrowSupported() && options.arrow
+      ? { element: options.arrow.element, padding: options.arrow.padding ?? 0 }
+      : null;
+
+  const syncArrowElement = (): void => {
+    const next = arrowSupported() ? (options.arrow ?? null) : null;
+    const nextElement = next?.element ?? null;
+    if (nextElement !== arrowElement) {
+      if (arrowElement && arrowSnapshot) {
+        resetArrowStyles(arrowElement, arrowSnapshot);
+      }
+      arrowElement = nextElement;
+      arrowSnapshot = nextElement ? snapshotArrowStyles(nextElement) : null;
+    }
+    if (arrowElement && next) {
+      // Size first so the positioner can measure the arrow before geometry arrives.
+      const size = `${next.size ?? DEFAULT_ARROW_SIZE}px`;
+      arrowElement.style.position = "absolute";
+      arrowElement.style.width = size;
+      arrowElement.style.height = size;
+      arrowElement.style.visibility = "hidden";
+    }
+  };
+  syncArrowElement();
 
   const original = {
     contentHidden: initial.content.hidden,
@@ -381,10 +173,27 @@ export function createOverlayController(
   const currentOpen = (): boolean =>
     disabled ? false : isControlled ? controlledOpen : internalOpen;
 
+  const host: ControllerHost = {
+    doc,
+    getOptions: () => options,
+    isDisabled: () => disabled,
+    isOpen: currentOpen,
+    requestOpen: (reason) => requestOpen(reason),
+    requestClose: (reason) => requestClose(reason),
+  };
+  const animator = createOverlayAnimator(
+    host,
+    initial.animation,
+    () => destroyed,
+    () => finalizeClose(),
+  );
+  const tooltip = createTooltipBehavior(host);
+  const contextMenu = createContextMenuBehavior(host);
+
   const snapshot = (): OverlayControllerState => ({
     isOpen: currentOpen(),
     placement: latestResult?.placement ?? options.placement ?? "bottom",
-    point,
+    point: contextMenu.point,
   });
 
   const emitState = (): void => {
@@ -411,6 +220,7 @@ export function createOverlayController(
           boundary: initial.boundary,
           strategy: initial.strategy,
           autoUpdate: initial.autoUpdate ?? true,
+          arrow: arrowPositionerOption(),
         });
 
   const unsubscribePosition = positioner.subscribe(
@@ -428,6 +238,19 @@ export function createOverlayController(
       options.content.dataset.side = parsed.side;
       options.content.dataset.align = parsed.align;
       options.content.dataset.placement = result.placement;
+      if (arrowElement) {
+        applyArrowStyles(
+          arrowElement,
+          getArrowStyles({
+            placement: result.placement,
+            arrow: result.arrow,
+            size: options.arrow?.size,
+          }),
+        );
+      }
+      if (animator.pendingEnter) {
+        animator.playEnter(result.placement);
+      }
     },
   );
 
@@ -515,11 +338,11 @@ export function createOverlayController(
     }
     const reference: ReferenceElement | null =
       options.kind === "context-menu"
-        ? point
+        ? contextMenu.point
           ? {
               getBoundingClientRect: () => ({
-                x: point?.x ?? 0,
-                y: point?.y ?? 0,
+                x: contextMenu.point?.x ?? 0,
+                y: contextMenu.point?.y ?? 0,
                 width: 0,
                 height: 0,
               }),
@@ -599,25 +422,6 @@ export function createOverlayController(
     docCleanups = [];
   };
 
-  const clearTimers = (): void => {
-    if (openTimer) {
-      clearTimeout(openTimer);
-      openTimer = null;
-    }
-    if (closeTimer) {
-      clearTimeout(closeTimer);
-      closeTimer = null;
-    }
-  };
-
-  const clearTypeahead = (): void => {
-    if (typeaheadTimer) {
-      clearTimeout(typeaheadTimer);
-      typeaheadTimer = null;
-    }
-    typeahead = "";
-  };
-
   const restoreFocusAfterClose = (): void => {
     if (options.kind === "tooltip" || options.restoreFocus === false) {
       return;
@@ -642,7 +446,11 @@ export function createOverlayController(
     previousActive = getActiveElement(doc);
     if (options.portal) {
       const states: PortalState[] = [];
-      const contentState = moveToPortal(options.content, options.portal);
+      // A backdrop that wraps the content moves as one unit.
+      const wrapped = options.backdrop?.contains(options.content) ?? false;
+      const contentState = wrapped
+        ? null
+        : moveToPortal(options.content, options.portal);
       if (contentState) {
         states.push(contentState);
       }
@@ -655,6 +463,7 @@ export function createOverlayController(
       portalStates = states;
     }
 
+    animator.settleExit();
     setContentOpenState(true);
     if (options.dir === "rtl") {
       options.content.dir = "rtl";
@@ -669,7 +478,11 @@ export function createOverlayController(
     }
     registerLayer();
     startDocumentListeners();
+    animator.pendingEnter = animator.enabled && options.kind !== "dialog";
     syncPositionReference();
+    if (animator.enabled && options.kind === "dialog") {
+      animator.playEnter();
+    }
 
     if (options.kind === "dialog") {
       const modal = options.modal ?? true;
@@ -689,7 +502,7 @@ export function createOverlayController(
         options.content.setAttribute("tabindex", "-1");
       }
       if (modal) {
-        backgroundCleanup = acquireBackground(doc, [
+        backgroundCleanup = acquireModalBackground(doc, [
           options.content,
           ...(options.backdrop ? [options.backdrop] : []),
         ]);
@@ -717,7 +530,7 @@ export function createOverlayController(
       if (!options.content.hasAttribute("tabindex")) {
         options.content.setAttribute("tabindex", "-1");
       }
-      const items = menuItems(options.content);
+      const items = getMenuItems(options.content);
       for (const item of items) {
         if (!item.hasAttribute("tabindex")) {
           item.setAttribute("tabindex", "-1");
@@ -747,9 +560,21 @@ export function createOverlayController(
     }
   };
 
-  const closeState = (): void => {
-    clearTimers();
-    clearTypeahead();
+  const finalizeClose = (): void => {
+    setContentOpenState(false);
+    delete options.content.dataset.animating;
+    for (const state of portalStates.reverse()) {
+      restorePortal(state);
+    }
+    portalStates = [];
+  };
+
+  const closeState = (immediate = false): void => {
+    const wasShown = !options.content.hidden;
+    animator.cancelEnter();
+    animator.settleExit();
+    tooltip.reset();
+    contextMenu.reset();
     stopDocumentListeners();
     disposeLayer();
     containment?.dispose();
@@ -767,17 +592,16 @@ export function createOverlayController(
         options.trigger.removeAttribute("aria-describedby");
       }
     }
-    setContentOpenState(false);
     setTriggerOpenState(false);
     if (options.kind !== "dialog") {
       positioner.setReference(null);
       positioner.setFloating(null);
     }
-    for (const state of portalStates.reverse()) {
-      restorePortal(state);
+    if (!immediate && animator.enabled && wasShown) {
+      animator.startExit(latestResult?.placement);
+    } else {
+      finalizeClose();
     }
-    portalStates = [];
-    contentHovered = false;
   };
 
   const emitChange = (open: boolean, reason: OverlayChangeReason): void => {
@@ -830,7 +654,7 @@ export function createOverlayController(
 
   const open = (reason: OverlayChangeReason = "programmatic"): void => {
     if (options.kind === "context-menu") {
-      point = null;
+      contextMenu.point = null;
     }
     requestOpen(reason);
   };
@@ -854,6 +678,13 @@ export function createOverlayController(
 
   const setOptions = (next: Partial<OverlayControllerOptions>): void => {
     options = { ...options, ...next };
+    if (next.animation !== undefined) {
+      animator.setConfig(next.animation);
+    }
+    if (next.arrow !== undefined) {
+      syncArrowElement();
+      positioner.setOptions({ arrow: arrowPositionerOption() });
+    }
     if (next.disabled !== undefined) {
       const wasOpen = currentOpen();
       disabled = next.disabled;
@@ -903,125 +734,12 @@ export function createOverlayController(
   };
 
   const handleTriggerClick = (): void => {
-    if (options.kind === "popover" || options.kind === "dialog") {
+    if (
+      (options.kind === "popover" || options.kind === "dialog") &&
+      options.toggleOnTriggerClick !== false
+    ) {
       toggle("trigger");
     }
-  };
-
-  const handleContextMenu = (event: MouseEvent): void => {
-    if (disabled || options.kind !== "context-menu") {
-      return;
-    }
-    if (
-      event.button === 0 &&
-      keyboardInvokedAt > 0 &&
-      Date.now() - keyboardInvokedAt < 500
-    ) {
-      keyboardInvokedAt = 0;
-      event.preventDefault();
-      return;
-    }
-    event.preventDefault();
-    point = { x: event.clientX, y: event.clientY };
-    requestOpen("trigger");
-  };
-
-  const handleKeyDownTrigger = (event: KeyboardEvent): void => {
-    if (
-      options.kind !== "context-menu" ||
-      disabled ||
-      (event.key !== "ContextMenu" && !(event.shiftKey && event.key === "F10"))
-    ) {
-      return;
-    }
-    event.preventDefault();
-    keyboardInvokedAt = Date.now();
-    point = null;
-    requestOpen("trigger");
-  };
-
-  const handlePointerEnter = (event: PointerEvent): void => {
-    if (
-      options.kind !== "tooltip" ||
-      disabled ||
-      event.pointerType === "touch"
-    ) {
-      return;
-    }
-    pointerOver = true;
-    clearTimers();
-    const wait = options.delay ?? 500;
-    if (wait <= 0) {
-      requestOpen("trigger");
-      return;
-    }
-    openTimer = setTimeout(() => {
-      openTimer = null;
-      requestOpen("trigger");
-    }, wait);
-  };
-
-  const scheduleClose = (): void => {
-    if (options.kind !== "tooltip" || !currentOpen()) {
-      return;
-    }
-    clearTimers();
-    const wait = options.closeDelay ?? 100;
-    if (wait <= 0) {
-      requestClose("programmatic");
-      return;
-    }
-    closeTimer = setTimeout(() => {
-      closeTimer = null;
-      if (
-        !pointerOver &&
-        !focused &&
-        (!(options.hoverableContent ?? true) || !contentHovered)
-      ) {
-        requestClose("programmatic");
-      }
-    }, wait);
-  };
-
-  const handlePointerLeave = (): void => {
-    if (options.kind !== "tooltip") {
-      return;
-    }
-    pointerOver = false;
-    scheduleClose();
-  };
-
-  const handleFocus = (): void => {
-    if (options.kind !== "tooltip" || disabled) {
-      return;
-    }
-    focused = true;
-    clearTimers();
-    requestOpen("trigger");
-  };
-
-  const handleBlur = (): void => {
-    if (options.kind !== "tooltip") {
-      return;
-    }
-    focused = false;
-    scheduleClose();
-  };
-
-  const handleContentPointerEnter = (): void => {
-    if (options.kind !== "tooltip" || !(options.hoverableContent ?? true)) {
-      return;
-    }
-    contentHovered = true;
-    clearTimers();
-  };
-
-  const handleContentPointerLeave = (): void => {
-    if (options.kind !== "tooltip") {
-      return;
-    }
-    contentHovered = false;
-    scheduleClose();
   };
 
   const handleContentFocusIn = (): void => {
@@ -1034,114 +752,6 @@ export function createOverlayController(
     }
   };
 
-  const focusMenuItem = (item: HTMLElement): void => {
-    item.focus();
-  };
-
-  const handleMenuKeyDown = (event: KeyboardEvent): void => {
-    if (options.kind !== "context-menu" || event.defaultPrevented) {
-      return;
-    }
-    const items = menuItems(options.content);
-    if (items.length === 0) {
-      return;
-    }
-    const active = getActiveElement(doc);
-    const index = active ? items.indexOf(active as HTMLElement) : -1;
-    const move = (delta: 1 | -1): void => {
-      event.preventDefault();
-      const next =
-        index === -1
-          ? delta > 0
-            ? 0
-            : items.length - 1
-          : (index + delta + items.length) % items.length;
-      const target = items[next];
-      if (target) {
-        focusMenuItem(target);
-      }
-    };
-    if (event.key === "ArrowDown") {
-      move(1);
-      return;
-    }
-    if (event.key === "ArrowUp") {
-      move(-1);
-      return;
-    }
-    if (event.key === "Home") {
-      event.preventDefault();
-      const first = items[0];
-      if (first) {
-        focusMenuItem(first);
-      }
-      return;
-    }
-    if (event.key === "End") {
-      event.preventDefault();
-      const last = items.at(-1);
-      if (last) {
-        focusMenuItem(last);
-      }
-      return;
-    }
-    if (event.key === "Enter" || event.key === " ") {
-      if (active instanceof HTMLElement && items.includes(active)) {
-        event.preventDefault();
-        active.click();
-      }
-      return;
-    }
-    if (
-      event.key.length === 1 &&
-      event.key !== " " &&
-      !event.ctrlKey &&
-      !event.metaKey &&
-      !event.altKey
-    ) {
-      event.preventDefault();
-      typeahead += event.key.toLocaleLowerCase();
-      if (typeaheadTimer) {
-        clearTimeout(typeaheadTimer);
-      }
-      typeaheadTimer = setTimeout(clearTypeahead, 500);
-      const ordered = [...items.slice(index + 1), ...items.slice(0, index + 1)];
-      const match = ordered.find((item) =>
-        (item.textContent ?? "")
-          .trim()
-          .toLocaleLowerCase()
-          .startsWith(typeahead),
-      );
-      if (match) {
-        focusMenuItem(match);
-      }
-    }
-  };
-
-  const handleMenuClick = (event: MouseEvent): void => {
-    if (options.kind !== "context-menu" || event.defaultPrevented) {
-      return;
-    }
-    const target = event.target as Element | null;
-    const item = target?.closest<HTMLElement>(
-      '[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]',
-    );
-    if (!item || !options.content.contains(item)) {
-      return;
-    }
-    if (
-      item.getAttribute("aria-disabled") === "true" ||
-      item.hasAttribute("disabled")
-    ) {
-      return;
-    }
-    options.onSelect?.(item, event);
-    const role = item.getAttribute("role");
-    if (role === "menuitem" && !item.hasAttribute("data-keep-open")) {
-      requestClose("select");
-    }
-  };
-
   const triggerClick =
     options.kind === "popover" || options.kind === "dialog"
       ? handleTriggerClick
@@ -1150,18 +760,10 @@ export function createOverlayController(
     options.trigger.addEventListener("click", triggerClick);
   }
   if (options.kind === "tooltip") {
-    options.trigger.addEventListener("pointerenter", handlePointerEnter);
-    options.trigger.addEventListener("pointerleave", handlePointerLeave);
-    options.trigger.addEventListener("focus", handleFocus);
-    options.trigger.addEventListener("blur", handleBlur);
-    options.content.addEventListener("pointerenter", handleContentPointerEnter);
-    options.content.addEventListener("pointerleave", handleContentPointerLeave);
+    tooltip.attach();
   }
   if (options.kind === "context-menu") {
-    options.trigger.addEventListener("contextmenu", handleContextMenu);
-    options.trigger.addEventListener("keydown", handleKeyDownTrigger);
-    options.content.addEventListener("keydown", handleMenuKeyDown);
-    options.content.addEventListener("click", handleMenuClick);
+    contextMenu.attach();
   }
   options.content.addEventListener("focusin", handleContentFocusIn);
   options.content.addEventListener("focusout", handleContentFocusOut);
@@ -1199,7 +801,7 @@ export function createOverlayController(
     },
     open,
     openAt(nextPoint, reason = "programmatic") {
-      point = nextPoint;
+      contextMenu.point = nextPoint;
       requestOpen(reason);
     },
     close,
@@ -1218,33 +820,19 @@ export function createOverlayController(
       if (destroyed) {
         return;
       }
-      closeState();
+      closeState(true);
       destroyed = true;
+      if (arrowElement && arrowSnapshot) {
+        resetArrowStyles(arrowElement, arrowSnapshot);
+      }
+      arrowElement = null;
       unsubscribePosition();
       positioner.dispose();
       if (triggerClick) {
         options.trigger.removeEventListener("click", triggerClick);
       }
-      if (options.kind === "tooltip") {
-        options.trigger.removeEventListener("pointerenter", handlePointerEnter);
-        options.trigger.removeEventListener("pointerleave", handlePointerLeave);
-        options.trigger.removeEventListener("focus", handleFocus);
-        options.trigger.removeEventListener("blur", handleBlur);
-        options.content.removeEventListener(
-          "pointerenter",
-          handleContentPointerEnter,
-        );
-        options.content.removeEventListener(
-          "pointerleave",
-          handleContentPointerLeave,
-        );
-      }
-      if (options.kind === "context-menu") {
-        options.trigger.removeEventListener("contextmenu", handleContextMenu);
-        options.trigger.removeEventListener("keydown", handleKeyDownTrigger);
-        options.content.removeEventListener("keydown", handleMenuKeyDown);
-        options.content.removeEventListener("click", handleMenuClick);
-      }
+      tooltip.detach();
+      contextMenu.detach();
       options.content.removeEventListener("focusin", handleContentFocusIn);
       options.content.removeEventListener("focusout", handleContentFocusOut);
       lease?.release();

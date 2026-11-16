@@ -21,8 +21,10 @@ alwaysApply: true
   exports. Run `pnpm build` before `pnpm typecheck`.
 - Verify with `pnpm check` (build + typecheck + test + lint) before reporting work as done.
   Run the relevant example/docs builds when those areas change.
-- `examples/` are integration/smoke-test projects only. Product documentation lives in READMEs
-  and `docs/`; there is no separate docs app.
-- Load the compact `.agents/skills/overlay/SKILL.md` before code, test, docs, or release work.
-- Update `README.md`, `.agents/AGENTS.md`, and `.agents/skills/overlay/SKILL.md` together when
+- `examples/` are integration/smoke-test projects only. Product documentation lives only in the
+  root and package READMEs (EN, VI, CN); there is no `docs/` folder and no separate docs app.
+- Load the compact `.agents/skills/overlay/SKILL.md` before code, test, docs, or release work,
+  and `.agents/skills/readme-system/SKILL.md` before touching any README. Run
+  `pnpm readme:check` after README changes.
+- Update the READMEs, `.agents/AGENTS.md`, and `.agents/skills/overlay/SKILL.md` together when
   architecture, package boundaries, commands, or documented workflows change.

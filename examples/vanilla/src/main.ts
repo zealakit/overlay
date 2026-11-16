@@ -1,289 +1,350 @@
 import {
-  type LayerHandle,
   type Placement,
-  createContextMenu,
-  createDialog,
+  type PopoverController,
   createFloating,
-  createLayerStack,
-  createOverlay,
-  createPopover,
-  createTooltip,
-  focusElement,
-  focusFirst,
+  initOverlays,
 } from "@zealakit/overlay-vanilla";
 import "./styles.css";
+import "./popover-examples.css";
+import "./tooltip-examples.css";
+import "./dialog-examples.css";
+import "./context-menu-examples.css";
+import "./arrow-animation-examples.css";
 
-function query<T extends Element>(selector: string): T {
-  const element = document.querySelector<T>(selector);
+function query<T extends Element>(
+  selector: string,
+  root: ParentNode = document,
+): T {
+  const element = root.querySelector<T>(selector);
   if (!element) {
     throw new Error(`Example markup is missing ${selector}`);
   }
   return element;
 }
 
-// One stack per document, shared by every layer in this page.
-const stack = createLayerStack();
-const placements: Placement[] = [
-  "bottom-start",
-  "bottom-end",
-  "top-start",
-  "right-start",
-];
+// Markup such as <div data-overlay="popover"> becomes a controller. See the
+// package README for the data-* attributes.
+const overlays = initOverlays();
 
-/* -------------------------------------------------------------------------- */
-/* 1–2. Floating positioning with dynamic updates                             */
-/* -------------------------------------------------------------------------- */
-
-const floatingTrigger = query<HTMLButtonElement>("#floating-trigger");
-const floatingPanel = query<HTMLDivElement>("#floating-panel");
-const floatingStatus = query<HTMLParagraphElement>("#floating-status");
-const cycleButton = query<HTMLButtonElement>("#cycle-placement");
-const disposeButton = query<HTMLButtonElement>("#dispose-demo");
-const closeFloating = query<HTMLButtonElement>("#close-floating");
-
-const floating = createFloating({
-  reference: floatingTrigger,
-  floating: floatingPanel,
-  placement: placements[0],
-  offset: 8,
-  padding: 8,
-});
-
-floating.subscribe((result) => {
-  floatingStatus.textContent = `x=${Math.round(result.x)} y=${Math.round(result.y)} placement=${result.placement}`;
-});
-
-let open = false;
-let layerHandle: LayerHandle | null = null;
-
-function setFloatingOpen(next: boolean): void {
-  if (next === open) {
-    return;
+const overlay = (id: string): PopoverController => {
+  const controller = overlays.get(id);
+  if (!controller) {
+    throw new Error(`No overlay with id ${id}`);
   }
-  open = next;
-  floatingPanel.hidden = !open;
-  floatingPanel.dataset.state = open ? "open" : "closed";
-  floatingTrigger.setAttribute("aria-expanded", String(open));
+  return controller;
+};
 
-  if (open) {
-    layerHandle = stack.register({
-      element: floatingPanel,
-      reference: floatingTrigger,
-      onDismiss: () => setFloatingOpen(false),
+/* -------------------------------------------------------------------------- */
+/* Placement playground (createFloating)                                      */
+/* -------------------------------------------------------------------------- */
+
+const PLACEMENTS = {
+  top: ["top-start", "top", "top-end"],
+  right: ["right-start", "right", "right-end"],
+  bottom: ["bottom-start", "bottom", "bottom-end"],
+  left: ["left-start", "left", "left-end"],
+} as const;
+
+let playgroundPlacement: Placement = "bottom";
+let playgroundOpen = true;
+const pgGrid = query<HTMLElement>("#pg-grid");
+const pgReference = query<HTMLButtonElement>("#pg-reference");
+const pgPreview = query<HTMLElement>("#placement-preview");
+const railButtons = new Map<Placement, HTMLButtonElement>();
+
+for (const [side, placements] of Object.entries(PLACEMENTS)) {
+  const rail = document.createElement("fieldset");
+  rail.className = `placement-rail placement-rail-${side}`;
+  rail.innerHTML = `<legend class="visually-hidden">${side} placements</legend>`;
+  for (const placement of placements) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "placement-button";
+    button.textContent = placement;
+    button.addEventListener("click", () => {
+      playgroundPlacement = placement;
+      syncPlayground();
+      void playground.update();
     });
-    focusFirst(floatingPanel);
-  } else {
-    layerHandle?.dispose();
-    layerHandle = null;
-    focusElement(floatingTrigger);
+    railButtons.set(placement, button);
+    rail.append(button);
   }
+  pgGrid.prepend(rail);
 }
 
-floatingTrigger.addEventListener("click", () => {
-  setFloatingOpen(!open);
+const playground = createFloating({
+  reference: pgReference,
+  floating: pgPreview,
+  placement: playgroundPlacement,
+  offset: 10,
+  padding: 12,
 });
 
-closeFloating.addEventListener("click", () => {
-  setFloatingOpen(false);
-});
+let renderedPlacement: string = playgroundPlacement;
 
-let placementIndex = 0;
-cycleButton.addEventListener("click", () => {
-  placementIndex = (placementIndex + 1) % placements.length;
-  const placement = placements[placementIndex];
-  if (!placement) {
-    return;
+function syncPlayground(): void {
+  for (const [placement, button] of railButtons) {
+    button.dataset.active = String(placement === playgroundPlacement);
+    button.setAttribute(
+      "aria-pressed",
+      String(placement === playgroundPlacement),
+    );
   }
+  query("#pg-placement").textContent = renderedPlacement;
+  query("#pg-label").textContent = renderedPlacement;
+  pgPreview.dataset.placement = renderedPlacement;
+  const requested = query<HTMLElement>("#pg-requested");
+  requested.hidden = renderedPlacement === playgroundPlacement;
+  requested.textContent = `requested ${playgroundPlacement}`;
+  playground.setOptions({ placement: playgroundPlacement });
+}
 
-  cycleButton.textContent = `Placement: ${placement}`;
-  floating.setOptions({ placement });
+playground.subscribe((result) => {
+  renderedPlacement = result.placement;
+  query("#pg-placement").textContent = renderedPlacement;
+  query("#pg-label").textContent = renderedPlacement;
+  pgPreview.dataset.placement = renderedPlacement;
+  const requested = query<HTMLElement>("#pg-requested");
+  requested.hidden = renderedPlacement === playgroundPlacement;
+  requested.textContent = `requested ${playgroundPlacement}`;
 });
 
-disposeButton.addEventListener("click", () => {
-  setFloatingOpen(false);
-  floating.dispose();
-  disposeButton.disabled = true;
-  cycleButton.disabled = true;
-  floatingTrigger.disabled = true;
-  floatingStatus.textContent = "Floating controller disposed";
+function setPlaygroundOpen(open: boolean): void {
+  playgroundOpen = open;
+  pgPreview.hidden = !open;
+  pgReference.setAttribute("aria-expanded", String(open));
+  query("#pg-hint").textContent = open ? "Click to close" : "Click to open";
+  playground.setReference(open ? pgReference : null);
+  if (open) {
+    void playground.update();
+  }
+}
+pgReference.addEventListener("click", () => setPlaygroundOpen(!playgroundOpen));
+document.addEventListener("keydown", (event) => {
+  if (playgroundOpen && event.key === "Escape") {
+    setPlaygroundOpen(false);
+  }
 });
+syncPlayground();
 
 /* -------------------------------------------------------------------------- */
-/* 3–6. Overlay controller: layers, outside, Escape, cleanup                  */
+/* Arrow and animation                                                        */
 /* -------------------------------------------------------------------------- */
 
-const overlayTrigger = query<HTMLButtonElement>("#overlay-trigger");
-const overlayPanel = query<HTMLDivElement>("#overlay-panel");
-const destroyButton = query<HTMLButtonElement>("#destroy-overlay");
+const aa = {
+  arrow: query<HTMLInputElement>("#aa-arrow"),
+  animate: query<HTMLInputElement>("#aa-animate"),
+  type: query<HTMLSelectElement>("#aa-type"),
+  direction: query<HTMLSelectElement>("#aa-direction"),
+  easing: query<HTMLSelectElement>("#aa-easing"),
+  duration: query<HTMLInputElement>("#aa-duration"),
+};
 
-const overlay = createOverlay({
-  reference: overlayTrigger,
-  floating: overlayPanel,
-  stack,
-  placement: "bottom-start",
-  offset: 8,
-  portal: document.body,
-  onOpenChange: (isOpen) => {
-    overlayTrigger.setAttribute("aria-expanded", String(isOpen));
-  },
+// Custom animation: grow from the anchor with a small overshoot.
+const customAnimation = {
+  enter: (context: { transformOrigin: string }) => [
+    { opacity: 0, scale: "0.6", transformOrigin: context.transformOrigin },
+    {
+      opacity: 1,
+      scale: "1.06",
+      offset: 0.7,
+      transformOrigin: context.transformOrigin,
+    },
+    { opacity: 1, scale: "1", transformOrigin: context.transformOrigin },
+  ],
+};
+
+const arrowSizes: Record<string, number> = {
+  "aa-popover": 14,
+  "aa-tooltip": 11,
+};
+
+function syncArrowAnimation(): void {
+  query("#aa-duration-label").textContent = `${aa.duration.value}ms`;
+  for (const id of ["aa-popover", "aa-tooltip"]) {
+    const host = query<HTMLElement>(`#${id}`);
+    const element = query<HTMLElement>("[data-arrow]", host);
+    overlay(id).setOptions({
+      arrow: aa.arrow.checked ? { element, size: arrowSizes[id] } : null,
+      animation: aa.animate.checked
+        ? {
+            type: aa.type.value as "fade",
+            direction: aa.direction.value as "auto",
+            easing: aa.easing.value as "linear",
+            duration: Number(aa.duration.value),
+            ...(aa.type.value === "custom" ? { custom: customAnimation } : {}),
+          }
+        : false,
+    });
+  }
+}
+for (const control of Object.values(aa)) {
+  control.addEventListener("input", syncArrowAnimation);
+  control.addEventListener("change", syncArrowAnimation);
+}
+syncArrowAnimation();
+
+/* -------------------------------------------------------------------------- */
+/* Popover cards                                                              */
+/* -------------------------------------------------------------------------- */
+
+// B. Alignment and placement
+const SIDES = ["top", "right", "bottom", "left"] as const;
+const ALIGNS = ["start", "center", "end"] as const;
+let plSide: (typeof SIDES)[number] = "bottom";
+let plAlign: (typeof ALIGNS)[number] = "center";
+const picker = query<HTMLElement>("#pl-picker");
+const pickerButtons: HTMLButtonElement[] = [];
+for (const side of SIDES) {
+  for (const align of ALIGNS) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = `${side}-${align}`;
+    button.addEventListener("click", () => {
+      plSide = side;
+      plAlign = align;
+      syncPlacementCard();
+    });
+    pickerButtons.push(button);
+    picker.append(button);
+  }
+}
+function syncPlacementCard(): void {
+  query("#pl-label").textContent = `${plSide} / ${plAlign}`;
+  for (const button of pickerButtons) {
+    button.dataset.active = String(
+      button.textContent === `${plSide}-${plAlign}`,
+    );
+  }
+  overlay("pl-overlay").setOptions({
+    placement: `${plSide}-${plAlign}` as Placement,
+  });
+}
+syncPlacementCard();
+
+// C. Form
+query<HTMLFormElement>("#pop-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  query("#pop-form-status").textContent = "Submitted — the popover stays open.";
 });
 
-overlayTrigger.setAttribute("aria-expanded", "false");
-
-destroyButton.addEventListener("click", () => {
-  overlay.destroy();
-  destroyButton.disabled = true;
-  overlayTrigger.disabled = true;
+// K. Controlled state
+const controlledHost = query<HTMLElement>("#ctl-overlay");
+const controlledLog = query("#ctl-log");
+controlledHost.addEventListener("overlay-change", (event) => {
+  const { open, reason } = (
+    event as CustomEvent<{ open: boolean; reason: string }>
+  ).detail;
+  controlledLog.textContent = `${open ? "open" : "closed"} · ${reason}`;
 });
-
-window.addEventListener(
-  "pagehide",
-  () => {
-    setFloatingOpen(false);
-    floating.dispose();
-    overlay.destroy();
-    stack.dispose();
-  },
-  { once: true },
+query("#ctl-open").addEventListener("click", () =>
+  overlay("ctl-overlay").open(),
 );
+query("#ctl-close").addEventListener("click", () => {
+  overlay("ctl-overlay").close();
+  controlledLog.textContent = "closed · programmatic";
+});
+
+// L. Long and dynamic content
+let itemCount = 8;
+const longList = query<HTMLElement>("#long-list");
+function renderItems(): void {
+  longList.replaceChildren(
+    ...Array.from({ length: itemCount }, (_, index) => {
+      const item = document.createElement("li");
+      item.textContent = `Item ${index + 1}`;
+      return item;
+    }),
+  );
+}
+renderItems();
+query("#long-add").addEventListener("click", () => {
+  itemCount += 5;
+  renderItems();
+});
+const longAsync = query<HTMLButtonElement>("#long-async");
+longAsync.addEventListener("click", () => {
+  longAsync.disabled = true;
+  longAsync.textContent = "Loading…";
+  window.setTimeout(() => {
+    itemCount += 3;
+    renderItems();
+    longAsync.disabled = false;
+    longAsync.textContent = "Load async items";
+  }, 300);
+});
 
 /* -------------------------------------------------------------------------- */
-/* 7–14. High-level component controllers                                     */
+/* Dialog cards                                                               */
 /* -------------------------------------------------------------------------- */
 
-const highLevel = [
-  ["hl-popover-trigger", HTMLButtonElement],
-  ["hl-popover-content", HTMLDivElement],
-  ["hl-popover-close", HTMLButtonElement],
-  ["hl-tooltip-trigger", HTMLButtonElement],
-  ["hl-tooltip-content", HTMLDivElement],
-  ["hl-dialog-trigger", HTMLButtonElement],
-  ["hl-dialog-backdrop", HTMLDivElement],
-  ["hl-dialog-content", HTMLDivElement],
-  ["hl-dialog-close", HTMLButtonElement],
-  ["hl-nested-trigger", HTMLButtonElement],
-  ["hl-nested-content", HTMLDivElement],
-  ["hl-nested-close", HTMLButtonElement],
-  ["hl-context-target", HTMLDivElement],
-  ["hl-context-content", HTMLDivElement],
-  ["hl-controlled-open", HTMLButtonElement],
-  ["hl-controlled-close", HTMLButtonElement],
-  ["hl-controlled-trigger", HTMLButtonElement],
-  ["hl-controlled-content", HTMLDivElement],
-  ["hl-controlled-state", HTMLParagraphElement],
-  ["hl-rtl-trigger", HTMLButtonElement],
-  ["hl-rtl-content", HTMLDivElement],
-  ["hl-placement", HTMLButtonElement],
-] as const;
-
-const high = Object.fromEntries(
-  highLevel.map(([id]) => [id, query<HTMLElement>(`#${id}`)]),
-) as Record<(typeof highLevel)[number][0], HTMLElement>;
-
-const popover = createPopover({
-  trigger: high["hl-popover-trigger"],
-  content: high["hl-popover-content"],
-  placement: "bottom-start",
-  offset: 8,
-  portal: document.body,
-});
-high["hl-popover-close"].addEventListener("click", () => popover.close());
-const highPlacements: Placement[] = [
-  "bottom-start",
-  "bottom-end",
-  "top",
-  "right",
-];
-let highPlacementIndex = 0;
-high["hl-placement"].addEventListener("click", () => {
-  highPlacementIndex = (highPlacementIndex + 1) % highPlacements.length;
-  const placement = highPlacements[highPlacementIndex] ?? "bottom-start";
-  high["hl-placement"].textContent = `Placement: ${placement}`;
-  popover.setOptions({ placement });
+// B. Form
+query<HTMLFormElement>("#dlg-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const status = query("#dlg-status");
+  const save = query<HTMLButtonElement>("#dlg-save");
+  status.textContent = "Saving…";
+  save.disabled = true;
+  save.textContent = "Saving…";
+  window.setTimeout(() => {
+    status.textContent = "Saved successfully.";
+    save.disabled = false;
+    save.textContent = "Save";
+  }, 700);
 });
 
-const tooltip = createTooltip({
-  trigger: high["hl-tooltip-trigger"],
-  content: high["hl-tooltip-content"],
-  placement: "top",
-  offset: 6,
-  delay: 200,
-  closeDelay: 80,
-  portal: document.body,
+// C. Controlled
+const dialogState = query("#dlg-ctl-state");
+query("#dlg-ctl-open").addEventListener("click", () => {
+  overlay("dlg-ctl").open();
+  dialogState.textContent = "State: open";
+});
+query("#dlg-ctl").addEventListener("overlay-change", (event) => {
+  const { open } = (event as CustomEvent<{ open: boolean }>).detail;
+  dialogState.textContent = `State: ${open ? "open" : "closed"}`;
 });
 
-const dialog = createDialog({
-  trigger: high["hl-dialog-trigger"],
-  content: high["hl-dialog-content"],
-  backdrop: high["hl-dialog-backdrop"],
-  portal: document.body,
-  modal: true,
-  labelledBy: "hl-dialog-title",
-});
-high["hl-dialog-close"].addEventListener("click", () => dialog.close());
-
-const nestedPopover = createPopover({
-  trigger: high["hl-nested-trigger"],
-  content: high["hl-nested-content"],
-  placement: "bottom-start",
-  offset: 6,
-});
-high["hl-nested-close"].addEventListener("click", () => nestedPopover.close());
-
-const contextMenu = createContextMenu({
-  trigger: high["hl-context-target"],
-  content: high["hl-context-content"],
-  portal: document.body,
-  placement: "bottom-start",
-  onSelect: (item) => {
-    if (item.getAttribute("aria-disabled") === "true") {
-      return;
-    }
-    high["hl-context-target"].textContent = `Selected: ${item.textContent}`;
-  },
+// J. Non-modal background action
+let backgroundCount = 0;
+const background = query<HTMLButtonElement>("#bg-count");
+background.addEventListener("click", () => {
+  backgroundCount += 1;
+  background.textContent = `Background action (${backgroundCount})`;
 });
 
-const controlledPopover = createPopover({
-  trigger: high["hl-controlled-trigger"],
-  content: high["hl-controlled-content"],
-  placement: "bottom-start",
-  offset: 8,
-  portal: document.body,
-  open: false,
-  onOpenChange: (open) => {
-    controlledPopover.setOpen(open);
-    high["hl-controlled-state"].textContent = open ? "open" : "closed";
-  },
+/* -------------------------------------------------------------------------- */
+/* ContextMenu cards                                                          */
+/* -------------------------------------------------------------------------- */
+
+query("#cm-basic").addEventListener("overlay-select", (event) => {
+  const { item } = (event as CustomEvent<{ item: HTMLElement }>).detail;
+  query("#cm-last").textContent =
+    `Last action: ${item.textContent?.trim() ?? ""}`;
 });
-high["hl-controlled-open"].addEventListener("click", () => {
-  controlledPopover.setOpen(true);
-  high["hl-controlled-state"].textContent = "open";
-});
-high["hl-controlled-close"].addEventListener("click", () => {
-  controlledPopover.setOpen(false);
-  high["hl-controlled-state"].textContent = "closed";
+query("#cm-child-select").addEventListener("overlay-select", () => {
+  overlay("child-dialog").open();
 });
 
-const rtlPopover = createPopover({
-  trigger: high["hl-rtl-trigger"],
-  content: high["hl-rtl-content"],
-  placement: "bottom-start",
-  dir: "rtl",
-  offset: 8,
-  portal: document.body,
-});
-rtlPopover.setOptions({ dir: "rtl" });
+/* -------------------------------------------------------------------------- */
+/* Hash navigation                                                            */
+/* -------------------------------------------------------------------------- */
+
+function scrollToHash(): void {
+  const id = window.location.hash.replace(/^#/, "");
+  if (id) {
+    requestAnimationFrame(() =>
+      document.getElementById(id)?.scrollIntoView({ block: "start" }),
+    );
+  }
+}
+scrollToHash();
+window.addEventListener("hashchange", scrollToHash);
 
 window.addEventListener(
   "pagehide",
   () => {
-    popover.destroy();
-    tooltip.destroy();
-    dialog.destroy();
-    nestedPopover.destroy();
-    contextMenu.destroy();
-    controlledPopover.destroy();
-    rtlPopover.destroy();
+    overlays.destroy();
+    playground.dispose();
   },
   { once: true },
 );

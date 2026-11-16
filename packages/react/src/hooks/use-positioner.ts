@@ -9,6 +9,7 @@ import {
   type PositionerResult,
   type ReferenceElement,
   createPositioner,
+  isSamePositionerResult,
 } from "@zealakit/overlay-core";
 
 export type UsePositionerOptions = PositionerOptions & {
@@ -29,19 +30,6 @@ export type UsePositionerReturn = {
   referenceElement: Element | null;
   floatingElement: HTMLElement | null;
 };
-
-function sameResult(
-  previous: PositionerResult | null,
-  next: PositionerResult,
-): boolean {
-  return (
-    previous !== null &&
-    previous.x === next.x &&
-    previous.y === next.y &&
-    previous.placement === next.placement &&
-    previous.strategy === next.strategy
-  );
-}
 
 /**
  * React positioning session.
@@ -108,7 +96,7 @@ export function usePositioner(
       if (!floatingElementRef.current) {
         return;
       }
-      if (sameResult(latestResultRef.current, next)) {
+      if (isSamePositionerResult(latestResultRef.current, next)) {
         return;
       }
       latestResultRef.current = next;

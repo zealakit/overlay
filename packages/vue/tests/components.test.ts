@@ -282,3 +282,57 @@ test("Vue controlled open follows external state", async () => {
   assert.equal(content.value.hidden, true);
   wrapper.unmount();
 });
+
+test("Vue usePopover positions a bound arrow and toggles animation", async () => {
+  const trigger = ref<HTMLElement | null>(null);
+  const content = ref<HTMLElement | null>(null);
+  const arrowEl = ref<HTMLElement | null>(null);
+  const animation = ref<boolean>(false);
+  let popover: ReturnType<typeof usePopover> | undefined;
+  const App = defineComponent({
+    setup() {
+      popover = usePopover({
+        trigger,
+        content,
+        placement: "bottom",
+        arrow: { element: arrowEl, size: 12 },
+        animation,
+      });
+      return () =>
+        h("div", [
+          h("button", { ref: trigger }, "Open"),
+          h("div", { ref: content }, [h("span", { ref: arrowEl })]),
+        ]);
+    },
+  });
+  const wrapper = mount(App, { attachTo: document.body });
+  await nextTick();
+  const arrow = wrapper.element.querySelector("span") as HTMLElement;
+  assert.equal(arrow.style.width, "12px");
+  popover?.open();
+  await popover?.update();
+  assert.equal(arrow.dataset.side, "bottom");
+
+  animation.value = true;
+  await nextTick();
+  const panel = arrow.parentElement as HTMLElement;
+  const originalAnimate = HTMLElement.prototype.animate;
+  const finishers: Array<() => void> = [];
+  HTMLElement.prototype.animate = () =>
+    ({
+      finished: new Promise<void>((resolve) => finishers.push(resolve)),
+      cancel() {},
+    }) as unknown as Animation;
+  try {
+    popover?.close();
+    assert.equal(panel.hidden, false);
+    for (const finish of finishers.splice(0)) {
+      finish();
+    }
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    assert.equal(panel.hidden, true);
+  } finally {
+    HTMLElement.prototype.animate = originalAnimate;
+  }
+  wrapper.unmount();
+});

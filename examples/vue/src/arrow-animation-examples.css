@@ -1,0 +1,41 @@
+.aa-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin-bottom: 14px;
+  color: #9aa7bd;
+  font-size: 13px;
+}
+
+.aa-controls label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aa-controls select {
+  padding: 5px 8px;
+  border: 1px solid #3d5478;
+  border-radius: 7px;
+  background: #0d131c;
+  color: #e8ecf3;
+  font: inherit;
+}
+
+.aa-controls input {
+  accent-color: #6d9cff;
+}
+
+.aa-panel {
+  --overlay-arrow-background: #121a27;
+  --overlay-arrow-border-width: 1px;
+  --overlay-arrow-border-color: #3d5478;
+  max-width: 260px;
+  padding: 10px 14px;
+  border: 1px solid #3d5478;
+  border-radius: 11px;
+  background: #121a27;
+  color: #e8ecf3;
+  font-size: 13px;
+  box-shadow: 0 22px 50px -22px rgb(0 0 0 / 0.9);
+}

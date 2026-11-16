@@ -10,6 +10,7 @@ export {
   type TooltipOptions,
   type UseContextMenuReturn,
   type UseDialogReturn,
+  type UseOverlayArrowOptions,
   type UseOverlayComponentOptions,
   type UseOverlayComponentReturn,
   type UsePopoverReturn,

@@ -16,6 +16,7 @@ import {
   type PositionerOptions,
   type PositionerResult,
   createPositioner,
+  isSamePositionerResult,
 } from "@zealakit/overlay-core";
 
 type MaybeOption<T> = MaybeRefOrGetter<T | undefined>;
@@ -40,19 +41,6 @@ export type UsePositionerReturn = {
   /** Idempotent; also runs automatically on scope disposal. */
   dispose: () => void;
 };
-
-function sameResult(
-  previous: PositionerResult | null,
-  next: PositionerResult,
-): boolean {
-  return (
-    previous !== null &&
-    previous.x === next.x &&
-    previous.y === next.y &&
-    previous.placement === next.placement &&
-    previous.strategy === next.strategy
-  );
-}
 
 /**
  * Vue positioning composable.
@@ -105,7 +93,7 @@ export function usePositioner(
       if (!floatingElement.value) {
         return;
       }
-      if (sameResult(result.value, next)) {
+      if (isSamePositionerResult(result.value, next)) {
         return;
       }
       result.value = next;

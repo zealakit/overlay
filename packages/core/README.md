@@ -1,301 +1,188 @@
 # @zealakit/overlay-core
 
-Framework-independent foundation for floating, layered UI. No React, Vue, Svelte, or DOM
-access at module load — only types, lifecycle contracts, and functions you invoke explicitly.
+[English](https://github.com/zealakit/overlay/blob/main/packages/core/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/core/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/core/README_CN.md)
 
-Adapters (`vanilla`, `react`, `vue`, `svelte`) depend on this package; it never depends on them.
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/cover.svg?raw=true)
 
-## Installation
+Headless positioning, layering, focus, and DOM-controller kernel for every Zealakit Overlay adapter. Provides a collision-aware positioner, a layer stack, focus helpers, and a shared overlay controller. You own visual styling.
+
+Core renders nothing and ships no CSS. Controllers write only inline `position`, `left`, `top` and `data-*` attributes, so your CSS owns every visual and exit animations collapse cleanly.
+
+> **Note**
+> Overlay is headless: it ships no CSS and renders no styled markup. Popover, Tooltip, Dialog, and ContextMenu are implemented. Select, Combobox, DatePicker, DropdownMenu, Menubar, and command palette are not.
+
+## Install
 
 ```bash
 npm install @zealakit/overlay-core
 ```
 
-ESM-only. The package has one runtime dependency (`@floating-ui/dom`) and no framework peer.
-
-## Responsibilities
-
-| Area | What it provides |
-| --- | --- |
-| Element references | Nullable element types, lazy getters, detached-element checks |
-| Lifecycle | `Cleanup`, `Disposer`, event-listener and resize-observer helpers |
-| Events | Pointer, keyboard, focus, and outside-interaction predicates |
-| Layer lifecycle | `createLayer` — open/closed state + subscription |
-| Layer stack | `createLayerManager` (ordering), `createLayerStack` (shared listeners/routing), and `acquireSharedLayerStack()` for one cross-adapter per-document stack |
-| Positioning | Collision-aware `createPositioner`, plus low-level placement math |
-| Focus | Focusable-element lookup, safe focus/restore, active-element resolution, and focus containment |
-| Scroll locking | Reference-counted modal body scroll lock with scrollbar compensation |
-| DOM overlay controller | Shared, framework-neutral open/position/layer/dismiss/focus behavior used by the Vanilla/Vue/Svelte adapters |
+No peer dependencies. The only runtime dependency is `@floating-ui/dom`, which stays behind `createPositioner()` and never appears in public types.
 
 ## Public API
 
-Everything below is exported from the package root. Anything not listed is internal and may
-change without notice.
-
-### Element references
-
 | Export | Purpose |
 | --- | --- |
-| `ReferenceElement`, `VirtualElement`, `FloatingElement` | Anchor and floating element contracts (virtual anchors supported) |
-| `ElementRef`, `ElementGetter`, `ElementSource` | Nullable refs and refs that change over time |
-| `resolveElement(source)` | Resolve an element or getter to the current element |
-| `isConnected(element)` | True when the element is attached to its document |
-| `getRect(element)`, `isElement(value)`, `isBrowser()` | Small DOM guards and measurement helper |
+| `createPositioner(options)` | Collision-aware positioner: `setReference`, `setFloating`, `setOptions`, `update`, `subscribe`, `dispose`. |
+| `computePosition`, `resolvePlacementCoordinates`, `parsePlacement`, `DEFAULT_PLACEMENT` | Synchronous placement math without collision handling. |
+| `getArrowStyles`, `applyArrowStyles`, `resetArrowStyles`, `snapshotArrowStyles` | Arrow geometry helpers for custom integrations. |
+| `createLayerStack`, `acquireSharedLayerStack`, `createLayerStackRegistry` | Layer ordering plus one Escape/outside listener pair per document. |
+| `createLayer` | Open/closed state machine with subscription. |
+| `createOverlayController` | Shared DOM controller for popover, tooltip, dialog, and context menu. |
+| `createFocusContainment`, `focusElement`, `focusFirst`, `getFocusableElements`, `isFocusable`, `getActiveElement`, `restoreFocus` | Focus primitives. |
+| `acquireModalBackground` | Mark body siblings inert while a modal is open; stacks per document. |
+| `moveToPortal`, `restorePortal` | Move an element into a portal target and put it back. |
+| `getMenuItems`, `moveMenuFocus`, `focusFirstMenuItem`, `focusLastMenuItem`, `focusMenuTypeahead`, `createTypeaheadBuffer` | Menu roving focus and typeahead. |
+| `lockBodyScroll` | Reference-counted body scroll lock. |
+| `runOverlayAnimation`, `createFadeKeyframes`, `createExpandKeyframes`, `normalizeAnimationConfig` | Enter/exit animation runner and helpers. |
+| `listen`, `isEscapeKey`, `isOutsidePress`, `isPointerOutside`, `isPrimaryPointer`, `isBrowser` | Event and environment helpers. |
+| `isSamePositionerResult` | Compare positioner results to skip redundant updates. |
 
-`VirtualElement` only promises `{ x, y, width, height }` from `getBoundingClientRect()`.
-The positioning engine adapter expands that to the engine's coordinate shape, so consumers
-never depend on engine types.
+## Usage
 
-### Overlay controller
-
-| Export | Purpose |
-| --- | --- |
-| `createOverlayController(options)` | Framework-neutral DOM controller for Popover, Tooltip, Dialog, and ContextMenu behavior. Manages open state, layer registration, dismissal, focus, positioning, portal transport, dialog modal/scroll/inert behavior, tooltip timing, and basic context-menu keyboard navigation. |
-
-Adapters expose idiomatic wrappers around this shared controller:
-Vanilla factories (`createPopover`, etc.), Vue composables (`usePopover`, etc.), and Svelte
-controller stores (`createPopover`, etc.). React keeps its compound-component implementation.
-
-All adapters use `acquireSharedLayerStack(document)` by default, so overlays from different
-frameworks on the same page share one ordering stack and one keyboard/pointer listener pair.
-Custom layers can still pass an explicit stack.
-
-### Scroll locking
-
-| Export | Purpose |
-| --- | --- |
-| `lockBodyScroll(document?)` | Reference-counted modal body lock; first call captures inline overflow/padding styles, nested calls share the lock, and the final cleanup restores them |
-
-### Lifecycle
-
-| Export | Purpose |
-| --- | --- |
-| `Cleanup` | Idempotent cleanup function type |
-| `createDisposer()` | Collect cleanups; dispose in reverse order; safe to call twice |
-| `listen(target, type, handler, options)` | Add/remove an event listener with a cleanup |
-| `observeResize(elements, callback)` | ResizeObserver lifecycle with a no-op fallback |
-
-Adding a cleanup to a disposed `Disposer` runs it immediately, so late async work cannot leak
-listeners. `listen` and `observeResize` accept nullish targets/elements and degrade to no-ops.
-
-### Events
-
-| Export | Purpose |
-| --- | --- |
-| `isEscapeKey(event)`, `isActivationKey(event)` | Keyboard predicates (Escape/Esc; Enter/Space) |
-| `isPrimaryPointer(event)` | Primary button of the primary pointer |
-| `isOutsidePress(event, elements)` | Target outside every element (`composedPath`, then `contains`) |
-| `isPointerOutside(event, elements)` | Primary-button outside press; right/middle clicks do not dismiss |
-| `isFocusInside(element, target)`, `isFocusOutside(event, elements)` | Focus-contained checks based on `relatedTarget` |
-
-`listenForDismiss({ floating, reference, onDismiss })` builds on these for Escape and
-outside-press dismissal.
-
-### Focus
-
-| Export | Purpose |
-| --- | --- |
-| `getFocusableElements(container)` | Focusable elements in DOM order, skipping disabled/hidden/inert/aria-hidden/`display:none`/`visibility:hidden` nodes |
-| `isFocusable(element)` | Focusability check used by the lookup |
-| `focusElement(element)` | Focus a connected element and report whether focus moved (shadow-root aware) |
-| `focusFirst(container)` | Focus the first focusable descendant, trying later candidates if earlier ones cannot take focus |
-| `getActiveElement(root?)` | Deepest active element, including open shadow roots |
-| `restoreFocus(element)` | Safe restore for a previously captured element |
-| `createFocusContainment(options)` | Focus-trap primitive: Tab wrapping, focus escape redirect, optional initial focus and restoration |
-
-`createFocusContainment()` is a primitive, not a Dialog. It never sets roles, ARIA
-attributes, or `inert`. Focusable elements are queried on demand so dynamic content works
-without a MutationObserver:
+### Quick start
 
 ```ts
-const containment = createFocusContainment({
-  container: panel,
-  initialFocus: "first",
-  restoreFocus: true,
-  onEscape: () => close(),
-});
+import { createPositioner } from "@zealakit/overlay-core";
 
-containment.setEnabled(false); // restores focus when restoreFocus is true
-containment.suspend();         // yield to a nested child without restoring
-containment.resume();          // reattach without recapturing focus
-containment.dispose();
-```
-
-For nested layers, `suspend()` the parent while the child is active and `resume()` afterward;
-`suspend()` neither restores nor moves focus. Alternatively provide `shouldContain(event)` so
-the active child layer keeps control.
-
-Focus restoration on layer close is component policy:
-
-```ts
-const returnTo = getActiveElement();
-const layer = stack.register({
-  element: panel,
-  reference: trigger,
-  onDismiss: () => {
-    close();
-    restoreFocus(returnTo);
-  },
-});
-``` Focus restoration/containment policy belongs to the
-component; layers themselves do not move focus.
-
-### Layers
-
-`createLayer()` manages one open/closed layer state machine (no DOM, no listeners beyond its
-own subscribers).
-
-`createLayerManager()` manages ordering and parent/child links. `createLayerStack()` adds the
-shared interaction layer used by adapters:
-
-```ts
-const stack = createLayerStack();
-const parent = stack.register({ element: () => parentEl, reference: trigger });
-const child = stack.register({ parent: parent, element: () => childEl });
-
-stack.getTopmost(); // child
-stack.subscribe((entries) => console.log(entries));
-
-parent.dispose(); // removes parent and descendants
-```
-
-`createLayerStackRegistry()` provides reference-counted stacks per document so independent
-components share one listener pair and release it when the last consumer unmounts.
-
-Rules:
-
-- Registration order is stack order (bottom → top); `getTopmost()` is the active layer.
-- A child requires an existing parent; unknown parents and duplicate ids throw.
-- Unregistering a parent removes its descendant layers.
-- Outside detection checks the layer element, reference, explicit extra `boundaries`, and
-  descendant layer elements; layers registered without any boundary never report outside.
-- Only the topmost layer receives Escape/outside interactions. Parent layers are not notified
-  when a child is topmost, so child interactions are not treated as parent-outside presses.
-- Escape/outside defaults are `true` per layer; set `dismissOnEscape` or
-  `dismissOnOutsidePress` to `false` to opt out.
-- Escape ignores composing events and events already `defaultPrevented`. Outside handling uses
-  primary `pointerdown`; right/middle clicks and secondary pointers do not dismiss.
-- Removing a parent removes descendants; closing a child leaves the parent registered.
-- The manager/stack does not open, close, focus, render, or style anything.
-
-### Interaction semantics
-
-- Only the topmost registered layer is routed Escape/outside. Parent layers do not interpret a
-  child's content as outside, and closing a child leaves the parent registered.
-- `dismissOnEscape`/`dismissOnOutsidePress` default to `true` per layer and can be disabled
-  independently. A topmost layer that opts out does not fall through to a parent layer.
-- Escape ignores IME composition and `defaultPrevented` events. Outside uses primary
-  `pointerdown` (touch produces pointer events); secondary buttons/pointers do not dismiss.
-- The interaction boundary is the layer element, reference, optional `boundaries`, and
-  descendant layer elements. Without any boundary, outside never fires.
-- Shadow DOM targets are handled through `composedPath()`. Detached boundary elements simply
-  cannot contain an event, so they do not block outside detection.
-- The stack does not call `preventDefault` or `stopPropagation`. Consumers can prevent an event
-  before it reaches the document listener to suppress dismissal.
-- Focus is not changed by layer registration, ordering, dismissal, or positioning.
-
-### Accessibility responsibilities
-
-Infrastructure (Core/adapters) owns:
-
-- Layer ordering, topmost interaction routing, configurable dismissal.
-- Pointer/Escape predicates, focusable-element detection, safe focus/restore, focus
-  containment.
-- Collision-aware positioning with no focus movement on updates.
-
-Components/consumers own:
-
-- Semantic roles (`dialog`, `tooltip`, `menu`), `aria-*` relationships, names, and descriptions.
-- `aria-expanded`/`aria-controls`/`aria-haspopup` on triggers.
-- Focus policy (initial focus, containment, restoration) using the primitives above.
-- Hiding inactive content (`hidden`, conditional rendering, `inert`) and scroll locking.
-- Deciding whether Escape/outside should close a given layer. The library does not inject ARIA
-  attributes or roles automatically.
-
-### Positioning
-
-`createPositioner()` is the collision-aware session API:
-
-```ts
 const positioner = createPositioner({
-  reference: button,
+  reference: trigger,
   floating: panel,
   placement: "bottom-start",
   offset: 8,
-  padding: 8,
 });
 
-const unsubscribe = positioner.subscribe(({ x, y, placement, strategy }) => {
-  panel.style.position = strategy;
-  panel.style.left = `${x}px`;
-  panel.style.top = `${y}px`;
+positioner.subscribe(({ x, y, placement, strategy }) => {
+  Object.assign(panel.style, { position: strategy, left: `${x}px`, top: `${y}px` });
   panel.dataset.placement = placement;
 });
 
-positioner.setReference(nextButton);
-positioner.setOptions({ placement: "top" });
 await positioner.update();
 positioner.dispose();
 ```
 
-| Option | Default | Meaning |
+### `createPositioner` options
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `reference` | `ReferenceElement \| null` | — | Anchor element or virtual `{ getBoundingClientRect }`. |
+| `floating` | `HTMLElement \| null` | — | Element to place. |
+| `placement` | `Placement` | `"bottom"` | Side plus optional `-start` or `-end`. |
+| `offset` | `number` | `0` | Main-axis gap in pixels. |
+| `alignOffset` | `number` | `0` | Cross-axis offset in pixels. |
+| `flip` | `boolean` | `true` | Flip to the opposite side on overflow. |
+| `shift` | `boolean` | `true` | Shift along the cross axis to stay visible. |
+| `padding` | `number` | `0` | Gap from the boundary. |
+| `boundary` | `Element \| "clippingAncestors" \| "viewport"` | `"clippingAncestors"` | Collision boundary. |
+| `strategy` | `"absolute" \| "fixed"` | automatic | Automatic: `absolute`, or `fixed` for fixed/sticky anchors. |
+| `autoUpdate` | `boolean` | `true` | Reposition on scroll, resize, and layout changes. |
+| `arrow` | `{ element, padding? } \| null` | `null` | Measure an arrow element and report its offset. |
+| `...` | — | — | The positioner accepts only these options and never touches focus, ARIA, or `hidden`. |
+
+`update()` resolves `null` when an element is missing or detached, or when a newer update supersedes it. Subscribers only receive the latest measurement.
+
+### Controller options
+
+`createOverlayController({ kind, ... })` takes `kind` (`"popover" | "tooltip" | "dialog" | "context-menu"`) plus the options below.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `trigger` | `HTMLElement` | **required** | Element that anchors and invokes the overlay. |
+| `content` | `HTMLElement` | **required** | Floating element you own. The controller toggles `hidden` and `data-state`. |
+| `backdrop` | `HTMLElement \| null` | — | Dialog backdrop element. |
+| `open` | `boolean` | — | Controlled visibility; reflect external state with `setOpen()`. |
+| `defaultOpen` | `boolean` | `false` | Initial visibility when uncontrolled. |
+| `disabled` | `boolean` | `false` | Closes the overlay and ignores triggers. |
+| `onOpenChange` | `(open, reason) => void` | — | Called on every user or programmatic change. |
+| `onSelect` | `(item, event) => void` | — | ContextMenu only: an item was activated. |
+| `portal` | `Element \| null` | — | Move content (and backdrop) here while open. |
+| `stack` | `LayerStack` | per-document | Share an explicit layer stack. |
+| `parentLayer` | `LayerStackHandle \| null` | — | Parent layer for nested overlays. |
+| `boundaries` | `(Element \| null)[]` | — | Extra elements that count as inside. |
+| `placement` | `Placement` | `"bottom-start"` | Tooltip defaults to `top`. Dialog is not anchored. |
+| `offset` | `number` | `0` | Main-axis gap in pixels. |
+| `alignOffset` | `number` | `0` | Cross-axis offset in pixels. |
+| `flip` | `boolean` | `true` | Flip to the opposite side when there is no room. |
+| `shift` | `boolean` | `true` | Shift along the cross axis to stay visible. |
+| `padding` | `number` | `0` | Gap from the collision boundary. |
+| `boundary` | `Element \| "clippingAncestors" \| "viewport"` | `"clippingAncestors"` | Collision boundary. |
+| `strategy` | `"absolute" \| "fixed"` | automatic | Automatic: `absolute`, or `fixed` for fixed/sticky anchors. |
+| `autoUpdate` | `boolean` | `true` | Reposition on scroll, resize, and layout changes. |
+| `arrow` | `{ element, size?, padding? } \| null` | — | Popover and Tooltip only; you own the arrow element. |
+| `animation` | `boolean \| AnimationConfig` | — | Off unless `true` or a config is passed. |
+| `dir` | `"ltr" \| "rtl"` | — | Applied to the content element. |
+| `dismissOnEscape` | `boolean` | `true` | Close on Escape (topmost layer only). |
+| `dismissOnOutsidePress` | `boolean` | `true` | Close on a primary press outside. |
+| `modal` | `boolean` | `true` | Dialog only: inert background, focus containment, scroll lock. |
+| `lockScroll` | `boolean` | `true` | Dialog only, while `modal`. |
+| `trapFocus` | `boolean` | `modal` | Dialog follows `modal`; Popover defaults to `false`. |
+| `initialFocus` | `"container" \| "first" \| Element \| boolean \| null` | — | Dialog: container when modal. ContextMenu: first item. Popover: none. |
+| `finalFocus` | `Element \| null` | — | Where focus returns on close; defaults to the trigger. |
+| `restoreFocus` | `boolean` | `true` | Restore focus on close. |
+| `delay` | `number` | `500` | Tooltip only: open delay in milliseconds. |
+| `closeDelay` | `number` | `100` | Tooltip only: close delay in milliseconds. |
+| `hoverableContent` | `boolean` | `true` | Tooltip only: keep open while the pointer is over the content. |
+| `labelledBy` / `describedBy` | `string` | — | Dialog only: ids for `aria-labelledby` / `aria-describedby`. |
+| `toggleOnTriggerClick` | `boolean` | `true` | Popover and Dialog: toggle when the trigger is clicked. |
+| `...` | — | — | No other attributes are forwarded; set them on your own elements. |
+
+The controller sets `role`, `aria-expanded`, `aria-controls`, `aria-haspopup`, `hidden`, and `data-state` for the chosen kind. Escape and outside presses reach only the topmost layer.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `isOpen` | `boolean` | — | Current visibility (read-only). |
+| `contentId` | `string` | — | Id assigned to the content element. |
+| `open(reason?)` / `close(reason?)` / `toggle(reason?)` | `void` | — | Change visibility and call `onOpenChange`. |
+| `openAt(point, reason?)` | `void` | — | ContextMenu: open at `{ x, y }`; `null` anchors to the trigger. |
+| `setOpen(open)` | `void` | — | Reflect controlled state without calling `onOpenChange`. |
+| `setOptions(patch)` | `void` | — | Update options after creation. |
+| `update()` | `Promise<PositionerResult \| null>` | — | Re-measure; resolves `null` while closed. |
+| `subscribe(listener)` | `() => void` | — | Called immediately and on every change with `{ isOpen, placement, point }`. |
+| `destroy()` | `void` | — | Idempotent; removes listeners and restores attributes. |
+
+### Animation configuration
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `true` with a config | Set `false` to turn the animation off. |
+| `type` | `"fade" \| "expand" \| "custom"` | `"fade"` | `expand` grows out of the anchor edge; `custom` is inferred when `custom` is set. |
+| `direction` | `"up" \| "down" \| "left" \| "right" \| "auto"` | `"auto"` | Travel direction; `auto` follows the resolved placement. |
+| `duration` | `number` | `160` | Milliseconds. |
+| `delay` | `number` | `0` | Milliseconds. |
+| `easing` | `string` | `"ease-in-out"` | `ease-in-out`, `linear`, or any CSS timing function. |
+| `custom` | `{ enter, exit } \| keyframes` | — | CSS classes or Web Animations keyframes (array or function). |
+| `...` | — | — | Pass `true` for the defaults. Exit replays enter in reverse; reduced motion keeps only opacity. |
+
+## Lifecycle
+
+- Create positioners and controllers only in the browser, after elements exist.
+- Call `update()` or `setOptions()` while mounted; both are safe to repeat.
+- Call `dispose()` or `destroy()` on teardown. Both are idempotent, so a double call or a second init does nothing.
+- Importing the package is safe during SSR; `createOverlayController` throws without a DOM.
+
+## Styling hooks
+
+| Attribute | Where | Purpose |
 | --- | --- | --- |
-| `placement` | `"bottom"` | Preferred placement (flipped when it overflows) |
-| `offset` | `0` | Gap on the main axis |
-| `alignOffset` | `0` | Shift on the alignment axis |
-| `flip` | `true` | Flip to the opposite side on overflow |
-| `shift` | `true` | Shift to stay inside the boundary |
-| `padding` | `0` | Collision padding from boundary edges |
-| `boundary` | `"clippingAncestors"` | Element, `"clippingAncestors"`, or `"viewport"` |
-| `strategy` | `"fixed"` | CSS positioning strategy |
-| `autoUpdate` | `true` | Recompute on scroll, resize, and layout shifts |
+| `data-state` | Content, trigger | `"open"` or `"closed"`. |
+| `data-open` / `data-closed` | Content | Presence flags for CSS selectors. |
+| `data-side` / `data-align` / `data-placement` | Content | Resolved placement after flip and shift. |
+| `data-animating` | Content | `"enter"` or `"exit"` while an animation runs. |
+| `--overlay-transform-origin` | Content | Anchor-edge origin for class-based animation. |
+| `--overlay-arrow-*` | Panel or ancestor | Arrow background, border width, and border color. |
 
-Behavior guarantees:
-
-- `update()` resolves `null` when there is no reference/floating element, either is detached,
-  or a newer update superseded it.
-- Subscribers only receive results for the latest measurement.
-- Positioning never focuses elements, mutates ARIA, or changes hidden state.
-- `dispose()` is idempotent, stops auto-update, drops subscriptions, and makes further
-  `update()` calls resolve `null`.
-
-Low-level exports remain available for simple, non-collision math and for the current
-adapters: `computePosition`, `resolvePlacementCoordinates`, `parsePlacement`, `watchPosition`,
-`DEFAULT_PLACEMENT`, `DEFAULT_OFFSET`.
-
-## Positioning architecture
-
-```
-adapter ──> createPositioner() ──> engine adapter ──> @floating-ui/dom
-                 │
-                 └── PositionerResult { x, y, placement, strategy }
+```css
+.panel {
+  --overlay-arrow-background: #121a27;
+  --overlay-arrow-border-width: 1px;
+  --overlay-arrow-border-color: #3d5478;
+}
 ```
 
-- The engine is an implementation detail. Adapters must not import `@floating-ui/*`.
-- `Placement` accepts center aliases (`"bottom-center"`); `createPositioner` normalizes them
-  (`"bottom"`) before computing.
-- `boundary: "viewport"` maps to the engine's clipping-ancestors boundary with a viewport root.
-- Why Floating UI: see [ADR 0001](https://github.com/zealakit/overlay/blob/main/docs/adr/0001-positioning-engine.md).
+## AI Agent Skill
 
-The synchronous `computePosition()` helper remains available for simple, single-placement
-calculations without collision handling; adapters use `createPositioner()`.
+Coding agents working on this package load the [overlay skill](https://github.com/zealakit/overlay/blob/main/.agents/skills/overlay/SKILL.md) first.
 
-## SSR constraints
+## License
 
-- Importing the package must not throw without `window`/`document`; this is covered by a test
-  that imports the built package in a bare Node process.
-- No browser globals are read at module initialization. DOM work happens only inside functions
-  you call.
-- `createPositioner()` with null elements is safe on the server; `update()` resolves `null`.
-- `listenForDismiss`, `watchPosition`, and `observeResize` no-op without a browser DOM.
-
-## Testing
-
-```bash
-pnpm --filter @zealakit/overlay-core run test
-```
-
-Tests use the Node test runner with `happy-dom` as the only DOM dependency (no test framework
-install). The suite covers layer registration/ordering/parent-child removal, outside detection,
-disposer idempotency, event predicates, positioning options/results/flip/shift, detached
-elements, disposal, and SSR import safety.
+MIT © Zealakit

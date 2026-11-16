@@ -1,137 +1,68 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { type Placement, usePositioner } from "@zealakit/overlay-vue";
-import HighLevelDemo from "./components/high-level-demo.vue";
-import NestedLayers from "./components/nested-layers.vue";
-import OverlayDemo from "./components/overlay-demo.vue";
+import { onBeforeUnmount, onMounted } from "vue";
+import ArrowAnimationDemo from "./components/arrow-animation-demo.vue";
+import ContextMenuExamples from "./components/context-menu-examples.vue";
+import DialogExamples from "./components/dialog-examples.vue";
+import PlacementPlayground from "./components/placement-playground.vue";
+import PopoverExamples from "./components/popover-examples.vue";
+import TooltipExamples from "./components/tooltip-examples.vue";
 
-const placements: Placement[] = [
-  "bottom-start",
-  "bottom-end",
-  "top-start",
-  "right-start",
-];
-
-const placementIndex = ref(0);
-const placement = computed<Placement>(
-  () => placements[placementIndex.value] ?? "bottom-start",
-);
-
-const referenceA = ref<HTMLElement | null>(null);
-const referenceB = ref<HTMLElement | null>(null);
-const useSecondReference = ref(false);
-const activeReference = computed<HTMLElement | null>(() =>
-  useSecondReference.value ? referenceB.value : referenceA.value,
-);
-
-const floating = ref<HTMLElement | null>(null);
-const { result, update } = usePositioner({
-  reference: activeReference,
-  floating,
-  placement,
-  offset: 8,
-  padding: 8,
+const scrollToHash = (): void => {
+  const id = window.location.hash.replace(/^#/, "");
+  if (!id) return;
+  requestAnimationFrame(() => {
+    document.getElementById(id)?.scrollIntoView({ block: "start" });
+  });
+};
+onMounted(() => {
+  scrollToHash();
+  window.addEventListener("hashchange", scrollToHash);
 });
-
-const nextPlacement = (): void => {
-  placementIndex.value = (placementIndex.value + 1) % placements.length;
-};
-
-const swapReference = (): void => {
-  useSecondReference.value = !useSecondReference.value;
-};
-
-const overlayMounted = ref(true);
+onBeforeUnmount(() => window.removeEventListener("hashchange", scrollToHash));
 </script>
 
 <template>
-  <main class="page">
-    <h1>@zealakit/overlay-vue</h1>
-    <p class="lede">
-      Composition API utilities for positioning, layers, outside interaction,
-      and Escape — no styles shipped by the library.
-    </p>
-
-    <section class="demo">
-      <h2>1–3. Positioning, reactive options, dynamic references</h2>
-      <p class="copy">
-        <code>usePositioner()</code> accepts refs/getters. Placement is reactive,
-        and the reference element can be swapped.
+  <main class="page examples-page combined-examples">
+    <header class="masthead">
+      <p class="eyebrow">@zealakit/overlay-vue</p>
+      <h1>Overlay examples</h1>
+      <p class="lede">
+        All Vue composable examples on one page. Use the section links to jump
+        between the placement playground and each overlay family.
       </p>
+      <nav class="examples-nav" aria-label="Example sections">
+        <a href="#playground">Playground</a>
+        <a href="#arrow-animation">Arrow &amp; animation</a>
+        <a href="#popover">Popover</a>
+        <a href="#tooltip">Tooltip</a>
+        <a href="#dialog">Dialog</a>
+        <a href="#context-menu">ContextMenu</a>
+      </nav>
+    </header>
 
-      <div class="row">
-        <button
-          ref="referenceA"
-          type="button"
-          :data-active="!useSecondReference"
-        >
-          Reference A
-        </button>
-        <button
-          ref="referenceB"
-          type="button"
-          :data-active="useSecondReference"
-        >
-          Reference B
-        </button>
-      </div>
-
-      <div class="row">
-        <button type="button" @click="nextPlacement">
-          Placement: {{ placement }}
-        </button>
-        <button type="button" @click="swapReference">
-          Use reference {{ useSecondReference ? "A" : "B" }}
-        </button>
-        <button type="button" @click="update()">Measure now</button>
-      </div>
-
-      <p class="status">
-        {{
-          result
-            ? `x=${Math.round(result.x)} y=${Math.round(result.y)} · ${result.placement}`
-            : "Waiting for measurement…"
-        }}
-      </p>
-
-      <div ref="floating" class="panel floating-panel">
-        <p>
-          Floating content driven by <code>usePositioner()</code>. Resize the
-          window or scroll to see automatic updates.
-        </p>
-      </div>
+    <section id="playground" class="examples-section">
+      <h2 class="examples-section-title">Placement playground</h2>
+      <PlacementPlayground />
     </section>
-
-    <HighLevelDemo />
-
-    <section class="demo">
-      <h2>4–8. Overlay, layers, outside, Escape, cleanup</h2>
-      <p class="copy">
-        <code>useOverlay()</code> composes positioning and a registered layer.
-        Unmounting the demo disposes both.
-      </p>
-
-      <div class="row">
-        <button type="button" @click="overlayMounted = !overlayMounted">
-          {{ overlayMounted ? "Unmount demo" : "Mount demo" }}
-        </button>
-      </div>
-
-      <div class="demo-body">
-        <OverlayDemo v-if="overlayMounted" />
-        <p v-else class="status">
-          Unmounted. Positioner and layer cleaned up.
-        </p>
-      </div>
+    <section id="arrow-animation" class="examples-section">
+      <h2 class="examples-section-title">Arrow and animation</h2>
+      <ArrowAnimationDemo />
     </section>
-
-    <section class="demo">
-      <h2>Nested layers</h2>
-      <p class="copy">
-        Child layers register with a parent handle; only the topmost layer
-        receives Escape and outside interactions.
-      </p>
-      <NestedLayers />
+    <section id="popover" class="examples-section">
+      <h2 class="examples-section-title">Popover examples</h2>
+      <PopoverExamples />
+    </section>
+    <section id="tooltip" class="examples-section">
+      <h2 class="examples-section-title">Tooltip examples</h2>
+      <TooltipExamples />
+    </section>
+    <section id="dialog" class="examples-section">
+      <h2 class="examples-section-title">Dialog examples</h2>
+      <DialogExamples />
+    </section>
+    <section id="context-menu" class="examples-section">
+      <h2 class="examples-section-title">ContextMenu examples</h2>
+      <ContextMenuExamples />
     </section>
   </main>
 </template>

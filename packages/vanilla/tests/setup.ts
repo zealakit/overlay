@@ -12,5 +12,6 @@ globals.document = window.document;
 globals.Element = window.Element;
 globals.HTMLElement = window.HTMLElement;
 globals.Node = window.Node;
+globals.CustomEvent = window.CustomEvent;
 globals.KeyboardEvent = window.KeyboardEvent;
 globals.getComputedStyle = window.getComputedStyle.bind(window);

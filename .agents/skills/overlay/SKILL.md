@@ -19,18 +19,19 @@ vue ─────┼──> @zealakit/overlay-core
 svelte ──┘
 
 examples/* -> adapters
-docs/ + READMEs -> product documentation
+READMEs (EN/VI/CN) -> product documentation
 ```
 
-- **Core** (`packages/core`) owns types, positioning, layers, dismissal, focus,
-  lifecycle, scroll lock, and the shared DOM overlay controller.
+- **Core** (`packages/core`) owns types, positioning (incl. arrow geometry), animation
+  runner, layers, dismissal, focus, lifecycle, scroll lock, and the shared DOM overlay controller.
 - **Adapters** own framework lifecycle and idiomatic APIs:
-  - vanilla: DOM controllers
+  - vanilla: declarative `data-*` markup (`initOverlays`) + DOM controllers
   - react: compound components + hooks
-  - vue: composables
-  - svelte: controllers + actions
-- **Docs** live in `README.md`, package READMEs, and `docs/`. Keep examples as integration
-  references, not a documentation app.
+  - vue: compound components (render functions) + composables
+  - svelte: compound components (`.svelte`, `/components` subpath) + controllers + actions
+- **Docs** live only in the root and package READMEs (EN, VI, CN), structured by the
+  [readme-system skill](../readme-system/SKILL.md). There is no `docs/` folder. Keep examples as
+  integration references, not a documentation app.
 
 ## Tree
 
@@ -39,11 +40,13 @@ overlay/
 ├── .agents/
 │   ├── AGENTS.md                 # hard rules, commands, boundaries
 │   ├── rules/overlay.mdc         # editor always-apply rule
-│   └── skills/overlay/SKILL.md   # this workflow
+│   └── skills/
+│       ├── overlay/SKILL.md      # this workflow
+│       └── readme-system/SKILL.md # README structure spec
 ├── AGENTS.md    -> .agents/AGENTS.md
 ├── CLAUDE.md    -> .agents/AGENTS.md
 ├── .cursor      -> .agents
-├── docs/                         # ADRs, component design, release docs
+├── assets/                       # README cover image
 ├── examples/                     # vanilla, react, vue, svelte, nextjs, astro
 ├── packages/
 │   ├── core/src/                 # controller, positioning, layer, focus, ...
@@ -52,9 +55,9 @@ overlay/
 │   ├── vue/src/                  # composables
 │   └── svelte/src/               # controllers + actions
 ├── monitor/                      # local dependency dashboard
-├── scripts/                      # packaging helpers
+├── scripts/                      # packaging + README check
 ├── CHANGELOG.md
-├── README.md
+├── README.md, README_VI.md, README_CN.md
 ├── package.json
 ├── pnpm-workspace.yaml
 ├── tsconfig.base.json
@@ -62,7 +65,7 @@ overlay/
 ```
 
 Each package uses `src/` (public barrel + implementation), `tests/`, and generated `dist/`.
-Keep integration demos in `examples/`, documentation in READMEs/`docs/`, and generated output
+Keep integration demos in `examples/`, documentation in READMEs, and generated output
 out of agent guidance.
 
 ## Boundaries
@@ -83,14 +86,20 @@ out of agent guidance.
 5. Clean up listeners, observers, layers, portals, focus traps, and scroll locks.
 6. Export only implemented public APIs and their types from `src/index.ts`.
 7. Add focused tests in the owning package; run `pnpm check`.
-8. Update docs/READMEs when public behavior changes.
+8. Update the READMEs (all three languages) when public behavior changes; load the
+   [readme-system skill](../readme-system/SKILL.md) and run `pnpm readme:check`.
 
 ### Framework notes
 
 - **React:** `"use client"` where required; refs/effects; Strict Mode cleanup;
   positioning updates must commit before paint.
 - **Vue:** `MaybeRefOrGetter`, shallow refs, correct watcher flush, `onScopeDispose`.
-- **Svelte:** Svelte 5 actions/controllers; mount/cleanup via `onMount`/`onDestroy`.
+- **Svelte:** Svelte 5 actions/controllers; mount/cleanup via `onMount`/`onDestroy`. The package
+  builds with `svelte-package` (not plain `tsc`); components live in `src/parts/` and ship from
+  the `./components` export so the root entry stays plain JavaScript. Tests compile `.svelte`
+  files through a `registerHooks` loader in `tests/setup.ts`.
+- **Component parts (Vue/Svelte/Vanilla):** keep them thin over `createOverlayController`; do
+  not reimplement behavior. A dialog backdrop that wraps the content portals as one unit.
 - **Vanilla:** controller options/types; `destroy()` restores portal, listeners, and ARIA/DOM state.
 - **Dialog/ContextMenu:** preserve topmost layer, focus, inertness, scroll lock, and Escape order.
 
@@ -106,14 +115,42 @@ pnpm check
   fixtures. Do not add a second test framework/DOM library.
 - For real layout/scroll/focus bugs, verify in a browser against an example. Do not claim a
   visual fix from mocked coordinates alone.
-- For release changes, follow `docs/releasing.md` and `docs/release-checklist.md`; inspect
-  tarballs and test isolated consumers. Never publish or require credentials unless explicitly
-  asked.
+- For release changes, follow the Release section below; inspect tarballs and test isolated
+  consumers. Never publish or require credentials unless explicitly asked.
+
+## Positioning engine decision
+
+`@floating-ui/dom` sits behind the Core-owned `createPositioner()`. Native-only positioning
+(CSS anchor, native popover) was rejected because browser support is uneven and it cannot cover
+virtual anchors; a custom flip/shift engine was rejected because correct overflow detection
+(clipping ancestors, scroll containers, transforms, RTL, shadow DOM) is a large maintenance
+surface. Core is the only package that imports Floating UI, engine types never appear in public
+types, and `autoUpdate` drives re-measurement. Upgrading Floating UI is a normal dependency
+bump gated by the Core positioner tests.
+
+## Release
+
+- All five packages ship together at one version. Core publishes first, then the adapters.
+  Adapters keep `workspace:^` in the repository; packing rewrites it to the release version.
+- Peer ranges: React `^18.0.0 || ^19.0.0`, Vue `^3.5.0`, Svelte `^5.0.0`.
+- Preflight: `pnpm install --frozen-lockfile`, `pnpm clean`, `pnpm check`, `pnpm readme:check`,
+  build every example, then `pnpm pack:packages` (tarballs in `artifacts/`, no publish).
+- Inspect each tarball: only `package.json`, `README*.md`, `LICENSE`, and `dist/**`; no
+  `workspace:` in the manifest; `main`/`module`/`types`/`exports` point into `dist`; no sources,
+  tests, source maps, absolute paths, or credentials; metadata has repository, homepage, bugs,
+  license, engines, and framework peers.
+- Validate the tarballs in temporary projects outside the repository (Core tarball provided to
+  adapters, framework peer from the registry, a TypeScript build, and a Node SSR import). Never
+  validate with `workspace:*` aliases or `packages/*` imports.
+- Publishing is manual and needs explicit authorization. No script publishes, and Storybook,
+  Changesets, and automated publishing stay out of scope. Tag `vX.Y.Z` only after preflight.
 
 ## Documentation
 
-- Keep the root README, package READMEs, and `docs/` synchronized with public APIs.
-- Use absolute GitHub links in package READMEs where npm would break relative links.
+- READMEs are the only product documentation; follow the
+  [readme-system skill](../readme-system/SKILL.md) for structure, tables, links, and voice.
+- Keep the root README and package READMEs synchronized with public APIs in EN, VI, and CN.
+- Use absolute GitHub links, because npm breaks relative ones.
 - Document implemented behavior only; state limitations clearly. There is no docs app.
 
 ## Reuse

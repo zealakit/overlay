@@ -41,7 +41,7 @@ test("applies position styles and data-placement", async () => {
 
   assert.ok(result);
   assert.deepEqual(controller.result, result);
-  assert.equal(floating.style.position, "fixed");
+  assert.equal(floating.style.position, "absolute");
   assert.equal(floating.style.left, "10px");
   assert.equal(floating.style.top, "68px");
   assert.equal(floating.dataset.placement, "bottom-start");

@@ -9,14 +9,14 @@ export {
   type FocusContainment,
   type FocusContainmentOptions,
   type FocusContainmentTarget,
-} from "./focus/focus.js";
+} from "@zealakit/overlay-core";
 export {
   createLayerStack,
-  type LayerHandle,
-  type LayerOptions,
   type LayerStack,
   type LayerStackOptions,
-} from "./layer/create-layer-stack.js";
+  type LayerStackHandle as LayerHandle,
+  type LayerStackRegistration as LayerOptions,
+} from "@zealakit/overlay-core";
 export {
   createOverlay,
   type Overlay,
@@ -39,6 +39,10 @@ export {
   type DialogController,
   type ContextMenuController,
 } from "./components/overlay-components.js";
+export {
+  initOverlays,
+  type OverlayInstances,
+} from "./declarative/init-overlays.js";
 export {
   createFloating,
   type Floating,

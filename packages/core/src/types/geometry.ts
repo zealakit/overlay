@@ -13,12 +13,6 @@ export type Placement = Side | `${Side}-${Align}`;
 /** A placement after normalization: center alignment collapses to the bare side. */
 export type NormalizedPlacement = Side | `${Side}-start` | `${Side}-end`;
 
-/** A point in viewport coordinates. */
-export type Point = {
-  x: number;
-  y: number;
-};
-
 export type Size = {
   width: number;
   height: number;

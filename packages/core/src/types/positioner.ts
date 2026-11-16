@@ -36,6 +36,11 @@ export type PositionerOptions = {
   /** Padding from the collision boundary edges, in pixels. */
   padding?: number;
   boundary?: PositionerBoundary;
+  /**
+   * CSS positioning strategy. Omit for automatic: `absolute` (moves with the page
+   * in the same frame while scrolling) unless the anchor sits in a fixed/sticky
+   * ancestor or is a bare viewport point, which use `fixed`.
+   */
   strategy?: Strategy;
   /** Keep the result updated on scroll, resize, and layout changes. */
   autoUpdate?: boolean;

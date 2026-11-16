@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { ArrowAnimationExamplesContent } from "./arrow-animation-examples";
 import { ContextMenuExamplesContent } from "./context-menu-examples";
 import { DialogExamplesContent } from "./dialog-examples";
 import { PlacementPlayground } from "./placement-playground";
@@ -52,6 +53,7 @@ export function App() {
         </p>
         <nav className="examples-nav" aria-label="Example sections">
           <a href="#playground">Playground</a>
+          <a href="#arrow-animation">Arrow &amp; animation</a>
           <a href="#popover">Popover</a>
           <a href="#tooltip">Tooltip</a>
           <a href="#dialog">Dialog</a>
@@ -61,6 +63,10 @@ export function App() {
 
       <Section id="playground" title="Placement playground">
         <PlacementPlayground />
+      </Section>
+
+      <Section id="arrow-animation" title="Arrow and animation">
+        <ArrowAnimationExamplesContent />
       </Section>
 
       <Section id="popover" title="Popover examples">

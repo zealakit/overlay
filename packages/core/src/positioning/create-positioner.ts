@@ -21,8 +21,14 @@ import type {
 import { isConnected } from "../utils/element.js";
 import { isElement } from "../utils/dom.js";
 import { parsePlacement } from "./placement.js";
+import { resolveStrategy } from "./strategy.js";
 
-const DEFAULT_OPTIONS: Required<PositionerOptions> = {
+/** `strategy` stays undefined until the caller sets it; undefined means automatic. */
+type ResolvedOptions = Required<Omit<PositionerOptions, "strategy">> & {
+  strategy: PositionerOptions["strategy"];
+};
+
+const DEFAULT_OPTIONS: ResolvedOptions = {
   placement: "bottom",
   offset: 0,
   alignOffset: 0,
@@ -30,14 +36,12 @@ const DEFAULT_OPTIONS: Required<PositionerOptions> = {
   shift: true,
   padding: 0,
   boundary: "clippingAncestors",
-  strategy: "fixed",
+  strategy: undefined,
   autoUpdate: true,
   arrow: null,
 };
 
-function resolveOptions(
-  patch: Partial<PositionerOptions>,
-): Required<PositionerOptions> {
+function resolveOptions(patch: Partial<PositionerOptions>): ResolvedOptions {
   return {
     placement: patch.placement ?? DEFAULT_OPTIONS.placement,
     offset: patch.offset ?? DEFAULT_OPTIONS.offset,
@@ -46,7 +50,7 @@ function resolveOptions(
     shift: patch.shift ?? DEFAULT_OPTIONS.shift,
     padding: patch.padding ?? DEFAULT_OPTIONS.padding,
     boundary: patch.boundary ?? DEFAULT_OPTIONS.boundary,
-    strategy: patch.strategy ?? DEFAULT_OPTIONS.strategy,
+    strategy: patch.strategy,
     autoUpdate: patch.autoUpdate ?? DEFAULT_OPTIONS.autoUpdate,
     arrow: patch.arrow ?? DEFAULT_OPTIONS.arrow,
   };
@@ -186,7 +190,7 @@ export function createPositioner(
         currentFloating as HTMLElement,
         {
           placement,
-          strategy: options.strategy,
+          strategy: resolveStrategy(currentReference, options.strategy),
           middleware,
         },
       );

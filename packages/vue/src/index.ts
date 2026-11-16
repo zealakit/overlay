@@ -1,3 +1,4 @@
+export * from "./components/index.js";
 export {
   useContextMenu,
   useDialog,
@@ -10,6 +11,7 @@ export {
   type TooltipOptions,
   type UseContextMenuReturn,
   type UseDialogReturn,
+  type UseOverlayArrowOptions,
   type UseOverlayComponentOptions,
   type UseOverlayComponentReturn,
   type UsePopoverReturn,

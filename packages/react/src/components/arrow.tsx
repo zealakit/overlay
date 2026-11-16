@@ -8,7 +8,7 @@ import {
   type CSSProperties,
   type HTMLAttributes,
 } from "react";
-import { parsePlacement } from "@zealakit/overlay-core";
+import { getArrowStyles, parsePlacement } from "@zealakit/overlay-core";
 import { usePopoverPositionerContext } from "./popover/content.js";
 import { composeRefs } from "./slot.js";
 
@@ -18,20 +18,6 @@ export type PopoverArrowProps = HTMLAttributes<HTMLDivElement> & {
   /** Space kept from the popup edges by the positioning engine. Defaults to 0. */
   padding?: number;
 };
-
-function staticEdge(side: "top" | "right" | "bottom" | "left"): string {
-  switch (side) {
-    case "top":
-      return "bottom";
-    case "right":
-      return "left";
-    case "bottom":
-      return "top";
-    case "left":
-    default:
-      return "right";
-  }
-}
 
 const FloatingArrow = forwardRef<
   HTMLDivElement,
@@ -61,30 +47,31 @@ const FloatingArrow = forwardRef<
     return () => positioner.setArrowPadding(config.padding);
   }, [config.padding, positioner.setArrowPadding, resolvedPadding]);
 
-  const geometry = positioner.result?.arrow;
-  const side = parsePlacement(
-    positioner.result?.placement ?? positioner.placement,
-  ).side;
-  const edge = staticEdge(side);
-  const arrowStyle = useMemo<CSSProperties>(() => {
-    const base: Record<string, string | number | undefined> = {
-      position: "absolute",
-      width: resolvedSize,
-      height: resolvedSize,
-      pointerEvents: "none",
-      background: "var(--overlay-arrow-background, inherit)",
-      transform: "rotate(45deg)",
-      visibility: geometry ? "visible" : "hidden",
-      [edge]: -resolvedSize / 2,
-    };
-    if (geometry?.x !== undefined) {
-      base.left = geometry.x;
-    }
-    if (geometry?.y !== undefined) {
-      base.top = geometry.y;
-    }
-    return { ...base, ...style } as CSSProperties;
-  }, [edge, geometry, resolvedSize, style]);
+  const placement = positioner.result?.placement ?? positioner.placement;
+  const side = parsePlacement(placement).side;
+  const computed = useMemo(
+    () =>
+      getArrowStyles({
+        placement,
+        arrow: positioner.result?.arrow,
+        size: resolvedSize,
+      }),
+    [placement, positioner.result?.arrow, resolvedSize],
+  );
+  const arrowStyle = useMemo<CSSProperties>(
+    () =>
+      ({
+        ...(computed?.style ?? {
+          position: "absolute",
+          width: resolvedSize,
+          height: resolvedSize,
+          pointerEvents: "none",
+        }),
+        visibility: computed ? "visible" : "hidden",
+        ...style,
+      }) as CSSProperties,
+    [computed, resolvedSize, style],
+  );
 
   if (!internal && config.shorthand) {
     // The Content `arrow` shorthand owns the single rendered arrow.
@@ -107,26 +94,14 @@ const FloatingArrow = forwardRef<
 /** Explicit arrow part for advanced Popover composition. */
 export const PopoverArrow = forwardRef<HTMLDivElement, PopoverArrowProps>(
   function PopoverArrow(props, forwardedRef) {
-    return (
-      <FloatingArrow
-        {...props}
-        part="PopoverArrow"
-        ref={forwardedRef}
-      />
-    );
+    return <FloatingArrow {...props} part="PopoverArrow" ref={forwardedRef} />;
   },
 );
 
 /** Explicit arrow part for Tooltip content. */
 export const TooltipArrow = forwardRef<HTMLDivElement, PopoverArrowProps>(
   function TooltipArrow(props, forwardedRef) {
-    return (
-      <FloatingArrow
-        {...props}
-        part="TooltipArrow"
-        ref={forwardedRef}
-      />
-    );
+    return <FloatingArrow {...props} part="TooltipArrow" ref={forwardedRef} />;
   },
 );
 
@@ -135,12 +110,5 @@ export const DefaultArrow = forwardRef<
   HTMLDivElement,
   PopoverArrowProps & { part: string }
 >(function DefaultArrow(props, forwardedRef) {
-  return (
-    <FloatingArrow
-      {...props}
-      internal
-      part="Arrow"
-      ref={forwardedRef}
-    />
-  );
+  return <FloatingArrow {...props} internal part="Arrow" ref={forwardedRef} />;
 });

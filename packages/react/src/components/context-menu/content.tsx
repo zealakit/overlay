@@ -32,7 +32,7 @@ export type ContextMenuContentProps = HTMLAttributes<HTMLDivElement> & {
   positionMethod?: Strategy;
   /** `true`/omitted uses an enclosing Dialog popup if present. */
   portal?: boolean | Element | null;
-  /** Fade/custom enter and exit animation. Enabled by default as fade. */
+  /** Fade/custom enter and exit animation. Disabled by default; pass true or a config. */
   animation?: AnimationSetting;
 };
 
@@ -114,20 +114,20 @@ export const ContextMenuContent = forwardRef<
       <MenuSurface
         {...rest}
         ref={forwardedRef}
-      reference={reference}
-      boundaryReference={triggerElement}
-      focusRestoreTarget={triggerElement}
-      menuId={menu.contentId}
-      placement={placement}
-      offset={sideOffset}
-      alignOffset={alignOffset}
-      padding={collisionPadding}
-      boundary={collisionBoundary}
-      strategy={positionMethod}
-      flip={collisionAvoidance?.flip ?? true}
-      shift={collisionAvoidance?.shift ?? true}
-      portal={portal}
-      parentLayer={menu.parentLayer}
+        reference={reference}
+        boundaryReference={triggerElement}
+        focusRestoreTarget={triggerElement}
+        menuId={menu.contentId}
+        placement={placement}
+        offset={sideOffset}
+        alignOffset={alignOffset}
+        padding={collisionPadding}
+        boundary={collisionBoundary}
+        strategy={positionMethod}
+        flip={collisionAvoidance?.flip ?? true}
+        shift={collisionAvoidance?.shift ?? true}
+        portal={portal}
+        parentLayer={menu.parentLayer}
         dir={menu.direction}
         open={menu.isOpen}
         onDismiss={handleDismiss}

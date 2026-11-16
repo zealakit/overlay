@@ -11,12 +11,14 @@ import {
   type ShallowRef,
 } from "vue";
 import type {
+  AnimationSetting,
   Placement,
   PositionerBoundary,
   Strategy,
 } from "@zealakit/overlay-core";
 import {
   createOverlayController,
+  type OverlayArrowOptions,
   type OverlayChangeReason,
   type OverlayController,
   type OverlayControllerKind,
@@ -36,6 +38,13 @@ type ReactivePositioningOptions = {
   dir?: MaybeRefOrGetter<"ltr" | "rtl" | undefined>;
 };
 
+/** Reactive arrow configuration; bind `element` to a template ref. */
+export type UseOverlayArrowOptions = {
+  element: MaybeRefOrGetter<HTMLElement | null | undefined>;
+  size?: MaybeRefOrGetter<number | undefined>;
+  padding?: MaybeRefOrGetter<number | undefined>;
+};
+
 export type UseOverlayComponentOptions = Omit<
   OverlayControllerOptions,
   | "kind"
@@ -53,12 +62,18 @@ export type UseOverlayComponentOptions = Omit<
   | "strategy"
   | "autoUpdate"
   | "dir"
+  | "arrow"
+  | "animation"
 > &
   ReactivePositioningOptions & {
     trigger: MaybeRefOrGetter<HTMLElement | null | undefined>;
     content: MaybeRefOrGetter<HTMLElement | null | undefined>;
     backdrop?: MaybeRefOrGetter<HTMLElement | null | undefined>;
     open?: MaybeRefOrGetter<boolean | undefined>;
+    /** Arrow for popover/tooltip. Hidden unless an element is provided. */
+    arrow?: MaybeRefOrGetter<UseOverlayArrowOptions | null | undefined>;
+    /** Enter/exit animation. Disabled unless `true` or a config is passed. */
+    animation?: MaybeRefOrGetter<AnimationSetting | undefined>;
   };
 
 export type UseOverlayComponentReturn = {
@@ -91,6 +106,19 @@ export function useOverlayComponent(
     contentId.value = null;
   };
 
+  const resolveArrow = (): OverlayArrowOptions | null => {
+    const arrow = toValue(options.arrow);
+    const element = arrow ? toValue(arrow.element) : null;
+    if (!arrow || !element) {
+      return null;
+    }
+    return {
+      element,
+      size: toValue(arrow.size),
+      padding: toValue(arrow.padding),
+    };
+  };
+
   const create = (): void => {
     if (disposed) {
       return;
@@ -119,6 +147,8 @@ export function useOverlayComponent(
       strategy: toValue(options.strategy),
       autoUpdate: toValue(options.autoUpdate),
       dir: toValue(options.dir),
+      arrow: resolveArrow(),
+      animation: toValue(options.animation),
       onOpenChange(open, reason) {
         isOpen.value = open;
         options.onOpenChange?.(open, reason);
@@ -180,6 +210,25 @@ export function useOverlayComponent(
         autoUpdate: toValue(options.autoUpdate),
         dir: toValue(options.dir),
       });
+    },
+    { flush: "post" },
+  );
+
+  watch(
+    () => {
+      const arrow = resolveArrow();
+      return [arrow?.element, arrow?.size, arrow?.padding];
+    },
+    () => {
+      controller.value?.setOptions({ arrow: resolveArrow() });
+    },
+    { flush: "post" },
+  );
+
+  watch(
+    () => toValue(options.animation),
+    (next) => {
+      controller.value?.setOptions({ animation: next ?? false });
     },
     { flush: "post" },
   );

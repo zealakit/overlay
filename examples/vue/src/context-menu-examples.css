@@ -1,0 +1,109 @@
+.context-menu-target {
+  display: grid;
+  place-items: center;
+  min-height: 96px;
+  padding: 16px;
+  border: 1px dashed #3a577b;
+  border-radius: 10px;
+  background: #0c1420;
+  color: #b9c9df;
+  cursor: context-menu;
+  text-align: center;
+}
+
+.context-menu-target:focus-visible,
+.context-menu-card:focus-visible {
+  outline: 2px solid #7aa2ff;
+  outline-offset: 3px;
+}
+
+.context-menu-surface {
+  z-index: 120;
+  min-width: 180px;
+  padding: 5px;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  background: #111a27;
+  box-shadow: 0 22px 54px -28px rgb(0 0 0 / 0.95);
+  color: #dce7f7;
+  font-size: 13px;
+}
+
+.context-menu-surface [role="menuitem"],
+.context-menu-surface [role="menuitemcheckbox"],
+.context-menu-surface [role="menuitemradio"] {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 9px;
+  border-radius: 6px;
+  cursor: default;
+  outline: none;
+}
+
+.context-menu-surface [role="menuitem"]:focus,
+.context-menu-surface [role="menuitemcheckbox"]:focus,
+.context-menu-surface [role="menuitemradio"]:focus {
+  background: #223c60;
+}
+
+.context-menu-surface [aria-disabled="true"] {
+  opacity: 0.45;
+}
+
+.context-menu-surface [data-context-menu-shortcut] {
+  margin-inline-start: auto;
+  color: #8fa3bd;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+}
+
+.context-menu-surface [data-context-menu-label] {
+  padding: 6px 9px 3px;
+  color: #8fa3bd;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.context-menu-surface [data-context-menu-separator] {
+  height: 1px;
+  margin: 5px 4px;
+  border: 0;
+  background: #2b3d55;
+}
+
+.context-menu-surface .context-menu-item--danger {
+  color: #ffb4b4;
+}
+
+.context-menu-card {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid #334155;
+  border-radius: 9px;
+  background: #0c1420;
+  color: #c9d7ea;
+  cursor: context-menu;
+}
+
+.context-menu-card span {
+  color: #8fa3bd;
+  font-size: 12px;
+}
+
+.context-menu-edge-target {
+  margin-inline-start: auto;
+  max-width: 260px;
+}
+
+.context-menu-in-dialog {
+  min-height: 72px;
+}
+
+@media (max-width: 640px) {
+  .context-menu-surface {
+    min-width: 160px;
+  }
+}

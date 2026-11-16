@@ -134,3 +134,40 @@ test("Svelte createContextMenu supports pointer and keyboard navigation", () => 
   assert.equal(document.activeElement, trigger);
   menu.destroy();
 });
+
+test("Svelte createPopover positions an arrow and animates exit", async () => {
+  const trigger = append<HTMLButtonElement>("<button>Open</button>");
+  const content = append<HTMLDivElement>("<div>Panel</div>");
+  const arrow = document.createElement("span");
+  content.append(arrow);
+  const popover = createPopover({
+    trigger,
+    content,
+    placement: "top",
+    arrow: { element: arrow, size: 6 },
+    animation: { duration: 100, easing: "linear" },
+  });
+  const originalAnimate = HTMLElement.prototype.animate;
+  const finishers: Array<() => void> = [];
+  HTMLElement.prototype.animate = () =>
+    ({
+      finished: new Promise<void>((resolve) => finishers.push(resolve)),
+      cancel() {},
+    }) as unknown as Animation;
+  try {
+    popover.open();
+    await popover.update();
+    assert.equal(arrow.dataset.side, "top");
+    assert.equal(arrow.style.width, "6px");
+    popover.close();
+    assert.equal(content.hidden, false);
+    for (const finish of finishers.splice(0)) {
+      finish();
+    }
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    assert.equal(content.hidden, true);
+  } finally {
+    HTMLElement.prototype.animate = originalAnimate;
+    popover.destroy();
+  }
+});

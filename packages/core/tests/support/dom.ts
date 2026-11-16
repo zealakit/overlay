@@ -67,16 +67,6 @@ export function dispatchPointer(
   return event;
 }
 
-export function dispatchFocusOut(
-  target: EventTarget,
-  relatedTarget: EventTarget | null,
-): FocusEvent {
-  const event = new window.FocusEvent("focusout", { bubbles: true });
-  Object.defineProperty(event, "relatedTarget", { value: relatedTarget });
-  target.dispatchEvent(event);
-  return event;
-}
-
 export function dispatchKey(
   target: EventTarget,
   init: {
