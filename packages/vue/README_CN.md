@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/vue/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/vue/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/vue/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/cover.svg?raw=true)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
 
 面向 Vue 的无样式 Popover、Tooltip、Dialog 和 ContextMenu 组件。提供复合组件、响应式定位、分层关闭、焦点管理和底层 composable。视觉样式由你自己决定。
 

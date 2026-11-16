@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/react/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/react/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/react/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/cover.svg?raw=true)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
 
 Popover, Tooltip, Dialog và ContextMenu headless cho React. Cung cấp compound component, định vị, đóng theo lớp, quản lý focus và các hook cấp thấp. Bạn tự quyết định kiểu dáng.
 

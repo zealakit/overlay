@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/core/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/core/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/core/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/cover.svg?raw=true)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
 
 供所有 Zealakit Overlay 适配器使用的无样式内核，负责定位、分层、焦点和 DOM 控制器。提供支持碰撞检测的 positioner、layer stack、焦点工具和共享的 overlay controller。视觉样式由你自己决定。
 

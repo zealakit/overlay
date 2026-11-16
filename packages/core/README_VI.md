@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/core/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/core/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/core/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/cover.svg?raw=true)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
 
 Kernel headless cho định vị, phân lớp, focus và DOM controller của mọi adapter Zealakit Overlay. Cung cấp positioner có xử lý va chạm, layer stack, helper focus và overlay controller dùng chung. Bạn tự quyết định kiểu dáng.
 

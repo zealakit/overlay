@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/cover.svg?raw=true)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
 
 无样式（headless）的 overlay 原语，用于在 Vanilla TypeScript、React、Vue 和 Svelte 中构建 popover、tooltip、dialog 和 context menu。
 

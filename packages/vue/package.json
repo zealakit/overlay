@@ -47,9 +47,9 @@
     "vue": "^3.5.0"
   },
   "devDependencies": {
-    "@vue/test-utils": "^2.5.1",
+    "@vue/test-utils": "^2.6.0",
     "happy-dom": "^21.0.4",
-    "vue": "^3.5.22"
+    "vue": "^3.5.45"
   },
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.json",

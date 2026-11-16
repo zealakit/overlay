@@ -38,7 +38,9 @@ async function popup(): Promise<HTMLElement> {
   await waitFor(() =>
     assert.ok(document.querySelector("[data-testid='popup']")),
   );
-  return document.querySelector<HTMLElement>("[data-testid='popup']")!;
+  const element = document.querySelector<HTMLElement>("[data-testid='popup']");
+  assert.ok(element);
+  return element;
 }
 
 test("arrow is hidden by default", async () => {
@@ -52,10 +54,13 @@ test("arrow shorthand renders one decorative arrow with a side", async () => {
   const element = await popup();
   const arrows = element.querySelectorAll<HTMLElement>("[data-arrow]");
   assert.equal(arrows.length, 1);
-  const arrow = arrows[0]!;
+  const [arrow] = arrows;
+  assert.ok(arrow);
+  const side = arrow.dataset.side;
+  assert.ok(side);
   assert.equal(arrow.getAttribute("aria-hidden"), "true");
   assert.equal(arrow.style.width, "10px");
-  assert.ok(["top", "right", "bottom", "left"].includes(arrow.dataset.side!));
+  assert.ok(["top", "right", "bottom", "left"].includes(side));
 });
 
 test("explicit PopoverArrow works without the shorthand", async () => {

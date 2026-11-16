@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/vanilla/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/cover.svg?raw=true)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
 
 Popover, Tooltip, Dialog và ContextMenu headless cho TypeScript và JavaScript thuần. Cung cấp markup `data-*` khai báo, controller mệnh lệnh, định vị, layer stack, xử lý focus và ARIA trên các phần tử do bạn sở hữu. Bạn tự quyết định kiểu dáng.
 

@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/vue/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/vue/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/vue/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/cover.svg?raw=true)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
 
 Component Popover, Tooltip, Dialog và ContextMenu headless cho Vue. Cung cấp compound component, định vị reactive, đóng theo lớp, quản lý focus và các composable cấp thấp. Bạn tự quyết định kiểu dáng.
 

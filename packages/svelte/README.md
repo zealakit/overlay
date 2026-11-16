@@ -2,7 +2,7 @@
 
 [English](https://github.com/zealakit/overlay/blob/main/packages/svelte/README.md) | [Tiếng Việt](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_VI.md) | [中文](https://github.com/zealakit/overlay/blob/main/packages/svelte/README_CN.md)
 
-![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/cover.svg?raw=true)
+![Zealakit Overlay cover](https://github.com/zealakit/overlay/blob/main/assets/overlay-cover.jpg)
 
 Headless Popover, Tooltip, Dialog, and ContextMenu components for Svelte 5. Provides compound components, positioning, layered dismissal, focus management, and low-level controllers and actions. You own visual styling.
 

@@ -8,6 +8,9 @@
     "zealakit",
     "hoverable",
     "describedby",
-    "labelledby"
+    "labelledby",
+    "astrojs",
+    "biomejs",
+    "esbuild"
   ]
 }

@@ -8,7 +8,8 @@
       "!**/.svelte-kit",
       "!**/.next",
       "!**/.astro",
-      "!**/*.tsbuildinfo"
+      "!**/*.tsbuildinfo",
+      "!**/*.md"
     ]
   },
   "assist": {
@@ -46,6 +47,16 @@
     }
   },
   "overrides": [
+    {
+      "includes": ["**/tests/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noComponentHookFactories": "off"
+          }
+        }
+      }
+    },
     {
       "includes": ["**/*.vue", "**/*.svelte", "**/*.astro"],
       "linter": {
