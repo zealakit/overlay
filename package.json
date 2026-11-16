@@ -1,0 +1,58 @@
+{
+  "name": "@zealakit/overlay",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A lightweight foundation for building floating, layered, and interactive headless UI components.",
+  "keywords": [
+    "overlay",
+    "popover",
+    "tooltip",
+    "headless",
+    "accessibility",
+    "a11y",
+    "ui",
+    "zealakit",
+    "monorepo",
+    "react",
+    "vue",
+    "svelte",
+    "vanilla"
+  ],
+  "author": "nqhed - Huy Ed. Nguyen",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zealakit/overlay.git"
+  },
+  "type": "module",
+  "packageManager": "pnpm@12.18.0",
+  "scripts": {
+    "build": "pnpm -r --filter './packages/*' run build",
+    "build:core": "pnpm --filter @zealakit/overlay-core run build",
+    "build:vanilla": "pnpm --filter @zealakit/overlay-vanilla run build",
+    "build:react": "pnpm --filter @zealakit/overlay-react run build",
+    "build:vue": "pnpm --filter @zealakit/overlay-vue run build",
+    "build:svelte": "pnpm --filter @zealakit/overlay-svelte run build",
+    "typecheck": "pnpm -r --filter './packages/*' run typecheck",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "check": "pnpm build && pnpm typecheck && pnpm test && pnpm lint",
+    "clean": "pnpm -r exec rm -rf dist .next .astro && rm -rf artifacts",
+    "dev:vanilla": "pnpm --filter @zealakit/overlay-vanilla-example run dev",
+    "dev:react": "pnpm --filter @zealakit/overlay-react-example run dev",
+    "dev:vue": "pnpm --filter @zealakit/overlay-vue-example run dev",
+    "dev:svelte": "pnpm --filter @zealakit/overlay-svelte-example run dev",
+    "dev:nextjs": "pnpm --filter @zealakit/overlay-nextjs-example run dev",
+    "dev:astro": "pnpm --filter @zealakit/overlay-astro-example run dev",
+    "monitor": "node --strip-types monitor/server.ts",
+    "test": "pnpm --filter @zealakit/overlay-core run test && pnpm --filter @zealakit/overlay-vanilla run test && pnpm --filter @zealakit/overlay-react run test && pnpm --filter @zealakit/overlay-vue run test && pnpm --filter @zealakit/overlay-svelte run test",
+    "pack:packages": "node scripts/pack-packages.mjs",
+    "release:check": "pnpm check && pnpm pack:packages"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.11",
+    "@types/node": "^24.19.0",
+    "typescript": "^5.9.3"
+  }
+}

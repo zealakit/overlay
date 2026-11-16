@@ -1,0 +1,32 @@
+---
+import SiteLayout from "../layouts/site-layout.astro";
+import ReactOverlayDemo from "../components/react-overlay-demo.tsx";
+import SvelteOverlayDemo from "../components/svelte-overlay-demo.svelte";
+import VueOverlayDemo from "../components/vue-overlay-demo.vue";
+---
+
+<SiteLayout title="@zealakit/overlay · Astro">
+  <main class="page">
+    <h1>@zealakit/overlay · Astro</h1>
+    <p class="lede">
+      One Astro project, three integrations. Each island below uses its own
+      workspace adapter and is server-rendered then hydrated with
+      <code>client:load</code>. Press Escape or click outside to dismiss.
+    </p>
+
+    <section class="demo">
+      <h2>React</h2>
+      <ReactOverlayDemo client:load />
+    </section>
+
+    <section class="demo">
+      <h2>Vue</h2>
+      <VueOverlayDemo client:load />
+    </section>
+
+    <section class="demo">
+      <h2>Svelte</h2>
+      <SvelteOverlayDemo client:load />
+    </section>
+  </main>
+</SiteLayout>

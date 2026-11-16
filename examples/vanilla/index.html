@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@zealakit/overlay-vanilla</title>
+  </head>
+  <body>
+    <main class="page">
+      <h1>@zealakit/overlay-vanilla</h1>
+      <p class="lede">
+        Positioning, layer registration, outside interaction, Escape handling,
+        and cleanup — with no framework runtime.
+      </p>
+
+      <section class="demo">
+        <h2>1–2. Floating positioning</h2>
+        <p class="copy">
+          <code>createFloating()</code> wraps core's collision-aware positioner
+          and applies <code>position</code>/<code>left</code>/<code>top</code>.
+          Change the placement to update it dynamically.
+        </p>
+
+        <div class="row">
+          <button id="floating-trigger" type="button" aria-controls="floating-panel" aria-expanded="false">
+            Toggle floating panel
+          </button>
+          <button id="cycle-placement" type="button">Placement: bottom-start</button>
+          <button id="dispose-demo" class="ghost" type="button">Dispose demo</button>
+        </div>
+
+        <p id="floating-status" class="status" aria-live="polite">
+          No measurement yet
+        </p>
+
+        <div
+          id="floating-panel"
+          class="panel"
+          role="dialog"
+          aria-label="Floating panel"
+          hidden
+          data-state="closed"
+        >
+          <p>
+            Positioned by the core engine. Press Escape or click outside to
+            dismiss.
+          </p>
+          <div class="row">
+            <button id="focus-action" type="button">Focusable action</button>
+            <button id="close-floating" class="ghost" type="button">Close</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="demo">
+        <h2>3–6. Overlay controller</h2>
+        <p class="copy">
+          <code>createOverlay()</code> combines positioning, a shared layer
+          stack, Escape/outside dismissal, and portal rendering.
+        </p>
+
+        <div class="row">
+          <button id="overlay-trigger" type="button" aria-controls="overlay-panel" aria-expanded="false">
+            Toggle overlay
+          </button>
+          <button id="destroy-overlay" class="ghost" type="button">
+            Destroy overlay
+          </button>
+        </div>
+
+        <div
+          id="overlay-panel"
+          class="panel"
+          role="dialog"
+          aria-label="Overlay panel"
+          hidden
+          data-state="closed"
+        >
+          <p>
+            Registered on the same layer stack. Only the topmost layer reacts to
+            Escape or outside presses.
+          </p>
+        </div>
+      </section>
+
+      <section class="demo">
+        <h2>7–14. High-level overlay components</h2>
+        <p class="copy">
+          <code>createPopover()</code>, <code>createTooltip()</code>,
+          <code>createDialog()</code>, and <code>createContextMenu()</code>
+          package the same Core behavior with explicit DOM lifecycle.
+        </p>
+
+        <div class="demo-grid">
+          <div class="demo-card">
+            <h3>Popover + placement</h3>
+            <button id="hl-popover-trigger" type="button">Open popover</button>
+            <button id="hl-placement" type="button">Placement: bottom-start</button>
+            <div id="hl-popover-content" class="popover-surface" hidden>
+              <p>Portaled popover content.</p>
+              <button id="hl-popover-close" type="button">Close</button>
+            </div>
+          </div>
+
+          <div class="demo-card">
+            <h3>Tooltip</h3>
+            <button id="hl-tooltip-trigger" type="button">Hover or focus me</button>
+            <div id="hl-tooltip-content" class="tooltip-surface" hidden>
+              A concise informational hint.
+            </div>
+          </div>
+
+          <div class="demo-card">
+            <h3>Dialog + nested popover</h3>
+            <button id="hl-dialog-trigger" type="button">Open dialog</button>
+            <div id="hl-dialog-backdrop" class="dialog-backdrop" hidden></div>
+            <div id="hl-dialog-content" class="dialog-surface" hidden>
+              <h2 id="hl-dialog-title">Dialog title</h2>
+              <p>Focus is contained; Escape and backdrop dismiss.</p>
+              <button id="hl-nested-trigger" type="button">Open nested popover</button>
+              <div id="hl-nested-content" class="popover-surface" hidden>
+                <p>Nested popover, still inside the dialog boundary.</p>
+                <button id="hl-nested-close" type="button">Close nested</button>
+              </div>
+              <button id="hl-dialog-close" type="button">Close dialog</button>
+            </div>
+          </div>
+
+          <div class="demo-card">
+            <h3>ContextMenu</h3>
+            <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: focusable context-menu region -->
+            <div id="hl-context-target" class="context-target" tabindex="0">
+              Right-click this target
+            </div>
+            <div id="hl-context-content" class="context-surface" hidden>
+              <div role="menuitem" tabindex="-1">Copy</div>
+              <div role="menuitem" tabindex="-1">Paste</div>
+              <div role="menuitem" tabindex="-1" aria-disabled="true">Unavailable</div>
+            </div>
+          </div>
+
+          <div class="demo-card">
+            <h3>Controlled popover</h3>
+            <button id="hl-controlled-open" type="button">Open</button>
+            <button id="hl-controlled-close" type="button">Close</button>
+            <button id="hl-controlled-trigger" type="button">Toggle controlled</button>
+            <p id="hl-controlled-state" class="status">closed</p>
+            <div id="hl-controlled-content" class="popover-surface" hidden>
+              <p>Visibility is controlled by page state.</p>
+            </div>
+          </div>
+
+          <div class="demo-card">
+            <h3>RTL popover</h3>
+            <div dir="rtl">
+              <button id="hl-rtl-trigger" type="button">افتح</button>
+              <div id="hl-rtl-content" class="popover-surface" hidden>
+                <p>محتوى من اليمين إلى اليسار.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
