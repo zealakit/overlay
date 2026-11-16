@@ -9,7 +9,7 @@ import {
   TooltipArrow,
   TooltipContent,
   TooltipTrigger,
-} from "@zealakit/overlay-svelte/components";
+} from "@zealakit/overlay-svelte";
 
 let arrow = $state(true);
 let animate = $state(true);

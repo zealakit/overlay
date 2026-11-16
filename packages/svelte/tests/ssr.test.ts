@@ -1,9 +1,12 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { test } from "node:test";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const packageRoot = fileURLToPath(new URL("..", import.meta.url));
+const loader = pathToFileURL(
+  fileURLToPath(new URL("./svelte-ssr-loader.ts", import.meta.url)),
+).href;
 
 test("Svelte adapter imports and constructs controllers without browser globals", () => {
   const script = `
@@ -21,6 +24,7 @@ test("Svelte adapter imports and constructs controllers without browser globals"
       result,
       layerId: layerState.id,
       exports: Object.keys(svelte).length,
+      hasComponents: typeof svelte.Popover === "function" && typeof svelte.Dialog === "function",
     }));
     unsubscribe();
     positioner.dispose();
@@ -29,7 +33,14 @@ test("Svelte adapter imports and constructs controllers without browser globals"
 
   const output = execFileSync(
     process.execPath,
-    ["--input-type=module", "--eval", script],
+    [
+      "--strip-types",
+      "--import",
+      loader,
+      "--input-type=module",
+      "--eval",
+      script,
+    ],
     { cwd: packageRoot, encoding: "utf8" },
   );
 
@@ -39,6 +50,7 @@ test("Svelte adapter imports and constructs controllers without browser globals"
     result: unknown;
     layerId: string | null;
     exports: number;
+    hasComponents: boolean;
   };
 
   assert.equal(result.window, "undefined");
@@ -46,4 +58,5 @@ test("Svelte adapter imports and constructs controllers without browser globals"
   assert.equal(result.result, null);
   assert.equal(result.layerId, null);
   assert.ok(result.exports > 0);
+  assert.equal(result.hasComponents, true);
 });

@@ -6,11 +6,10 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { compile } from "svelte/compiler";
 import { flushSync, mount, tick, unmount } from "svelte";
 import { dispatchEscape, dispatchPointer, resetDom } from "./support/dom.ts";
+import * as rootEntry from "../dist/index.js";
 
 const packageRoot = fileURLToPath(new URL("..", import.meta.url));
-const partsUrl = pathToFileURL(
-  join(packageRoot, "dist", "parts", "index.js"),
-).href;
+const entryUrl = pathToFileURL(join(packageRoot, "dist", "index.js")).href;
 const directory = mkdtempSync(join(packageRoot, "tests", "parts-"));
 const mounted: Array<ReturnType<typeof mount>> = [];
 let fixtureCount = 0;
@@ -40,7 +39,7 @@ async function render(
         DialogTitle, DialogTrigger,
         Popover, PopoverClose, PopoverContent, PopoverTrigger,
         Tooltip, TooltipContent, TooltipTrigger,
-      } from "${partsUrl}";
+      } from "${entryUrl}";
       let props = $props();
       ${script}
     </script>
@@ -237,5 +236,47 @@ test("parts throw a clear error outside their root", async () => {
     );
   } finally {
     console.error = originalError;
+  }
+});
+
+test("root entry exports every Svelte component part", () => {
+  const parts = [
+    "ContextMenu",
+    "ContextMenuContent",
+    "ContextMenuGroup",
+    "ContextMenuItem",
+    "ContextMenuLabel",
+    "ContextMenuSeparator",
+    "ContextMenuShortcut",
+    "ContextMenuTrigger",
+    "Dialog",
+    "DialogBackdrop",
+    "DialogClose",
+    "DialogContent",
+    "DialogDescription",
+    "DialogFooter",
+    "DialogHeader",
+    "DialogTitle",
+    "DialogTrigger",
+    "Popover",
+    "PopoverArrow",
+    "PopoverClose",
+    "PopoverContent",
+    "PopoverDescription",
+    "PopoverHeader",
+    "PopoverTitle",
+    "PopoverTrigger",
+    "Tooltip",
+    "TooltipArrow",
+    "TooltipContent",
+    "TooltipTrigger",
+  ] as const;
+  const entry = rootEntry as unknown as Record<string, unknown>;
+  for (const name of parts) {
+    assert.equal(
+      typeof entry[name],
+      "function",
+      `${name} is not exported from @zealakit/overlay-svelte`,
+    );
   }
 });

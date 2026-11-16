@@ -17,7 +17,7 @@ Style the parts with `class`, `style`, and the `data-*` hooks below. Content sta
 npm install @zealakit/overlay-svelte svelte
 ```
 
-Peer dependency: `svelte` `^5.0.0`. Svelte 5 only; ESM only. The components ship as `.svelte` files from `@zealakit/overlay-svelte/components`, so use Vite with `@sveltejs/vite-plugin-svelte` (SvelteKit includes it). The root entry stays plain JavaScript.
+Peer dependency: `svelte` `^5.0.0`. Svelte 5 only; ESM only. Components, controllers, and actions share one entry, `@zealakit/overlay-svelte`. Components ship as `.svelte` files, so use Vite with `@sveltejs/vite-plugin-svelte` (SvelteKit includes it).
 
 ## Popover
 
@@ -33,7 +33,7 @@ Peer dependency: `svelte` `^5.0.0`. Svelte 5 only; ESM only. The components ship
     PopoverHeader,
     PopoverTitle,
     PopoverTrigger,
-  } from "@zealakit/overlay-svelte/components";
+  } from "@zealakit/overlay-svelte";
 </script>
 
 <Popover placement="bottom-start" offset={8}>
@@ -148,7 +148,7 @@ Every part renders a sensible default tag. Pass `as` to change it, for example `
     Tooltip,
     TooltipContent,
     TooltipTrigger,
-  } from "@zealakit/overlay-svelte/components";
+  } from "@zealakit/overlay-svelte";
 </script>
 
 <Tooltip placement="top" delay={500}>
@@ -234,7 +234,7 @@ Every part renders a sensible default tag. Pass `as` to change it, for example `
     DialogDescription,
     DialogTitle,
     DialogTrigger,
-  } from "@zealakit/overlay-svelte/components";
+  } from "@zealakit/overlay-svelte";
 </script>
 
 <Dialog>
@@ -322,7 +322,7 @@ Every part renders a sensible default tag. Pass `as` to change it, for example `
     ContextMenuItem,
     ContextMenuSeparator,
     ContextMenuTrigger,
-  } from "@zealakit/overlay-svelte/components";
+  } from "@zealakit/overlay-svelte";
 </script>
 
 <ContextMenu>

@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@zealakit/overlay-svelte/components";
+} from "@zealakit/overlay-svelte";
 import ExampleCard from "./example-card.svelte";
 
 let open = $state(false);

@@ -4,7 +4,7 @@ import {
   TooltipArrow,
   TooltipContent,
   TooltipTrigger,
-} from "@zealakit/overlay-svelte/components";
+} from "@zealakit/overlay-svelte";
 import ExampleCard from "./example-card.svelte";
 
 const PLACEMENTS = ["top", "right", "bottom", "left"] as const;

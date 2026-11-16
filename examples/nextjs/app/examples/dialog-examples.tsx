@@ -2,8 +2,8 @@ import {
   forwardRef,
   useState,
   type ButtonHTMLAttributes,
-  type FormEvent,
   type ReactNode,
+  type SubmitEvent,
 } from "react";
 import {
   Dialog,
@@ -82,7 +82,7 @@ function FormDialog() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSaving(true);
     setSaved(false);

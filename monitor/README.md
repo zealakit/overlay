@@ -6,7 +6,7 @@ This folder is designed to be **copied into other repositories** with small, exp
 
 It is ported from the Disclosure repository monitor without architectural changes. The
 adaptations are the repository name, package names, and stack notes in the AI prompt templates
-(review + auto-upgrade), plus a small lockfile-parser fix: pnpm 12 can emit more than one
+(check + auto-upgrade), plus a small lockfile-parser fix: pnpm 12 can emit more than one
 `importers:`/`packages:` pair, so the resolved-version scan continues past the first `packages:`
 section instead of stopping.
 
@@ -16,7 +16,7 @@ section instead of stopping.
 - Shows declared ranges, lockfile-resolved versions (when available), and npm registry latest/patch/minor/major
 - Groups dependencies into **one card per manifest** (Root, then each package)
 - Lets you pick a target version per row and update individually or in bulk
-- Generates an **AI review prompt** and an **AI auto-upgrade prompt** (copy/paste into an external coding agent) — never calls an AI API itself
+- Generates an **AI check prompt** and an **AI auto-upgrade prompt** (copy/paste into an external coding agent) — never calls an AI API itself
 
 ## What it never does
 
@@ -179,7 +179,7 @@ Update flow:
 | Action | Behavior |
 | --- | --- |
 | **Refresh Data** | `POST /api/refresh` |
-| **Get AI Prompt** | Builds a copyable review prompt from selected outdated rows, or outdated rows in the **current filter view** if none selected. Includes each row’s selected target version. Does not modify packages. |
+| **Get AI Check Prompt** | Builds a copyable check prompt from selected outdated rows, or outdated rows in the **current filter view** if none selected. Includes each row’s selected target version. Does not modify packages. |
 | **Get AI Upgrade Prompt** | Builds a copyable prompt that tells the agent to **apply** upgrades to the latest stable versions (majors included), then verify with build/typecheck/test/lint. Same row scope. The monitor still does not write files. |
 | **Update All Outdated** | Opens a **review dialog** (not an immediate upgrade). Targets default to conservative patch/minor. User can change/remove rows, then confirm. |
 
@@ -202,7 +202,7 @@ Update flow:
 Both prompts are generated **client-side** from current monitor data. The monitor never calls
 an AI API itself, and it writes nothing until an external agent acts on the pasted text.
 
-### Review prompt (`Get AI Prompt`)
+### Check prompt (`Get AI Check Prompt`)
 
 It asks an external agent to:
 
@@ -230,12 +230,12 @@ peer ranges that are broader than pinned devDependencies stay broad, no commit/p
 
 - If checkboxes are selected → selected outdated rows only
 - Else → outdated rows matching the current filters (not necessarily the entire repo)
-- Review prompt’s **Proposed target** column comes from each row’s target `<select>` (falls back to the conservative default)
+- Check prompt’s **Proposed target** column comes from each row’s target `<select>` (falls back to the conservative default)
 - Upgrade prompt’s **Proposed target** column is each row’s **Latest** stable version
 
 Package names in the prompt header are taken from `/api/packages` when available (so adding `packages/vanilla` etc. stays current).
 
-When porting, edit the prompt template in `index.html` (`buildPrompt` / `publishedPackageList`) so repository name, package names, and stack notes match the target project. The `mode` option (`"review"` / `"upgrade"`) switches the directive and constraint sections.
+When porting, edit the prompt template in `index.html` (`buildPrompt` / `publishedPackageList`) so repository name, package names, and stack notes match the target project. The `mode` option (`"check"` / `"upgrade"`) switches the directive and constraint sections.
 
 ### Template anatomy (for ports)
 
@@ -251,7 +251,7 @@ Everything the agent reads comes from `buildPrompt()`. This table maps each bloc
 | Inventory table | 14 columns from server rows | Keep unless you change the row shape in `server.ts` |
 | Required investigation | 9 checks tuned to overlay/framework peers | Replace framework/CDN specifics with the port’s real risks |
 | Execution directive (upgrade) | latest stable, majors allowed, edit manifests, `pnpm install`, verify loop, per-dependency fallback, final report | New commands, manifest scope, and registry policy |
-| Recommendation format (review) | 4 outcome buckets | Keep unless the project wants different buckets |
+| Recommendation format (check) | 4 outcome buckets | Keep unless the project wants different buckets |
 | Constraints (both) | no `examples/**`, no framework deps in core, broad peers, no publish | The port’s hard boundaries and excluded trees |
 | Final report (upgrade) | upgraded / kept / blocked table + commands run | Keep; extend only for project-specific evidence |
 
@@ -260,7 +260,7 @@ Practical constraints of the template:
 - The verification chain (`pnpm build` → `pnpm typecheck` → `pnpm test` → `pnpm lint`) is hardcoded in the execution directive, the constraints, and the final report. Replace all occurrences with the host repo’s real commands and keep the same order: build, typecheck, test, lint.
 - The `examples/**` guardrail is project-specific too. Swap it for the port’s excluded tree (for example `fixtures/**`, `docs/**`, `templates/**`).
 - Prompts are written in English so any coding agent reads them consistently. Translating the static text is fine; keep the directive explicit — one target, one write path, one verification loop, one fallback rule.
-- Only `mode: "upgrade"` may tell the agent to write files. Never add write permissions to the review section.
+- Only `mode: "upgrade"` may tell the agent to write files. Never add write permissions to the check section.
 
 Find leftover project-specific strings before shipping a port:
 
@@ -335,13 +335,13 @@ rules. Edit these blocks in `buildPrompt()` and `publishedPackageList()` in `ind
 - **Package inventory** — `publishedPackageList()` fallback array.
 - **Execution directive (upgrade mode)** — registry policy (latest stable? majors allowed?), which manifests the agent may write, the install command, the verification chain, the per-dependency fallback rule, and the final report format.
 - **Constraints (both modes)** — excluded trees, architecture boundaries, peer-range policy, and the no-commit/no-publish rule.
-- **Review mode** — outcome buckets and the explicit “do not apply” instruction.
+- **Check mode** — outcome buckets and the explicit “do not apply” instruction.
 
 Then generate both prompts against at least one outdated row and verify:
 
 | Check | Expected |
 | --- | --- |
-| Review prompt | Has a recommendation section, forbids applying upgrades, and its **Proposed target** follows the row’s selected/conservative version |
+| Check prompt | Has a recommendation section, forbids applying upgrades, and its **Proposed target** follows the row’s selected/conservative version |
 | Upgrade prompt | Has the execution directive, targets the **Latest** column, and names the host repo’s real install and verification commands |
 | Guardrails | Lists the port’s excluded trees and architecture rules, with no leftover Zealakit strings |
 | Leftovers | `grep -n "zealakit\|overlay-core\|examples/\|pnpm build\|pnpm typecheck\|pnpm test\|pnpm lint" monitor/index.html` returns only deliberate template hits |
@@ -352,7 +352,7 @@ Then generate both prompts against at least one outdated row and verify:
 | --- | --- |
 | Port `4177` | `PREFERRED_PORT` in `server.ts` |
 | Page title / header copy | `index.html` |
-| AI prompt repo name, stack & upgrade rules | `buildPrompt()` in `index.html` (`mode: "review"` / `"upgrade"`) |
+| AI prompt repo name, stack & upgrade rules | `buildPrompt()` in `index.html` (`mode: "check"` / `"upgrade"`) |
 | Ecosystem list | `ecosystem: "node"` on rows + `summary.ecosystems` — extend if you add Cargo/etc. |
 
 ### 6. TypeScript project

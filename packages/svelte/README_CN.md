@@ -17,7 +17,7 @@
 npm install @zealakit/overlay-svelte svelte
 ```
 
-Peer 依赖：`svelte` `^5.0.0`。仅支持 Svelte 5；仅支持 ESM。组件以 `.svelte` 文件形式从 `@zealakit/overlay-svelte/components` 提供，因此请使用带 `@sveltejs/vite-plugin-svelte` 的 Vite（SvelteKit 已包含）。根入口仍是纯 JavaScript。
+Peer 依赖：`svelte` `^5.0.0`。仅支持 Svelte 5；仅支持 ESM。组件、控制器和 action 共用同一个入口 `@zealakit/overlay-svelte`。组件以 `.svelte` 文件形式提供，因此请使用带 `@sveltejs/vite-plugin-svelte` 的 Vite（SvelteKit 已包含）。
 
 ## Popover
 
@@ -33,7 +33,7 @@ Peer 依赖：`svelte` `^5.0.0`。仅支持 Svelte 5；仅支持 ESM。组件以
     PopoverHeader,
     PopoverTitle,
     PopoverTrigger,
-  } from "@zealakit/overlay-svelte/components";
+  } from "@zealakit/overlay-svelte";
 </script>
 
 <Popover placement="bottom-start" offset={8}>
@@ -148,7 +148,7 @@ Peer 依赖：`svelte` `^5.0.0`。仅支持 Svelte 5；仅支持 ESM。组件以
     Tooltip,
     TooltipContent,
     TooltipTrigger,
-  } from "@zealakit/overlay-svelte/components";
+  } from "@zealakit/overlay-svelte";
 </script>
 
 <Tooltip placement="top" delay={500}>
@@ -234,7 +234,7 @@ Peer 依赖：`svelte` `^5.0.0`。仅支持 Svelte 5；仅支持 ESM。组件以
     DialogDescription,
     DialogTitle,
     DialogTrigger,
-  } from "@zealakit/overlay-svelte/components";
+  } from "@zealakit/overlay-svelte";
 </script>
 
 <Dialog>
@@ -322,7 +322,7 @@ Peer 依赖：`svelte` `^5.0.0`。仅支持 Svelte 5；仅支持 ESM。组件以
     ContextMenuItem,
     ContextMenuSeparator,
     ContextMenuTrigger,
-  } from "@zealakit/overlay-svelte/components";
+  } from "@zealakit/overlay-svelte";
 </script>
 
 <ContextMenu>

@@ -28,7 +28,7 @@ READMEs (EN/VI/CN) -> product documentation
   - vanilla: declarative `data-*` markup (`initOverlays`) + DOM controllers
   - react: compound components + hooks
   - vue: compound components (render functions) + composables
-  - svelte: compound components (`.svelte`, `/components` subpath) + controllers + actions
+  - svelte: compound components (`.svelte`, root entry) + controllers + actions
 - **Docs** live only in the root and package READMEs (EN, VI, CN), structured by the
   [readme-system skill](../readme-system/SKILL.md). There is no `docs/` folder. Keep examples as
   integration references, not a documentation app.
@@ -95,9 +95,9 @@ out of agent guidance.
   positioning updates must commit before paint.
 - **Vue:** `MaybeRefOrGetter`, shallow refs, correct watcher flush, `onScopeDispose`.
 - **Svelte:** Svelte 5 actions/controllers; mount/cleanup via `onMount`/`onDestroy`. The package
-  builds with `svelte-package` (not plain `tsc`); components live in `src/parts/` and ship from
-  the `./components` export so the root entry stays plain JavaScript. Tests compile `.svelte`
-  files through a `registerHooks` loader in `tests/setup.ts`.
+  builds with `svelte-package` (not plain `tsc`); components live in `src/parts/` and are
+  re-exported from the root entry `src/index.ts`. Tests compile `.svelte` files through a
+  `registerHooks` loader in `tests/setup.ts`.
 - **Component parts (Vue/Svelte/Vanilla):** keep them thin over `createOverlayController`; do
   not reimplement behavior. A dialog backdrop that wraps the content portals as one unit.
 - **Vanilla:** controller options/types; `destroy()` restores portal, listeners, and ARIA/DOM state.

@@ -79,8 +79,8 @@ pnpm monitor      # dependency dashboard at http://127.0.0.1:4177
 - **Package surface:** do not export speculative or unimplemented APIs. No placeholder
   components, no fake implementations.
 - **Scope:** Popover, Tooltip, Dialog, and ContextMenu are implemented as compound components
-  in React (own implementation), Vue (render functions) and Svelte (`.svelte` files, subpath
-  `@zealakit/overlay-svelte/components`), and as declarative `data-*` markup in Vanilla
+  in React (own implementation), Vue (render functions) and Svelte (`.svelte` files, exported
+  from the root entry `@zealakit/overlay-svelte`), and as declarative `data-*` markup in Vanilla
   (`initOverlays`). Vue, Svelte, and Vanilla build on the shared Core DOM controller; submenus,
   checkbox/radio items, and tooltip skip-delay exist only in React. Lower-level
   controllers/composables stay public. Do not add speculative exports for DropdownMenu, Menubar, Select,

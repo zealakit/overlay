@@ -403,7 +403,7 @@
         </div>
         <div class="monitor-actions">
           <button id="refresh-btn" type="button">Refresh Data</button>
-          <button id="prompt-btn" class="contrast" type="button">Get AI Prompt</button>
+          <button id="prompt-btn" class="contrast" type="button">Get AI Check Prompt</button>
           <button id="upgrade-prompt-btn" class="contrast" type="button">
             Get AI Upgrade Prompt
           </button>
@@ -505,7 +505,7 @@
 
     <dialog id="prompt-dialog">
       <article>
-        <header><h3 id="prompt-title" style="margin:0">AI Review Prompt</h3></header>
+        <header><h3 id="prompt-title" style="margin:0">AI Check Prompt</h3></header>
         <p id="prompt-note" style="margin-top:0;color:var(--muted);font-size:0.84rem">
           Copy into your AI coding assistant. This does not update packages.
           Scope: selected outdated rows, otherwise outdated rows in the current
@@ -1256,12 +1256,12 @@ ${constraintsSection}
           );
           return;
         }
-        els.promptTitle.textContent = autoUpgrade ? "AI Auto-Upgrade Prompt" : "AI Review Prompt";
+        els.promptTitle.textContent = autoUpgrade ? "AI Auto-Upgrade Prompt" : "AI Check Prompt";
         els.promptNote.textContent = autoUpgrade
           ? "Copy into your AI coding assistant. It asks the agent to upgrade every listed dependency to the latest stable version (majors included), edit the manifests, run pnpm install, then verify with build/typecheck/test/lint. The agent writes files; the monitor itself still does not."
           : "Copy into your AI coding assistant. This does not update packages. Scope: selected outdated rows, otherwise outdated rows in the current filter view (includes each row’s selected target version).";
         els.promptText.value = buildPrompt(rows, {
-          mode: autoUpgrade ? "upgrade" : "review",
+          mode: autoUpgrade ? "upgrade" : "check",
           scopeNote: usingSelection
             ? "selected outdated rows"
             : "outdated rows matching current filters",
@@ -1270,7 +1270,7 @@ ${constraintsSection}
         els.promptText.focus();
       }
 
-      els.prompt.addEventListener("click", () => openPromptDialog("review"));
+      els.prompt.addEventListener("click", () => openPromptDialog("check"));
       els.upgradePrompt.addEventListener("click", () => openPromptDialog("upgrade"));
 
       els.promptCopy.addEventListener("click", async () => {

@@ -20,7 +20,7 @@
 
 - Vue, Svelte, and Vanilla now ship prebuilt headless components like React: Popover, Tooltip,
   Dialog, and ContextMenu as compound components in Vue (`@zealakit/overlay-vue`) and Svelte
-  (`@zealakit/overlay-svelte/components`), and declarative `data-*` markup via `initOverlays()`
+  (`@zealakit/overlay-svelte`), and declarative `data-*` markup via `initOverlays()`
   in Vanilla. Submenus, checkbox/radio items, and the tooltip provider remain React-only.
 
 ### Changed
@@ -32,8 +32,8 @@
   (Vanilla, Svelte, controller) and `isSamePositionerResult` (React, Vue, Svelte positioners).
 - Controller menu navigation now ignores items that belong to a nested menu.
 - A dialog backdrop that contains the dialog content now portals and toggles as one unit.
-- `@zealakit/overlay-svelte` builds with `svelte-package` and adds the `./components` export;
-  the root entry is unchanged.
+- `@zealakit/overlay-svelte` builds with `svelte-package` and exports components, controllers,
+  and actions from the root entry; the `./components` subpath is gone.
 - Documentation is now READMEs only, in English, Vietnamese, and Chinese. The `docs/` folder is
   gone; its component, animation, release, and positioning notes moved into the package
   READMEs and the agent skills. The README structure is defined by the `readme-system` skill
@@ -50,6 +50,8 @@
 - Unused Core exports: `watchPosition`, `listenForDismiss`, `createDisposer`/`Disposer`,
   `observeResize`, `isFocusInside`, `isFocusOutside`, `isActivationKey`, `Point`, `fadeOffset`,
   `DEFAULT_OFFSET`, `ExpandAxis`, and `ExpandPlan`.
+- The `@zealakit/overlay-svelte/components` subpath. Import components from
+  `@zealakit/overlay-svelte`, which now matches the React and Vue adapters.
 
 ### Fixed
 

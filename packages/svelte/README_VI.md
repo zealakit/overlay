@@ -17,7 +17,7 @@ Hãy style các phần bằng `class`, `style` và các hook `data-*` bên dư�
 npm install @zealakit/overlay-svelte svelte
 ```
 
-Peer dependency: `svelte` `^5.0.0`. Chỉ Svelte 5; chỉ ESM. Các component được phát hành dạng file `.svelte` từ `@zealakit/overlay-svelte/components`, nên hãy dùng Vite với `@sveltejs/vite-plugin-svelte` (SvelteKit đã có sẵn). Entry gốc vẫn là JavaScript thuần.
+Peer dependency: `svelte` `^5.0.0`. Chỉ Svelte 5; chỉ ESM. Component, controller và action dùng chung một entry, `@zealakit/overlay-svelte`. Các component phát hành dạng file `.svelte`, nên hãy dùng Vite với `@sveltejs/vite-plugin-svelte` (SvelteKit đã có sẵn).
 
 ## Popover
 
@@ -33,7 +33,7 @@ Peer dependency: `svelte` `^5.0.0`. Chỉ Svelte 5; chỉ ESM. Các component đ
     PopoverHeader,
     PopoverTitle,
     PopoverTrigger,
-  } from "@zealakit/overlay-svelte/components";
+  } from "@zealakit/overlay-svelte";
 </script>
 
 <Popover placement="bottom-start" offset={8}>
@@ -148,7 +148,7 @@ Mỗi phần render một tag mặc định hợp lý. Truyền `as` để đổ
     Tooltip,
     TooltipContent,
     TooltipTrigger,
-  } from "@zealakit/overlay-svelte/components";
+  } from "@zealakit/overlay-svelte";
 </script>
 
 <Tooltip placement="top" delay={500}>
@@ -234,7 +234,7 @@ Mỗi phần render một tag mặc định hợp lý. Truyền `as` để đổ
     DialogDescription,
     DialogTitle,
     DialogTrigger,
-  } from "@zealakit/overlay-svelte/components";
+  } from "@zealakit/overlay-svelte";
 </script>
 
 <Dialog>
@@ -322,7 +322,7 @@ Mỗi phần render một tag mặc định hợp lý. Truyền `as` để đổ
     ContextMenuItem,
     ContextMenuSeparator,
     ContextMenuTrigger,
-  } from "@zealakit/overlay-svelte/components";
+  } from "@zealakit/overlay-svelte";
 </script>
 
 <ContextMenu>

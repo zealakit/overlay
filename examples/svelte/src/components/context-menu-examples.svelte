@@ -8,7 +8,7 @@ import {
   ContextMenuSeparator,
   ContextMenuShortcut,
   ContextMenuTrigger,
-} from "@zealakit/overlay-svelte/components";
+} from "@zealakit/overlay-svelte";
 import ExampleCard from "./example-card.svelte";
 
 let last = $state("Nothing selected.");
