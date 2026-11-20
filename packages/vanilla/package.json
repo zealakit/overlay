@@ -1,6 +1,6 @@
 {
   "name": "@zealakit/overlay-vanilla",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A lightweight foundation for building floating, layered, and interactive headless UI components for vanilla JavaScript and TypeScript.",
   "keywords": [
     "overlay",

@@ -50,9 +50,16 @@ export {
 } from "./positioning/create-floating.js";
 
 export type {
+  AnimationConfig,
+  AnimationDirection,
+  AnimationDirectionSetting,
+  AnimationEasing,
+  AnimationSetting,
+  CustomAnimationClasses,
   DismissReason,
   Placement,
   PositionerOptions,
   PositionerResult,
   ReferenceElement,
+  ResolvedAnimationConfig,
 } from "@zealakit/overlay-core";

@@ -52,10 +52,17 @@ export {
 } from "@zealakit/overlay-core";
 
 export type {
+  AnimationConfig,
+  AnimationDirection,
+  AnimationDirectionSetting,
+  AnimationEasing,
+  AnimationSetting,
+  CustomAnimationClasses,
   DismissReason,
   LayerStack,
   LayerStackHandle,
   Placement,
   PositionerOptions,
   PositionerResult,
+  ResolvedAnimationConfig,
 } from "@zealakit/overlay-core";
