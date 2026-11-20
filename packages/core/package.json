@@ -1,6 +1,6 @@
 {
   "name": "@zealakit/overlay-core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Internal framework-independent overlay kernel: collision-aware positioning, layers, lifecycle, and event primitives. Private: bundled into each adapter package, never published to npm.",
   "keywords": [
