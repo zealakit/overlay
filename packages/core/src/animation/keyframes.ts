@@ -130,22 +130,58 @@ export function resolveExpandPlan({
 }
 
 /**
- * Keyframes for expand/collapse: the popup scales out of the anchor edge while
- * it fades in (opacity 0 to 1), and collapse is the exact reverse (opacity 1
- * to 0). Reduced motion keeps only the fade.
+ * How far (px) the reveal extends past the popup on the sides that do not
+ * move, so the arrow and box-shadow are not clipped while it grows.
+ */
+export const EXPAND_CLIP_OVERFLOW = 32;
+
+/**
+ * `clip-path` that reveals nothing but the overflow margin at the anchor edge.
+ * The clipped edge is the one opposite the anchor, so the popup grows away
+ * from it without scaling its content.
+ */
+function expandClip(side: Side, shown: boolean): string {
+  const open = `${-EXPAND_CLIP_OVERFLOW}px`;
+  const closed = shown ? open : "100%";
+  // inset(top right bottom left)
+  switch (side) {
+    case "bottom":
+      return `inset(${open} ${open} ${closed} ${open})`;
+    case "top":
+      return `inset(${closed} ${open} ${open} ${open})`;
+    case "right":
+      return `inset(${open} ${closed} ${open} ${open})`;
+    default:
+      return `inset(${open} ${open} ${open} ${closed})`;
+  }
+}
+
+/** Share of the duration the expand fade takes; the growth uses all of it. */
+export const EXPAND_FADE_PORTION = 0.3;
+
+/**
+ * Keyframes for expand/collapse: the popup is revealed out of the anchor edge
+ * with a `clip-path` while it fades in (opacity 0 to 1), and collapse is the
+ * exact reverse. Content is never scaled, so text keeps its proportions.
+ * Without an anchor (Dialog) a uniform, slight scale is used. Reduced motion
+ * keeps only the fade.
  */
 export function createExpandKeyframes(
   phase: AnimationPhase,
   plan: ExpandPlan,
   reducedMotion = false,
 ): Keyframe[] {
-  const from = reducedMotion
-    ? {}
-    : {
-        scale:
-          plan.axis === "y" ? "1 0" : plan.axis === "x" ? "0 1" : "0.95 0.95",
-      };
-  const to = reducedMotion ? {} : { scale: "1 1" };
+  let from: Keyframe = {};
+  let to: Keyframe = {};
+  if (!reducedMotion) {
+    if (plan.side !== null && plan.axis !== "both") {
+      from = { clipPath: expandClip(plan.side, false) };
+      to = { clipPath: expandClip(plan.side, true) };
+    } else {
+      from = { scale: "0.95 0.95" };
+      to = { scale: "1 1" };
+    }
+  }
   const hidden: Keyframe = {
     opacity: 0,
     transformOrigin: plan.transformOrigin,
@@ -156,7 +192,22 @@ export function createExpandKeyframes(
     transformOrigin: plan.transformOrigin,
     ...to,
   };
-  return phase === "enter" ? [hidden, shown] : [shown, hidden];
+  if (reducedMotion) {
+    return phase === "enter" ? [hidden, shown] : [shown, hidden];
+  }
+  // The fade finishes early so the growth stays visible instead of playing
+  // while the popup is still nearly transparent.
+  return phase === "enter"
+    ? [
+        { ...hidden, offset: 0 },
+        { opacity: 1, offset: EXPAND_FADE_PORTION },
+        { ...shown, offset: 1 },
+      ]
+    : [
+        { ...shown, offset: 0 },
+        { opacity: 1, offset: 1 - EXPAND_FADE_PORTION },
+        { ...hidden, offset: 1 },
+      ];
 }
 
 export { splitPlacement };

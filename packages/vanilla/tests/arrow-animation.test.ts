@@ -230,7 +230,8 @@ test("expand grows from the anchor edge and fades in and out", async () => {
   await tick();
   const enter = calls[0]?.keyframes;
   assert.equal(enter?.[0]?.opacity, 0);
-  assert.equal(enter?.[0]?.scale, "1 0");
+  assert.equal(enter?.[0]?.clipPath, "inset(-32px -32px 100% -32px)");
+  assert.equal(enter?.[0]?.scale, undefined);
   assert.equal(enter?.[0]?.transformOrigin, "left top");
   assert.equal(enter?.[1]?.opacity, 1);
   for (const finish of finishers.splice(0)) {
