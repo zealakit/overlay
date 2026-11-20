@@ -201,18 +201,47 @@ test("expand fades in with the scale and collapse reverses to opacity 0", () => 
   const enter = createExpandKeyframes("enter", plan);
   const exit = createExpandKeyframes("exit", plan);
   assert.equal(enter[0]?.opacity, 0);
-  assert.equal(enter[0]?.scale, "1 0");
+  assert.equal(enter[0]?.clipPath, "inset(-32px -32px 100% -32px)");
   assert.equal(enter[1]?.opacity, 1);
-  assert.equal(enter[1]?.scale, "1 1");
-  assert.deepEqual(exit, [...enter].reverse());
+  assert.equal(enter[1]?.offset, 0.3);
+  assert.equal(enter[1]?.clipPath, undefined);
+  assert.equal(enter[2]?.clipPath, "inset(-32px -32px -32px -32px)");
+  // Content is never scaled, so text is not squished.
+  assert.equal(enter[0]?.scale, undefined);
+  assert.equal(enter[2]?.scale, undefined);
+  // Exit mirrors enter: opacity holds at 1 and fades over the last 30%.
+  assert.deepEqual(
+    exit.map((frame) => [frame.opacity, frame.offset]),
+    [
+      [1, 0],
+      [1, 0.7],
+      [0, 1],
+    ],
+  );
   assert.equal(exit.at(-1)?.opacity, 0);
   assert.equal(
     createExpandKeyframes("enter", resolveExpandPlan({ placement: "right" }))[0]
-      ?.scale,
-    "0 1",
+      ?.clipPath,
+    "inset(-32px 100% -32px -32px)",
+  );
+  assert.equal(
+    createExpandKeyframes("enter", resolveExpandPlan({ placement: "top" }))[0]
+      ?.clipPath,
+    "inset(100% -32px -32px -32px)",
+  );
+  assert.equal(
+    createExpandKeyframes("enter", resolveExpandPlan({ placement: "left" }))[0]
+      ?.clipPath,
+    "inset(-32px -32px -32px 100%)",
+  );
+  // Dialog (no anchor) keeps a uniform scale instead of a stretch.
+  assert.equal(
+    createExpandKeyframes("enter", resolveExpandPlan({}))[0]?.scale,
+    "0.95 0.95",
   );
   const reduced = createExpandKeyframes("enter", plan, true);
   assert.equal(reduced[0]?.scale, undefined);
+  assert.equal(reduced[0]?.clipPath, undefined);
   assert.equal(reduced[0]?.opacity, 0);
 });
 

@@ -134,7 +134,7 @@ test("animation true keeps the popup until the exit animation finishes", async (
   }
 });
 
-test("expand animation passes keyframes that fade and scale from the anchor", async () => {
+test("expand animation passes keyframes that fade and reveal from the anchor", async () => {
   const seen: Keyframe[][] = [];
   const original = HTMLElement.prototype.animate;
   HTMLElement.prototype.animate = (keyframes) => {
@@ -150,7 +150,8 @@ test("expand animation passes keyframes that fade and scale from the anchor", as
     await waitFor(() => assert.ok(seen.length > 0));
     assert.equal(seen[0]?.[0]?.opacity, 0);
     assert.equal(seen[0]?.[1]?.opacity, 1);
-    assert.equal(typeof seen[0]?.[0]?.scale, "string");
+    assert.equal(typeof seen[0]?.[0]?.clipPath, "string");
+    assert.equal(seen[0]?.[0]?.scale, undefined);
     assert.equal(seen[0]?.[0]?.transformOrigin !== undefined, true);
   } finally {
     HTMLElement.prototype.animate = original;
